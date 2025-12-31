@@ -39,7 +39,7 @@
     - 实现 triton_matmul wrapper 函数
     - _Requirements: 1.1, 1.2, 1.3_
 
-  - [ ]* 2.2 编写矩阵乘法正确性属性测试
+  - [x]* 2.2 编写矩阵乘法正确性属性测试
     - **Property 1: Matrix Multiplication Correctness**
     - **Validates: Requirements 1.1, 1.2, 6.1**
 
@@ -47,7 +47,7 @@
     - 添加 masking 逻辑处理维度不是 block size 倍数的情况
     - _Requirements: 1.5_
 
-  - [ ]* 2.4 编写 Block Size 不变性属性测试
+  - [x]* 2.4 编写 Block Size 不变性属性测试
     - **Property 2: Block Size Invariance**
     - **Validates: Requirements 1.4**
 
@@ -67,7 +67,7 @@
     - 支持多种矩阵大小和 block size 配置
     - _Requirements: 2.1, 2.3, 3.2, 3.3_
 
-  - [ ]* 4.3 编写 benchmark 单元测试
+  - [x]* 4.3 编写 benchmark 单元测试
     - 测试 TFLOPS 计算正确性
     - 测试输出格式
     - _Requirements: 2.2_
@@ -79,7 +79,7 @@
     - 实现详细错误报告
     - _Requirements: 6.1, 6.2, 6.3_
 
-  - [ ]* 5.2 编写验证工具单元测试
+  - [x]* 5.2 编写验证工具单元测试
     - 测试边界情况（零矩阵、单位矩阵）
     - _Requirements: 6.4_
 
@@ -108,11 +108,11 @@
     - 处理不同序列长度
     - _Requirements: 4.5_
 
-  - [ ]* 7.5 编写 FlashAttention 正确性属性测试
+  - [x]* 7.5 编写 FlashAttention 正确性属性测试
     - **Property 3: FlashAttention Correctness**
     - **Validates: Requirements 4.1, 4.4, 6.1**
 
-  - [ ]* 7.6 编写 Causal Masking 属性测试
+  - [x]* 7.6 编写 Causal Masking 属性测试
     - **Property 4: Causal Masking Correctness**
     - **Validates: Requirements 4.3**
 
@@ -131,7 +131,7 @@
     - 验证 O(N) vs O(N²) 缩放
     - _Requirements: 5.3, 5.4_
 
-  - [ ]* 9.3 编写内存缩放属性测试
+  - [x]* 9.3 编写内存缩放属性测试
     - **Property 5: Memory Scaling**
     - **Validates: Requirements 5.4**
 
@@ -142,7 +142,7 @@
     - 验证 dtype 支持
     - _Requirements: 3.4_
 
-  - [ ]* 10.2 编写错误处理单元测试
+  - [x]* 10.2 编写错误处理单元测试
     - 测试无效输入的错误消息
     - _Requirements: 3.4_
 
@@ -151,18 +151,18 @@
   - 运行 benchmark 脚本验证性能
   - 如有问题请询问用户
 
-- [ ] 12. 现代 CUDA 特性优化（可选）
-  - [ ]* 12.1 实现 TMA 数据加载（Hopper+）
+- [x] 12. 现代 CUDA 特性优化（可选）
+  - [x]* 12.1 实现 TMA 数据加载（Hopper+）
     - 使用 tl.make_tensor_descriptor 创建 TMA 描述符
     - 实现异步数据预取
     - _Requirements: 8.1_
 
-  - [ ]* 12.2 添加 FP8 支持
+  - [x]* 12.2 添加 FP8 支持
     - 实现 FP8 matmul kernel 变体
     - 添加 FP8 FlashAttention 选项
     - _Requirements: 8.2_
 
-  - [ ]* 12.3 实现架构自适应
+  - [x]* 12.3 实现架构自适应
     - 根据 GPU 检测结果选择最优 kernel
     - 实现 fallback 逻辑
     - _Requirements: 8.3, 8.4_
