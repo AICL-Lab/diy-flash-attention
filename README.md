@@ -1,12 +1,17 @@
-# DIY FlashAttention
+# DIY FlashAttention 🚀
 
 使用 Python + OpenAI Triton 从零实现 FlashAttention 算法。
+
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![CUDA](https://img.shields.io/badge/CUDA-11.0+-green.svg)](https://developer.nvidia.com/cuda-toolkit)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## 项目目标
 
 1. **理解 Triton 编程模型** - 通过实现矩阵乘法 Kernel 学习 Block 指针运算和 Tiling
 2. **复现 FlashAttention** - 实现 LLM 中最核心的注意力机制加速算法
 3. **性能对比** - 通过 Benchmark 量化优化效果，感受 Block Size 对性能的影响
+4. **支持现代 GPU** - 自动检测 GPU 架构，支持 Hopper/Blackwell 特性
 
 ## 环境要求
 
@@ -38,6 +43,33 @@ source venv/bin/activate  # Linux/Mac
 
 # 安装依赖
 pip install -r requirements.txt
+
+# 或者使用 pip 安装（开发模式）
+pip install -e ".[dev]"
+```
+
+## 快速开始
+
+```bash
+# 运行快速演示
+python examples/quick_start.py
+```
+
+```python
+# 或者在 Python 中使用
+import torch
+from kernels import triton_matmul, flash_attention
+
+# 矩阵乘法
+a = torch.randn(1024, 1024, device="cuda", dtype=torch.float16)
+b = torch.randn(1024, 1024, device="cuda", dtype=torch.float16)
+c = triton_matmul(a, b)
+
+# FlashAttention
+q = torch.randn(2, 8, 512, 64, device="cuda", dtype=torch.float16)
+k = torch.randn(2, 8, 512, 64, device="cuda", dtype=torch.float16)
+v = torch.randn(2, 8, 512, 64, device="cuda", dtype=torch.float16)
+out = flash_attention(q, k, v, causal=True)
 ```
 
 ## 项目结构
@@ -45,18 +77,21 @@ pip install -r requirements.txt
 ```
 diy-flash-attention/
 ├── kernels/           # Triton GPU Kernels
-│   ├── matmul.py      # 矩阵乘法 Kernel
-│   └── flash_attn.py  # FlashAttention Kernel
+│   ├── matmul.py      # 矩阵乘法 Kernel (含 autotune)
+│   └── flash_attn.py  # FlashAttention Kernel (含 online softmax)
 ├── benchmarks/        # 性能测试脚本
 │   ├── bench_matmul.py
 │   └── bench_flash.py
-├── tests/             # 单元测试和属性测试
+├── tests/             # 单元测试
 │   ├── test_matmul.py
 │   └── test_flash.py
 ├── utils/             # 工具函数
 │   ├── benchmark.py   # Benchmark 工具类
 │   ├── validation.py  # 数值验证工具
-│   └── gpu_detect.py  # GPU 检测工具
+│   └── gpu_detect.py  # GPU 检测 (支持 Hopper/Blackwell)
+├── examples/          # 示例代码
+│   └── quick_start.py
+├── pyproject.toml     # 项目配置
 └── requirements.txt
 ```
 
@@ -65,18 +100,23 @@ diy-flash-attention/
 ### 1. 检测 GPU 能力
 
 ```python
-from utils import detect_gpu
+from utils import detect_gpu, print_gpu_info
 
 caps = detect_gpu()
-print(f"GPU 架构: {caps.arch}")
-print(f"TMA 支持: {caps.has_tma}")
-print(f"FP8 支持: {caps.has_fp8}")
+print_gpu_info(caps)
+# 输出:
+# GPU Information
+# Name:                NVIDIA GeForce RTX 4090
+# Architecture:        sm_89
+# TMA 支持:            ✗
+# FP8 支持:            ✗
 ```
 
 ### 2. 运行矩阵乘法 Benchmark
 
 ```bash
 python benchmarks/bench_matmul.py
+python benchmarks/bench_matmul.py --test-block-sizes  # 测试不同 block size
 ```
 
 输出示例：

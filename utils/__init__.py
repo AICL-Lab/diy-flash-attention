@@ -2,7 +2,7 @@
 
 from .benchmark import BenchmarkResult, BenchmarkRunner
 from .validation import validate_matmul, validate_attention
-from .gpu_detect import detect_gpu, GPUCapabilities, GPUArch
+from .gpu_detect import detect_gpu, GPUCapabilities, GPUArch, print_gpu_info
 
 __all__ = [
     "BenchmarkResult",
@@ -12,4 +12,5 @@ __all__ = [
     "detect_gpu",
     "GPUCapabilities",
     "GPUArch",
+    "print_gpu_info",
 ]
