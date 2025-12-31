@@ -4,7 +4,10 @@
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![CUDA](https://img.shields.io/badge/CUDA-11.0+-green.svg)](https://developer.nvidia.com/cuda-toolkit)
+[![Triton](https://img.shields.io/badge/Triton-2.1+-orange.svg)](https://triton-lang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+> 🎯 **Vibe Coding 项目** - 通过动手实践理解 LLM 核心算法
 
 ## 项目目标
 
@@ -12,6 +15,7 @@
 2. **复现 FlashAttention** - 实现 LLM 中最核心的注意力机制加速算法
 3. **性能对比** - 通过 Benchmark 量化优化效果，感受 Block Size 对性能的影响
 4. **支持现代 GPU** - 自动检测 GPU 架构，支持 Hopper/Blackwell 特性
+5. **完整测试覆盖** - 包含单元测试和属性测试 (Property-Based Testing)
 
 ## 环境要求
 
@@ -76,23 +80,38 @@ out = flash_attention(q, k, v, causal=True)
 
 ```
 diy-flash-attention/
-├── kernels/           # Triton GPU Kernels
-│   ├── matmul.py      # 矩阵乘法 Kernel (含 autotune)
-│   └── flash_attn.py  # FlashAttention Kernel (含 online softmax)
-├── benchmarks/        # 性能测试脚本
-│   ├── bench_matmul.py
-│   └── bench_flash.py
-├── tests/             # 单元测试
-│   ├── test_matmul.py
-│   └── test_flash.py
-├── utils/             # 工具函数
-│   ├── benchmark.py   # Benchmark 工具类
-│   ├── validation.py  # 数值验证工具
-│   └── gpu_detect.py  # GPU 检测 (支持 Hopper/Blackwell)
-├── examples/          # 示例代码
-│   └── quick_start.py
-├── pyproject.toml     # 项目配置
-└── requirements.txt
+├── kernels/               # Triton GPU Kernels
+│   ├── matmul.py          # 矩阵乘法 Kernel (含 autotune)
+│   ├── flash_attn.py      # FlashAttention Kernel (含 online softmax)
+│   └── modern_features.py # 现代 CUDA 特性 (TMA, FP8, 架构自适应)
+├── benchmarks/            # 性能测试脚本
+│   ├── bench_matmul.py    # 矩阵乘法 benchmark
+│   └── bench_flash.py     # FlashAttention benchmark
+├── tests/                 # 测试套件
+│   ├── test_matmul.py     # 矩阵乘法单元测试
+│   ├── test_flash.py      # FlashAttention 单元测试
+│   ├── test_properties.py # 属性测试 (Hypothesis)
+│   ├── test_benchmark.py  # Benchmark 工具测试
+│   ├── test_validation.py # 验证工具测试
+│   └── test_error_handling.py # 错误处理测试
+├── utils/                 # 工具函数
+│   ├── benchmark.py       # Benchmark 工具类
+│   ├── validation.py      # 数值验证工具
+│   └── gpu_detect.py      # GPU 检测 (支持 Hopper/Blackwell)
+├── examples/              # 示例代码
+│   ├── quick_start.py     # 快速入门
+│   ├── advanced_usage.py  # 高级用法
+│   ├── block_size_experiment.py # Block Size 实验
+│   └── visualize_tiling.py # Tiling 可视化
+├── docs/                  # 文档
+│   ├── tutorial.md        # 中文教程
+│   └── api.md             # API 参考
+├── scripts/               # 脚本
+│   └── run_all_benchmarks.py # 一键运行所有 benchmark
+├── pyproject.toml         # 项目配置
+├── Makefile               # 便捷命令
+├── CHANGELOG.md           # 版本历史
+└── requirements.txt       # 依赖
 ```
 
 ## 快速开始
@@ -144,6 +163,38 @@ pytest tests/
 
 # 运行特定测试
 pytest tests/test_matmul.py -v
+
+# 运行属性测试 (Property-Based Testing)
+pytest tests/test_properties.py -v
+
+# 运行测试并显示覆盖率
+pytest tests/ --cov=kernels --cov=utils
+```
+
+## 便捷命令 (Makefile)
+
+```bash
+make help          # 显示所有可用命令
+
+# 运行
+make demo          # 快速演示
+make experiment    # Block Size 实验
+make visualize     # Tiling 可视化
+make advanced      # 高级用法示例
+
+# Benchmark
+make bench-matmul  # 矩阵乘法 benchmark
+make bench-flash   # FlashAttention benchmark
+make bench-all     # 运行所有 benchmark
+make report        # 生成 benchmark 报告
+
+# 测试
+make test          # 运行所有测试
+make gpu-info      # 显示 GPU 信息
+
+# 其他
+make install       # 安装依赖
+make clean         # 清理缓存
 ```
 
 ## 核心概念
@@ -184,9 +235,15 @@ c2 = triton_matmul(a, b, block_m=128, block_n=256, block_k=64)
 
 ## 参考资料
 
-- [FlashAttention Paper](https://arxiv.org/abs/2205.14135)
-- [Triton Documentation](https://triton-lang.org/)
-- [CUDA Programming Guide](https://docs.nvidia.com/cuda/cuda-c-programming-guide/)
+- [FlashAttention Paper](https://arxiv.org/abs/2205.14135) - 原始论文
+- [FlashAttention-2 Paper](https://arxiv.org/abs/2307.08691) - 改进版本
+- [Triton Documentation](https://triton-lang.org/) - Triton 官方文档
+- [CUDA Programming Guide](https://docs.nvidia.com/cuda/cuda-c-programming-guide/) - CUDA 编程指南
+- [Online Softmax Paper](https://arxiv.org/abs/1805.02867) - Online Softmax 算法
+
+## 贡献
+
+欢迎提交 Issue 和 Pull Request！
 
 ## License
 
