@@ -86,24 +86,24 @@
 - [x] 6. Checkpoint - Benchmark 和验证工具
   - 确保所有测试通过，如有问题请询问用户
 
-- [ ] 7. 实现 FlashAttention 核心算法
-  - [ ] 7.1 实现 online softmax 辅助函数
+- [x] 7. 实现 FlashAttention 核心算法
+  - [x] 7.1 实现 online softmax 辅助函数
     - 实现 running max 和 running sum 更新逻辑
     - _Requirements: 4.2_
 
-  - [ ] 7.2 实现 FlashAttention forward kernel
+  - [x] 7.2 实现 FlashAttention forward kernel
     - 在 kernels/flash_attn.py 中实现 flash_attention_forward_kernel
     - 实现 Q, K, V 的分块加载
     - 实现 online softmax 计算
     - 实现增量输出累积
     - _Requirements: 4.1, 4.2, 4.4_
 
-  - [ ] 7.3 实现 causal masking
+  - [x] 7.3 实现 causal masking
     - 在 kernel 中添加 IS_CAUSAL 参数
     - 实现上三角 mask 逻辑
     - _Requirements: 4.3_
 
-  - [ ] 7.4 实现 flash_attention wrapper 函数
+  - [x] 7.4 实现 flash_attention wrapper 函数
     - 支持 batch 和 multi-head
     - 处理不同序列长度
     - _Requirements: 4.5_
@@ -116,17 +116,17 @@
     - **Property 4: Causal Masking Correctness**
     - **Validates: Requirements 4.3**
 
-- [ ] 8. Checkpoint - FlashAttention 核心功能
+- [x] 8. Checkpoint - FlashAttention 核心功能
   - 确保所有测试通过，如有问题请询问用户
 
-- [ ] 9. 实现 FlashAttention Benchmark
-  - [ ] 9.1 实现 FlashAttention benchmark 脚本
+- [x] 9. 实现 FlashAttention Benchmark
+  - [x] 9.1 实现 FlashAttention benchmark 脚本
     - 在 benchmarks/bench_flash.py 中实现
     - 对比 FlashAttention 和 PyTorch scaled_dot_product_attention
     - 测试不同序列长度的性能
     - _Requirements: 5.1, 5.5_
 
-  - [ ] 9.2 实现内存使用测量
+  - [x] 9.2 实现内存使用测量
     - 测量不同序列长度的内存使用
     - 验证 O(N) vs O(N²) 缩放
     - _Requirements: 5.3, 5.4_
@@ -135,8 +135,8 @@
     - **Property 5: Memory Scaling**
     - **Validates: Requirements 5.4**
 
-- [ ] 10. 错误处理和边界情况
-  - [ ] 10.1 添加输入验证
+- [x] 10. 错误处理和边界情况
+  - [x] 10.1 添加输入验证
     - 验证矩阵维度兼容性
     - 验证 block size 有效性
     - 验证 dtype 支持
@@ -146,7 +146,7 @@
     - 测试无效输入的错误消息
     - _Requirements: 3.4_
 
-- [ ] 11. Final Checkpoint - 完整功能验证
+- [x] 11. Final Checkpoint - 完整功能验证
   - 运行所有测试确保通过
   - 运行 benchmark 脚本验证性能
   - 如有问题请询问用户
