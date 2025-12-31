@@ -241,9 +241,18 @@ c2 = triton_matmul(a, b, block_m=128, block_n=256, block_k=64)
 - [CUDA Programming Guide](https://docs.nvidia.com/cuda/cuda-c-programming-guide/) - CUDA 编程指南
 - [Online Softmax Paper](https://arxiv.org/abs/1805.02867) - Online Softmax 算法
 
+## 文档
+
+- [教程](docs/tutorial.md) - 从零开始理解 FlashAttention
+- [API 参考](docs/api.md) - 完整 API 文档
+- [性能指南](docs/performance.md) - 性能优化技巧
+- [常见问题](docs/faq.md) - FAQ
+- [贡献指南](CONTRIBUTING.md) - 如何贡献代码
+- [更新日志](CHANGELOG.md) - 版本历史
+
 ## 贡献
 
-欢迎提交 Issue 和 Pull Request！
+欢迎提交 Issue 和 Pull Request！详见 [贡献指南](CONTRIBUTING.md)。
 
 ## License
 
