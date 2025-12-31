@@ -24,6 +24,10 @@ help:
 	@echo ""
 	@echo "    make clean        - Clean cache files"
 	@echo ""
+	@echo "  Advanced:"
+	@echo "    make advanced     - Run advanced usage examples"
+	@echo "    make report       - Generate benchmark report"
+	@echo ""
 
 # Install dependencies
 install:
@@ -79,3 +83,15 @@ clean:
 # Check GPU
 gpu-info:
 	python -c "from utils import detect_gpu, print_gpu_info; print_gpu_info(detect_gpu())"
+
+# Run advanced usage examples
+advanced:
+	python examples/advanced_usage.py
+
+# Generate benchmark report
+report:
+	python scripts/run_all_benchmarks.py --output benchmark_report.md
+	@echo "Report saved to benchmark_report.md"
+
+# Run all benchmarks and generate report
+bench-report: bench-all report
