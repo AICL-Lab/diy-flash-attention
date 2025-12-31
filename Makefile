@@ -4,12 +4,25 @@
 help:
 	@echo "DIY FlashAttention - Available commands:"
 	@echo ""
-	@echo "  make install      - Install dependencies"
-	@echo "  make test         - Run all tests"
-	@echo "  make demo         - Run quick start demo"
-	@echo "  make bench-matmul - Run matrix multiplication benchmark"
-	@echo "  make bench-flash  - Run FlashAttention benchmark"
-	@echo "  make clean        - Clean cache files"
+	@echo "  Setup:"
+	@echo "    make install      - Install dependencies"
+	@echo "    make install-dev  - Install in development mode"
+	@echo ""
+	@echo "  Run:"
+	@echo "    make demo         - Run quick start demo"
+	@echo "    make experiment   - Run block size experiment"
+	@echo "    make visualize    - Visualize tiling strategy"
+	@echo ""
+	@echo "  Benchmark:"
+	@echo "    make bench-matmul - Run matrix multiplication benchmark"
+	@echo "    make bench-flash  - Run FlashAttention benchmark"
+	@echo "    make bench-all    - Run all benchmarks"
+	@echo ""
+	@echo "  Test:"
+	@echo "    make test         - Run all tests"
+	@echo "    make gpu-info     - Show GPU information"
+	@echo ""
+	@echo "    make clean        - Clean cache files"
 	@echo ""
 
 # Install dependencies
@@ -27,6 +40,14 @@ test:
 # Run quick start demo
 demo:
 	python examples/quick_start.py
+
+# Run block size experiment
+experiment:
+	python examples/block_size_experiment.py
+
+# Visualize tiling strategy
+visualize:
+	python examples/visualize_tiling.py
 
 # Run matmul benchmark
 bench-matmul:
