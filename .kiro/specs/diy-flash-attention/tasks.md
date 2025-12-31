@@ -31,8 +31,8 @@
     - 检测 TMA, FP8, Warpgroup MMA 支持
     - _Requirements: 8.3_
 
-- [ ] 2. 实现基础矩阵乘法 Kernel
-  - [ ] 2.1 实现 Triton matmul kernel
+- [x] 2. 实现基础矩阵乘法 Kernel
+  - [x] 2.1 实现 Triton matmul kernel
     - 在 kernels/matmul.py 中实现 matmul_kernel
     - 实现 Block 指针运算和 tiling 逻辑
     - 支持可配置的 BLOCK_SIZE_M, BLOCK_SIZE_N, BLOCK_SIZE_K
@@ -43,7 +43,7 @@
     - **Property 1: Matrix Multiplication Correctness**
     - **Validates: Requirements 1.1, 1.2, 6.1**
 
-  - [ ] 2.3 处理非对齐维度
+  - [x] 2.3 处理非对齐维度
     - 添加 masking 逻辑处理维度不是 block size 倍数的情况
     - _Requirements: 1.5_
 
@@ -51,17 +51,17 @@
     - **Property 2: Block Size Invariance**
     - **Validates: Requirements 1.4**
 
-- [ ] 3. Checkpoint - 矩阵乘法验证
+- [x] 3. Checkpoint - 矩阵乘法验证
   - 确保所有测试通过，如有问题请询问用户
 
-- [ ] 4. 实现 Benchmark 工具
-  - [ ] 4.1 实现 benchmark 工具类
+- [x] 4. 实现 Benchmark 工具
+  - [x] 4.1 实现 benchmark 工具类
     - 在 utils/benchmark.py 中实现 BenchmarkResult 和 BenchmarkRunner
     - 实现 TFLOPS 计算逻辑
     - 实现格式化输出表格
     - _Requirements: 2.2, 2.4, 2.5_
 
-  - [ ] 4.2 实现矩阵乘法 benchmark 脚本
+  - [x] 4.2 实现矩阵乘法 benchmark 脚本
     - 在 benchmarks/bench_matmul.py 中实现
     - 对比 Triton kernel 和 torch.matmul
     - 支持多种矩阵大小和 block size 配置
@@ -72,8 +72,8 @@
     - 测试输出格式
     - _Requirements: 2.2_
 
-- [ ] 5. 实现验证工具
-  - [ ] 5.1 实现 validation 工具
+- [x] 5. 实现验证工具
+  - [x] 5.1 实现 validation 工具
     - 在 utils/validation.py 中实现 validate_matmul 和 validate_attention
     - 实现数值比较逻辑（rtol=1e-3, atol=1e-3）
     - 实现详细错误报告
@@ -83,7 +83,7 @@
     - 测试边界情况（零矩阵、单位矩阵）
     - _Requirements: 6.4_
 
-- [ ] 6. Checkpoint - Benchmark 和验证工具
+- [x] 6. Checkpoint - Benchmark 和验证工具
   - 确保所有测试通过，如有问题请询问用户
 
 - [ ] 7. 实现 FlashAttention 核心算法
