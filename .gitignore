@@ -64,3 +64,12 @@ benchmark_results/
 # Temporary files
 tmp/
 temp/
+
+# Benchmark reports
+benchmark_report.md
+
+# Type checking
+.mypy_cache/
+
+# Ruff
+.ruff_cache/
