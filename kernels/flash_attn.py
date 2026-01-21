@@ -38,6 +38,8 @@ def _flash_attention_forward_kernel(
     stride_lz, stride_lh, stride_lm,
     # Sequence lengths
     N_CTX,
+    # Softmax scale
+    SM_SCALE,
     # Head dimension
     HEAD_DIM: tl.constexpr,
     # Block sizes
@@ -65,17 +67,9 @@ def _flash_attention_forward_kernel(
     # Program IDs
     start_m = tl.program_id(0)  # Which Q block
     off_hz = tl.program_id(1)   # Which batch/head
-    
-    # Compute batch and head indices
-    off_z = off_hz // tl.num_programs(1)  # This doesn't work, need to pass num_heads
-    off_h = off_hz % tl.num_programs(1)
-    
-    # Actually, let's compute it differently
-    # off_hz encodes both batch and head: off_hz = batch_idx * num_heads + head_idx
-    # We'll handle this in the wrapper
-    
+
     # Scaling factor
-    qk_scale = 1.0 / math.sqrt(HEAD_DIM)
+    qk_scale = SM_SCALE
     
     # Offsets for this block
     offs_m = start_m * BLOCK_M + tl.arange(0, BLOCK_M)
@@ -83,9 +77,9 @@ def _flash_attention_forward_kernel(
     offs_k = tl.arange(0, HEAD_DIM)
     
     # Pointers to Q, K, V for this batch/head
-    q_ptrs = Q + off_hz * stride_qh + (offs_m[:, None] * stride_qm + offs_k[None, :] * stride_qk)
-    k_ptrs = K + off_hz * stride_kh + (offs_n[:, None] * stride_kn + offs_k[None, :] * stride_kk)
-    v_ptrs = V + off_hz * stride_vh + (offs_n[:, None] * stride_vn + offs_k[None, :] * stride_vk)
+    q_ptrs = Q + off_hz * stride_qz + (offs_m[:, None] * stride_qm + offs_k[None, :] * stride_qk)
+    k_ptrs = K + off_hz * stride_kz + (offs_n[:, None] * stride_kn + offs_k[None, :] * stride_kk)
+    v_ptrs = V + off_hz * stride_vz + (offs_n[:, None] * stride_vn + offs_k[None, :] * stride_vk)
     
     # Load Q block - stays in SRAM for entire computation
     q = tl.load(q_ptrs, mask=offs_m[:, None] < N_CTX, other=0.0)
@@ -150,7 +144,7 @@ def _flash_attention_forward_kernel(
         # Step 6: Update accumulator
         # acc_new = (l_i * alpha * acc + p @ V) / l_new
         # But we defer the division to the end
-        acc = acc * (alpha * l_i)[:, None]
+        acc = acc * alpha[:, None]
         acc = tl.dot(p.to(v.dtype), v, acc)
         
         # Update running statistics
@@ -161,11 +155,11 @@ def _flash_attention_forward_kernel(
     acc = acc / l_i[:, None]
     
     # Store log-sum-exp for potential backward pass
-    l_ptrs = L + off_hz * stride_lh + offs_m * stride_lm
+    l_ptrs = L + off_hz * stride_lz + offs_m * stride_lm
     tl.store(l_ptrs, m_i + tl.log(l_i), mask=offs_m < N_CTX)
     
     # Store output
-    out_ptrs = Out + off_hz * stride_oh + (offs_m[:, None] * stride_om + offs_k[None, :] * stride_ok)
+    out_ptrs = Out + off_hz * stride_oz + (offs_m[:, None] * stride_om + offs_k[None, :] * stride_ok)
     tl.store(out_ptrs, acc.to(Out.dtype.element_ty), mask=offs_m[:, None] < N_CTX)
 
 
@@ -231,6 +225,10 @@ def flash_attention(
     batch_heads = q.shape[0]
     out = torch.empty_like(q)
     L = torch.empty((batch_heads, seq_len), device=q.device, dtype=torch.float32)
+
+    # Softmax scaling factor
+    if sm_scale is None:
+        sm_scale = 1.0 / math.sqrt(head_dim)
     
     # Determine block sizes based on head_dim
     BLOCK_M = 128
@@ -262,6 +260,7 @@ def flash_attention(
         L.stride(0), 0, L.stride(1),
         # Dimensions
         seq_len,
+        sm_scale,
         HEAD_DIM=head_dim,
         BLOCK_M=BLOCK_M,
         BLOCK_N=BLOCK_N,
