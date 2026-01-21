@@ -37,6 +37,10 @@ out = flash_attention(q, k, v)
 
 # Causal attention
 out = flash_attention(q, k, v, causal=True)
+
+# 变长序列 (seq_lens 形状为 batch)
+seq_lens = torch.tensor([256, 512], device="cuda", dtype=torch.int32)
+out = flash_attention(q, k, v, seq_lens=seq_lens)
 ```
 
 ### GPU 检测
@@ -93,6 +97,8 @@ A: (M, K)  ×  B: (K, N)  →  C: (M, N)
 ```
 Q, K, V: (batch, heads, seq_len, head_dim)
 Output:  (batch, heads, seq_len, head_dim)
+
+可选: seq_lens (batch,) 指定每个样本的有效长度，超出部分输出为 0
 ```
 
 ## Block Size 推荐
@@ -139,6 +145,7 @@ Output:  (batch, heads, seq_len, head_dim)
 | `Block sizes must be positive` | block size <= 0 | 使用正数 |
 | `Q, K, V shapes must match` | 形状不一致 | 确保 Q, K, V 形状相同 |
 | `Expected 3D or 4D tensors` | attention 输入维度错误 | 使用 3D 或 4D 张量 |
+| `Unsupported head_dim` | head_dim 非 32/64 | 使用 head_dim=32 或 64 |
 
 ## 性能提示
 

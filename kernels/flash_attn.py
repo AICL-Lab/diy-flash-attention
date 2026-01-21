@@ -30,14 +30,14 @@ def _flash_attention_forward_kernel(
     Out,
     # Softmax statistics (for potential backward pass)
     L,  # log-sum-exp
+    # Sequence lengths (per batch)
+    SEQ_LENS,
     # Dimensions
     stride_qz, stride_qh, stride_qm, stride_qk,
     stride_kz, stride_kh, stride_kn, stride_kk,
     stride_vz, stride_vh, stride_vn, stride_vk,
     stride_oz, stride_oh, stride_om, stride_ok,
     stride_lz, stride_lh, stride_lm,
-    # Sequence lengths
-    N_CTX,
     # Softmax scale
     SM_SCALE,
     # Head dimension
@@ -45,6 +45,10 @@ def _flash_attention_forward_kernel(
     # Block sizes
     BLOCK_M: tl.constexpr,
     BLOCK_N: tl.constexpr,
+    # Sequence lengths
+    N_CTX: tl.constexpr,
+    # Head count
+    NUM_HEADS: tl.constexpr,
     # Causal mask flag
     IS_CAUSAL: tl.constexpr,
 ):
@@ -68,6 +72,11 @@ def _flash_attention_forward_kernel(
     start_m = tl.program_id(0)  # Which Q block
     off_hz = tl.program_id(1)   # Which batch/head
 
+    # Decode batch index for per-batch sequence length
+    off_z = off_hz // NUM_HEADS
+    seq_len = tl.load(SEQ_LENS + off_z)
+    seq_len = tl.minimum(seq_len, N_CTX)
+
     # Scaling factor
     qk_scale = SM_SCALE
     
@@ -82,7 +91,7 @@ def _flash_attention_forward_kernel(
     v_ptrs = V + off_hz * stride_vz + (offs_n[:, None] * stride_vn + offs_k[None, :] * stride_vk)
     
     # Load Q block - stays in SRAM for entire computation
-    q = tl.load(q_ptrs, mask=offs_m[:, None] < N_CTX, other=0.0)
+    q = tl.load(q_ptrs, mask=offs_m[:, None] < seq_len, other=0.0)
     
     # Initialize accumulators for online softmax
     # m_i: running max (for numerical stability)
@@ -95,17 +104,18 @@ def _flash_attention_forward_kernel(
     # Determine the range of K, V blocks to process
     if IS_CAUSAL:
         # For causal attention, only process K, V up to current position
-        end_n = min((start_m + 1) * BLOCK_M, N_CTX)
+        end_n = tl.minimum((start_m + 1) * BLOCK_M, seq_len)
     else:
-        end_n = N_CTX
+        end_n = seq_len
     
     # Iterate over K, V blocks
-    for start_n in range(0, end_n, BLOCK_N):
+    for start_n in range(0, N_CTX, BLOCK_N):
         start_n = tl.multiple_of(start_n, BLOCK_N)
+        block_mask = start_n < end_n
         
         # Load K block
         k = tl.load(k_ptrs + start_n * stride_kn,
-                    mask=(start_n + offs_n[:, None]) < N_CTX,
+                    mask=(start_n + offs_n[:, None]) < seq_len,
                     other=0.0)
         
         # Compute Q @ K^T
@@ -119,26 +129,29 @@ def _flash_attention_forward_kernel(
             qk = tl.where(causal_mask, qk, float("-inf"))
         
         # Mask out-of-bounds positions
-        qk = tl.where((start_n + offs_n[None, :]) < N_CTX, qk, float("-inf"))
+        qk = tl.where((start_n + offs_n[None, :]) < seq_len, qk, float("-inf"))
+        qk = tl.where(block_mask, qk, float("-inf"))
         
         # Online softmax update
         # Step 1: Compute new max
         m_ij = tl.max(qk, axis=1)
+        m_ij = tl.where(block_mask, m_ij, m_i)
         m_new = tl.maximum(m_i, m_ij)
         
         # Step 2: Compute correction factors
         alpha = tl.exp(m_i - m_new)
-        beta = tl.exp(m_ij - m_new)
+        beta = tl.where(block_mask, tl.exp(m_ij - m_new), 0.0)
         
         # Step 3: Update running sum
         l_new = alpha * l_i + beta * tl.sum(tl.exp(qk - m_ij[:, None]), axis=1)
         
         # Step 4: Compute attention weights for this block
         p = tl.exp(qk - m_new[:, None])
+        p = tl.where(block_mask, p, 0.0)
         
         # Step 5: Load V block
         v = tl.load(v_ptrs + start_n * stride_vn,
-                    mask=(start_n + offs_n[:, None]) < N_CTX,
+                    mask=(start_n + offs_n[:, None]) < seq_len,
                     other=0.0)
         
         # Step 6: Update accumulator
@@ -156,11 +169,11 @@ def _flash_attention_forward_kernel(
     
     # Store log-sum-exp for potential backward pass
     l_ptrs = L + off_hz * stride_lz + offs_m * stride_lm
-    tl.store(l_ptrs, m_i + tl.log(l_i), mask=offs_m < N_CTX)
+    tl.store(l_ptrs, m_i + tl.log(l_i), mask=offs_m < seq_len)
     
     # Store output
     out_ptrs = Out + off_hz * stride_oz + (offs_m[:, None] * stride_om + offs_k[None, :] * stride_ok)
-    tl.store(out_ptrs, acc.to(Out.dtype.element_ty), mask=offs_m[:, None] < N_CTX)
+    tl.store(out_ptrs, acc.to(Out.dtype.element_ty), mask=offs_m[:, None] < seq_len)
 
 
 
@@ -170,6 +183,7 @@ def flash_attention(
     v: torch.Tensor,
     causal: bool = False,
     sm_scale: Optional[float] = None,
+    seq_lens: Optional[torch.Tensor] = None,
 ) -> torch.Tensor:
     """
     FlashAttention: Memory-efficient attention computation.
@@ -182,6 +196,7 @@ def flash_attention(
         v: Value tensor of shape (batch, heads, seq_len, head_dim) or (batch*heads, seq_len, head_dim)
         causal: Whether to apply causal masking (for autoregressive models)
         sm_scale: Softmax scaling factor (default: 1/sqrt(head_dim))
+        seq_lens: Optional sequence lengths per batch element (shape: [batch])
         
     Returns:
         Attention output of same shape as input
@@ -209,6 +224,13 @@ def flash_attention(
     # Validate shapes
     if k.shape != q.shape or v.shape != q.shape:
         raise ValueError(f"Q, K, V shapes must match. Got Q={q.shape}, K={k.shape}, V={v.shape}")
+
+    supported_head_dims = (32, 64)
+    if head_dim not in supported_head_dims:
+        raise ValueError(
+            "Unsupported head_dim for FlashAttention. "
+            f"Supported head_dim values: {supported_head_dims}. Got {head_dim}."
+        )
     
     # Ensure contiguous
     q = q.contiguous()
@@ -220,10 +242,41 @@ def flash_attention(
         q = q.to(torch.float16)
         k = k.to(torch.float16)
         v = v.to(torch.float16)
+
+    # Prepare per-batch sequence lengths
+    if seq_lens is None:
+        seq_lens_tensor = torch.full((batch,), seq_len, device=q.device, dtype=torch.int32)
+    else:
+        if isinstance(seq_lens, torch.Tensor):
+            seq_lens_tensor = seq_lens.to(device=q.device, dtype=torch.int32)
+        else:
+            seq_lens_tensor = torch.tensor(seq_lens, device=q.device, dtype=torch.int32)
+
+        if seq_lens_tensor.dim() != 1:
+            raise ValueError("seq_lens must be a 1D tensor or list")
+        if reshape_output:
+            if seq_lens_tensor.numel() != batch:
+                raise ValueError(
+                    f"seq_lens length must match batch size. Got {seq_lens_tensor.numel()} vs {batch}."
+                )
+        else:
+            if seq_lens_tensor.numel() != 1:
+                raise ValueError("seq_lens for 3D inputs must have length 1")
+
+        max_len = int(seq_len)
+        if seq_lens_tensor.min().item() <= 0:
+            raise ValueError("seq_lens values must be positive")
+        if seq_lens_tensor.max().item() > max_len:
+            raise ValueError(
+                f"seq_lens values must be <= seq_len ({max_len}). Got max={seq_lens_tensor.max().item()}."
+            )
+
+    seq_lens_tensor = seq_lens_tensor.contiguous()
     
     # Allocate output and log-sum-exp
     batch_heads = q.shape[0]
-    out = torch.empty_like(q)
+    needs_zero_fill = seq_lens_tensor.min().item() < seq_len
+    out = torch.zeros_like(q) if needs_zero_fill else torch.empty_like(q)
     L = torch.empty((batch_heads, seq_len), device=q.device, dtype=torch.float32)
 
     # Softmax scaling factor
@@ -248,6 +301,7 @@ def flash_attention(
         q, k, v,
         out,
         L,
+        seq_lens_tensor,
         # Q strides
         q.stride(0), 0, q.stride(1), q.stride(2),
         # K strides
@@ -258,12 +312,12 @@ def flash_attention(
         out.stride(0), 0, out.stride(1), out.stride(2),
         # L strides
         L.stride(0), 0, L.stride(1),
-        # Dimensions
-        seq_len,
         sm_scale,
         HEAD_DIM=head_dim,
         BLOCK_M=BLOCK_M,
         BLOCK_N=BLOCK_N,
+        N_CTX=seq_len,
+        NUM_HEADS=heads,
         IS_CAUSAL=causal,
     )
     

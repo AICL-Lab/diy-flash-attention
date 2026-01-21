@@ -17,7 +17,7 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from kernels.flash_attn import flash_attention
+from kernels.flash_attn import flash_attention, reference_attention
 
 
 class TestFlashAttentionBasic:
@@ -34,6 +34,29 @@ class TestFlashAttentionBasic:
         flash_out = flash_attention(q, k, v, causal=False)
         ref_out = torch.nn.functional.scaled_dot_product_attention(q, k, v, is_causal=False)
         
+        assert torch.allclose(flash_out, ref_out, rtol=1e-2, atol=1e-2)
+
+    def test_variable_seq_lens(self):
+        """Test variable sequence lengths within a batch using seq_lens."""
+        batch, heads, seq_len, head_dim = 2, 4, 128, 64
+        seq_lens = torch.tensor([64, 128], device="cuda", dtype=torch.int32)
+
+        q = torch.randn((batch, heads, seq_len, head_dim), device="cuda", dtype=torch.float16)
+        k = torch.randn((batch, heads, seq_len, head_dim), device="cuda", dtype=torch.float16)
+        v = torch.randn((batch, heads, seq_len, head_dim), device="cuda", dtype=torch.float16)
+
+        flash_out = flash_attention(q, k, v, causal=False, seq_lens=seq_lens)
+
+        ref_out = torch.zeros_like(q)
+        for idx, length in enumerate(seq_lens.tolist()):
+            ref = reference_attention(
+                q[idx, :, :length, :],
+                k[idx, :, :length, :],
+                v[idx, :, :length, :],
+                causal=False,
+            )
+            ref_out[idx, :, :length, :] = ref
+
         assert torch.allclose(flash_out, ref_out, rtol=1e-2, atol=1e-2)
     
     def test_causal(self):

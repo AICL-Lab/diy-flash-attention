@@ -232,6 +232,13 @@ def triton_matmul(
     # Input validation
     if a.dim() != 2 or b.dim() != 2:
         raise ValueError(f"Expected 2D tensors, got a.dim()={a.dim()}, b.dim()={b.dim()}")
+
+    supported_dtypes = (torch.float16, torch.float32, torch.bfloat16)
+    if a.dtype not in supported_dtypes or b.dtype not in supported_dtypes:
+        raise TypeError(
+            "Unsupported dtype for matmul. "
+            f"Supported dtypes: {supported_dtypes}. Got a={a.dtype}, b={b.dtype}."
+        )
     
     M, K = a.shape
     K2, N = b.shape
@@ -256,11 +263,19 @@ def triton_matmul(
     
     # Determine if using manual block sizes or autotune
     manual_blocks = block_m is not None and block_n is not None and block_k is not None
+
+    if not manual_blocks and not use_autotune:
+        raise ValueError("Manual block sizes are required when use_autotune=False")
     
     if manual_blocks:
         # Validate block sizes
         if block_m <= 0 or block_n <= 0 or block_k <= 0:
             raise ValueError(f"Block sizes must be positive, got ({block_m}, {block_n}, {block_k})")
+        if block_m > M or block_n > N or block_k > K:
+            raise ValueError(
+                "Block sizes must not exceed matrix dimensions. "
+                f"Got blocks=({block_m}, {block_n}, {block_k}), dims=({M}, {N}, {K})."
+            )
         
         # Use non-autotuned kernel with specified block sizes
         grid = lambda META: (

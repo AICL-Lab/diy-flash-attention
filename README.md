@@ -74,6 +74,10 @@ q = torch.randn(2, 8, 512, 64, device="cuda", dtype=torch.float16)
 k = torch.randn(2, 8, 512, 64, device="cuda", dtype=torch.float16)
 v = torch.randn(2, 8, 512, 64, device="cuda", dtype=torch.float16)
 out = flash_attention(q, k, v, causal=True)
+
+# 可选：变长序列 (seq_lens 形状为 batch, head_dim 当前支持 32/64)
+seq_lens = torch.tensor([256, 512], device="cuda", dtype=torch.int32)
+out = flash_attention(q, k, v, seq_lens=seq_lens)
 ```
 
 ## 项目结构

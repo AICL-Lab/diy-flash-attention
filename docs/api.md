@@ -49,7 +49,8 @@ def flash_attention(
     k: torch.Tensor,
     v: torch.Tensor,
     causal: bool = False,
-    sm_scale: float = None
+    sm_scale: float = None,
+    seq_lens: torch.Tensor = None
 ) -> torch.Tensor:
     """
     FlashAttention forward pass
@@ -60,15 +61,22 @@ def flash_attention(
         v: Value 张量，形状 (batch, heads, seq_len, head_dim)
         causal: 是否使用因果 masking (用于自回归模型)
         sm_scale: Softmax 缩放因子 (默认 1/sqrt(head_dim))
+        seq_lens: 可选，形状 (batch,) 的 int32 张量，表示每个样本的有效序列长度
     
     返回:
         输出张量，形状 (batch, heads, seq_len, head_dim)
+
+    说明:
+        - 当前仅支持 head_dim 为 32 或 64
+        - 当 seq_lens 小于 seq_len 时，超过有效长度的位置输出为 0
     
     示例:
         >>> q = torch.randn(2, 8, 512, 64, device="cuda", dtype=torch.float16)
         >>> k = torch.randn(2, 8, 512, 64, device="cuda", dtype=torch.float16)
         >>> v = torch.randn(2, 8, 512, 64, device="cuda", dtype=torch.float16)
         >>> out = flash_attention(q, k, v, causal=True)
+        >>> seq_lens = torch.tensor([256, 512], device="cuda", dtype=torch.int32)
+        >>> out = flash_attention(q, k, v, seq_lens=seq_lens)
     """
 ```
 

@@ -96,6 +96,46 @@ class TestFlashAttentionErrorHandling:
         
         with pytest.raises(ValueError, match="match"):
             flash_attention(q, k, v)
+
+    def test_unsupported_head_dim(self):
+        """Test error for unsupported head_dim values."""
+        q = torch.randn((1, 2, 64, 16), device="cuda", dtype=torch.float16)
+        k = torch.randn((1, 2, 64, 16), device="cuda", dtype=torch.float16)
+        v = torch.randn((1, 2, 64, 16), device="cuda", dtype=torch.float16)
+
+        with pytest.raises(ValueError, match="head_dim"):
+            flash_attention(q, k, v)
+
+    def test_seq_lens_length_mismatch(self):
+        """Test error for seq_lens length mismatch."""
+        q = torch.randn((2, 4, 128, 64), device="cuda", dtype=torch.float16)
+        k = torch.randn((2, 4, 128, 64), device="cuda", dtype=torch.float16)
+        v = torch.randn((2, 4, 128, 64), device="cuda", dtype=torch.float16)
+        seq_lens = torch.tensor([64], device="cuda", dtype=torch.int32)
+
+        with pytest.raises(ValueError, match="batch size"):
+            flash_attention(q, k, v, seq_lens=seq_lens)
+
+    def test_seq_lens_invalid_values(self):
+        """Test error for invalid seq_lens values."""
+        q = torch.randn((2, 4, 128, 64), device="cuda", dtype=torch.float16)
+        k = torch.randn((2, 4, 128, 64), device="cuda", dtype=torch.float16)
+        v = torch.randn((2, 4, 128, 64), device="cuda", dtype=torch.float16)
+
+        with pytest.raises(ValueError, match="positive"):
+            flash_attention(q, k, v, seq_lens=torch.tensor([0, 64], device="cuda", dtype=torch.int32))
+
+        with pytest.raises(ValueError, match="seq_len"):
+            flash_attention(q, k, v, seq_lens=torch.tensor([129, 128], device="cuda", dtype=torch.int32))
+
+    def test_seq_lens_3d_length_mismatch(self):
+        """Test error for seq_lens length mismatch on 3D input."""
+        q = torch.randn((8, 128, 64), device="cuda", dtype=torch.float16)
+        k = torch.randn((8, 128, 64), device="cuda", dtype=torch.float16)
+        v = torch.randn((8, 128, 64), device="cuda", dtype=torch.float16)
+
+        with pytest.raises(ValueError, match="length 1"):
+            flash_attention(q, k, v, seq_lens=torch.tensor([64, 64], device="cuda", dtype=torch.int32))
     
     def test_shape_mismatch_head_dim(self):
         """Test error for mismatched head dimensions."""

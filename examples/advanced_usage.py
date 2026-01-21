@@ -112,7 +112,7 @@ def demo_causal_masking():
     print("🎭 Causal Masking 演示")
     print("=" * 60)
     
-    batch, heads, seq_len, head_dim = 1, 1, 8, 16
+    batch, heads, seq_len, head_dim = 1, 1, 8, 32
     
     torch.manual_seed(42)
     q = torch.randn(batch, heads, seq_len, head_dim, device="cuda", dtype=torch.float16)
