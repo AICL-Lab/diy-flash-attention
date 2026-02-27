@@ -26,18 +26,20 @@
     - _Requirements: 7.3_
 
   - [x] 1.4 实现 GPU 检测工具
-    - 在 utils/gpu_detect.py 中实现 GPUCapabilities 和 detect_gpu
-    - 检测 GPU 架构（Ampere/Hopper/Blackwell）
+    - 在 utils/gpu_detect.py 中实现 GPUArch (7 种架构)、GPUCapabilities 和 detect_gpu
+    - 检测 GPU 架构（Volta/Turing/Ampere/Ada/Hopper/Blackwell）
     - 检测 TMA, FP8, Warpgroup MMA 支持
-    - _Requirements: 8.3_
+    - 实现 get_optimal_config 和 print_gpu_info
+    - _Requirements: 8.3, 8.5_
 
 - [x] 2. 实现基础矩阵乘法 Kernel
   - [x] 2.1 实现 Triton matmul kernel
-    - 在 kernels/matmul.py 中实现 matmul_kernel
-    - 实现 Block 指针运算和 tiling 逻辑
-    - 支持可配置的 BLOCK_SIZE_M, BLOCK_SIZE_N, BLOCK_SIZE_K
-    - 实现 triton_matmul wrapper 函数
-    - _Requirements: 1.1, 1.2, 1.3_
+    - 在 kernels/matmul.py 中实现 matmul_kernel（带 @triton.autotune）和 matmul_kernel_no_autotune
+    - 实现 Block 指针运算、tiling 逻辑、L2 cache super-grouping 优化
+    - 支持可配置的 BLOCK_SIZE_M, BLOCK_SIZE_N, BLOCK_SIZE_K，7 组 autotune 配置
+    - 实现 triton_matmul wrapper（支持 autotune 和手动 block size）和 triton_matmul_fp32
+    - 支持 float16/float32/bfloat16 输入，内部 float32 累加，输出 float16
+    - _Requirements: 1.1, 1.2, 1.3, 1.6, 1.7_
 
   - [x]* 2.2 编写矩阵乘法正确性属性测试
     - **Property 1: Matrix Multiplication Correctness**
@@ -104,9 +106,12 @@
     - _Requirements: 4.3_
 
   - [x] 7.4 实现 flash_attention wrapper 函数
-    - 支持 batch 和 multi-head
-    - 处理不同序列长度
-    - _Requirements: 4.5_
+    - 支持 4D (batch, heads, seq_len, head_dim) 和 3D (batch*heads, seq_len, head_dim) 输入
+    - 支持 per-batch 变长序列 (seq_lens 参数)
+    - 支持 head_dim 32 和 64，动态选择 block size
+    - 存储 log-sum-exp 统计信息以备 backward pass
+    - 实现 reference_attention 用于正确性对比
+    - _Requirements: 4.5, 4.6, 4.7, 4.8_
 
   - [x]* 7.5 编写 FlashAttention 正确性属性测试
     - **Property 3: FlashAttention Correctness**
@@ -167,6 +172,55 @@
     - 实现 fallback 逻辑
     - _Requirements: 8.3, 8.4_
 
+- [x] 13. 项目打包与自动化
+  - [x] 13.1 创建 pyproject.toml
+    - 项目元数据、依赖管理、工具配置（pytest, ruff, mypy）
+    - 定义 benchmark 入口点 (bench-matmul, bench-flash)
+    - _Requirements: 9.1, 9.3, 9.4_
+
+  - [x] 13.2 创建 Makefile
+    - 常用开发任务自动化（test, lint, benchmark 等）
+    - _Requirements: 9.2_
+
+  - [x] 13.3 创建 scripts/run_all_benchmarks.py
+    - 一键运行所有 benchmark
+    - _Requirements: 9.2_
+
+- [x] 14. 文档与示例
+  - [x] 14.1 创建 API 文档
+    - docs/api.md - 所有公共接口文档
+    - _Requirements: 10.1_
+
+  - [x] 14.2 创建教程和参考文档
+    - docs/tutorial.md - 分步学习教程
+    - docs/cheatsheet.md - Triton 概念速查表
+    - docs/performance.md - 性能文档和 benchmark 指南
+    - docs/faq.md - 常见问题解答
+    - _Requirements: 10.2, 10.3, 10.4, 10.6_
+
+  - [x] 14.3 创建示例代码
+    - examples/quick_start.py - 快速入门
+    - examples/advanced_usage.py - 进阶用法
+    - examples/block_size_experiment.py - Block Size 调优实验
+    - examples/visualize_tiling.py - Tiling 可视化
+    - _Requirements: 10.5_
+
+- [x] 15. 开源协作规范
+  - [x] 15.1 创建 CONTRIBUTING.md
+    - 贡献指南和代码规范
+    - _Requirements: 11.1_
+
+  - [x] 15.2 创建 LICENSE (MIT)
+    - _Requirements: 11.2_
+
+  - [x] 15.3 创建 CHANGELOG.md
+    - 项目变更记录
+    - _Requirements: 11.3_
+
+  - [x] 15.4 配置 GitHub CI
+    - .github/ 目录下的 CI 配置
+    - _Requirements: 11.4_
+
 ## Notes
 
 - 标记 `*` 的任务为可选任务，可跳过以加快 MVP 开发
@@ -176,3 +230,4 @@
 - 单元测试验证特定示例和边界情况
 - 项目使用 Git 进行版本控制，建议在每个 Checkpoint 后提交
 - 现代 CUDA 特性（Task 12）需要 Hopper 或更新的 GPU，在旧 GPU 上会自动 fallback
+- Task 13-15 为工程化基础设施任务，已全部完成

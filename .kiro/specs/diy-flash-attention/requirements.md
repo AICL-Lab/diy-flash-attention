@@ -2,13 +2,18 @@
 
 ## Introduction
 
-本项目旨在使用 Python 和 OpenAI Triton 复现 FlashAttention 算法，这是 LLM 中最核心的注意力机制加速算法。项目将从基础的矩阵乘法 Kernel 开始，逐步构建完整的 FlashAttention 实现，并通过 benchmark 验证性能。
+本项目旨在使用 Python 和 OpenAI Triton 复现 FlashAttention 算法，这是 LLM 中最核心的注意力机制加速算法。项目从基础的矩阵乘法 Kernel 开始，逐步构建完整的 FlashAttention 实现，并通过 benchmark 验证性能。
 
-项目将使用 Git 进行版本控制，并尽可能利用 CUDA 13.x 和现代 GPU 架构（Hopper/Blackwell）的最新特性，包括：
-- TMA (Tensor Memory Accelerator) 异步数据传输
-- Warpgroup MMA 指令
-- FP8 数据类型支持
-- 异步屏障和流水线优化
+项目还包含完整的工程化基础设施：
+- 数值验证工具和 benchmark 框架
+- GPU 架构自动检测与自适应配置
+- 文档（API、教程、速查表、FAQ）和示例代码
+- pyproject.toml 项目打包、Makefile 自动化、CI 配置
+- Git 版本控制，尽可能利用现代 GPU 架构特性：
+  - TMA (Tensor Memory Accelerator) 异步数据传输
+  - Warpgroup MMA 指令
+  - FP8 数据类型支持
+  - 异步屏障和流水线优化
 
 ## Glossary
 
@@ -22,6 +27,8 @@
 - **TMA**: Tensor Memory Accelerator，Hopper 架构引入的硬件加速异步数据传输单元
 - **Warpgroup_MMA**: Hopper 架构的 warpgroup 级矩阵乘累加指令
 - **FP8**: 8位浮点数据类型，用于加速推理
+- **SDPA**: Scaled Dot-Product Attention，PyTorch 内置的注意力实现
+- **Autotune**: Triton 的自动调优机制，在多组配置中选择最优的 block size
 
 ## Requirements
 
@@ -36,6 +43,8 @@
 3. THE Triton_Kernel SHALL use configurable Block_Size parameters for M, N, and K dimensions
 4. WHEN Block_Size parameters are modified, THE Triton_Kernel SHALL still produce correct results
 5. THE Triton_Kernel SHALL handle matrices where dimensions are not multiples of Block_Size
+6. THE Triton_Kernel SHALL support Autotune，在多组 Block_Size 配置中自动选择最优配置
+7. THE Triton_Kernel SHALL support float16, float32, bfloat16 input dtypes，内部以 float32 累加，输出 float16
 
 ### Requirement 2: 性能 Benchmark 脚本
 
@@ -70,7 +79,10 @@
 2. WHEN computing attention, THE Triton_Kernel SHALL use online softmax to avoid materializing full attention matrix
 3. THE Triton_Kernel SHALL support causal masking for autoregressive models
 4. WHEN processing Q, K, V tensors, THE Triton_Kernel SHALL produce numerically correct attention output
-5. THE Triton_Kernel SHALL handle variable sequence lengths within a batch
+5. THE Triton_Kernel SHALL handle variable sequence lengths within a batch via per-batch seq_lens parameter
+6. THE Triton_Kernel SHALL support both 4D (batch, heads, seq_len, head_dim) and 3D (batch*heads, seq_len, head_dim) input
+7. THE Triton_Kernel SHALL support head_dim of 32 and 64
+8. THE Triton_Kernel SHALL store log-sum-exp statistics for potential backward pass
 
 ### Requirement 5: FlashAttention 性能验证
 
@@ -106,13 +118,49 @@
 3. THE Project SHALL include a README.md with setup instructions and usage examples
 4. WHEN significant features are completed, THE Project SHALL have meaningful commit messages
 
-### Requirement 8: 现代 CUDA 特性支持（可选）
+### Requirement 8: 现代 CUDA 特性支持
 
 **User Story:** 作为开发者，我想要利用 CUDA 13.x 和 Hopper/Blackwell 架构的最新特性，以便获得最佳性能。
 
 #### Acceptance Criteria
 
 1. WHERE Hopper GPU is available, THE Triton_Kernel SHALL utilize TMA for async data loading
-2. WHERE FP8 is supported, THE Triton_Kernel SHALL provide FP8 computation option
-3. THE Triton_Kernel SHALL auto-detect GPU architecture and select optimal code path
+2. WHERE FP8 is supported, THE Triton_Kernel SHALL provide FP8 computation option (E4M3 and E5M2)
+3. THE Triton_Kernel SHALL auto-detect GPU architecture and select optimal code path via AdaptiveKernelSelector
 4. IF modern features are unavailable, THEN THE Triton_Kernel SHALL fallback to compatible implementation
+5. THE Project SHALL support GPU architectures from Volta (SM70) to Blackwell (SM100)
+
+### Requirement 9: 项目打包与自动化
+
+**User Story:** 作为开发者，我想要项目具备标准的 Python 打包配置和自动化工具，以便方便地安装、测试和发布。
+
+#### Acceptance Criteria
+
+1. THE Project SHALL include pyproject.toml with project metadata, dependencies, and tool configurations
+2. THE Project SHALL include a Makefile with common development tasks (test, lint, benchmark, etc.)
+3. THE Project SHALL configure pytest, ruff, and mypy via pyproject.toml
+4. THE Project SHALL define project entry points for benchmark scripts
+
+### Requirement 10: 文档与示例
+
+**User Story:** 作为开发者，我想要完整的文档和示例代码，以便快速上手和理解实现细节。
+
+#### Acceptance Criteria
+
+1. THE Project SHALL include API documentation covering all public interfaces
+2. THE Project SHALL include a tutorial for step-by-step learning
+3. THE Project SHALL include a cheatsheet for quick reference of Triton concepts
+4. THE Project SHALL include performance documentation with benchmarking guidelines
+5. THE Project SHALL include example scripts demonstrating key features (quick start, advanced usage, block size experiments, tiling visualization)
+6. THE Project SHALL include FAQ for common questions
+
+### Requirement 11: 开源协作规范
+
+**User Story:** 作为开源项目维护者，我想要规范的协作流程，以便引导贡献者参与。
+
+#### Acceptance Criteria
+
+1. THE Project SHALL include a CONTRIBUTING.md with contribution guidelines
+2. THE Project SHALL include a LICENSE file (MIT)
+3. THE Project SHALL include a CHANGELOG.md tracking project changes
+4. THE Project SHALL include GitHub CI configuration for automated testing
