@@ -16,10 +16,6 @@ pytestmark = pytest.mark.skipif(
     reason="CUDA not available"
 )
 
-import sys
-from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
 from utils.validation import (
     validate_matmul,
     validate_attention,

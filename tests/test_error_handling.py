@@ -16,10 +16,6 @@ pytestmark = pytest.mark.skipif(
     reason="CUDA not available"
 )
 
-import sys
-from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
 from kernels.matmul import triton_matmul
 from kernels.flash_attn import flash_attention
 
@@ -83,6 +79,22 @@ class TestMatmulErrorHandling:
         # Only specifying some block sizes should fall back to autotune
         result = triton_matmul(a, b, block_m=64)  # Only block_m specified
         assert result.shape == (64, 64)
+    
+    def test_unsupported_dtype(self):
+        """Test error for unsupported dtype (e.g. int32)."""
+        a = torch.randint(0, 10, (64, 64), device="cuda", dtype=torch.int32)
+        b = torch.randint(0, 10, (64, 64), device="cuda", dtype=torch.int32)
+        
+        with pytest.raises(TypeError, match="Unsupported dtype"):
+            triton_matmul(a, b)
+    
+    def test_block_size_exceeds_dimension(self):
+        """Test error when block size exceeds matrix dimension."""
+        a = torch.randn((64, 64), device="cuda", dtype=torch.float16)
+        b = torch.randn((64, 64), device="cuda", dtype=torch.float16)
+        
+        with pytest.raises(ValueError, match="must not exceed"):
+            triton_matmul(a, b, block_m=128, block_n=64, block_k=32)
 
 
 class TestFlashAttentionErrorHandling:
@@ -246,6 +258,17 @@ class TestDtypeHandling:
         
         result = triton_matmul(a, b)
         assert result.dtype == torch.float16
+    
+    def test_matmul_bfloat16_input(self):
+        """Test that bfloat16 input is accepted and produces correct result (Req 1.7)."""
+        a = torch.randn((64, 64), device="cuda", dtype=torch.bfloat16)
+        b = torch.randn((64, 64), device="cuda", dtype=torch.bfloat16)
+        
+        result = triton_matmul(a, b)
+        assert result.dtype == torch.float16
+        
+        ref = torch.matmul(a.float(), b.float()).half()
+        assert torch.allclose(result, ref, rtol=1e-1, atol=1e-1)
     
     def test_attention_float32_conversion(self):
         """Test that float32 attention input is converted to float16."""

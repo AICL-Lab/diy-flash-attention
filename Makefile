@@ -1,4 +1,4 @@
-.PHONY: install test bench-matmul bench-flash demo clean help
+.PHONY: install test lint format typecheck bench-matmul bench-flash demo clean help
 
 # Default target
 help:
@@ -18,8 +18,11 @@ help:
 	@echo "    make bench-flash  - Run FlashAttention benchmark"
 	@echo "    make bench-all    - Run all benchmarks"
 	@echo ""
-	@echo "  Test:"
+	@echo "  Test & Quality:"
 	@echo "    make test         - Run all tests"
+	@echo "    make lint         - Lint code with ruff"
+	@echo "    make format       - Format code with ruff"
+	@echo "    make typecheck    - Type check with mypy"
 	@echo "    make gpu-info     - Show GPU information"
 	@echo ""
 	@echo "    make clean        - Clean cache files"
@@ -40,6 +43,18 @@ install-dev:
 # Run tests
 test:
 	pytest tests/ -v
+
+# Lint code with ruff
+lint:
+	ruff check kernels/ utils/ tests/ benchmarks/ examples/
+
+# Format code with ruff
+format:
+	ruff format kernels/ utils/ tests/ benchmarks/ examples/
+
+# Type check with mypy
+typecheck:
+	mypy kernels/ utils/
 
 # Run quick start demo
 demo:

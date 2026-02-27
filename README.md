@@ -2,7 +2,7 @@
 
 使用 Python + OpenAI Triton 从零实现 FlashAttention 算法。
 
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![CUDA](https://img.shields.io/badge/CUDA-11.0+-green.svg)](https://developer.nvidia.com/cuda-toolkit)
 [![Triton](https://img.shields.io/badge/Triton-2.1+-orange.svg)](https://triton-lang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -19,7 +19,7 @@
 
 ## 环境要求
 
-- Python >= 3.8
+- Python >= 3.9
 - CUDA >= 11.0
 - PyTorch >= 2.0.0
 - OpenAI Triton >= 2.1.0
@@ -37,7 +37,7 @@
 
 ```bash
 # 克隆项目
-git clone <repo-url>
+git clone https://github.com/LessUp/diy-flash-attention.git
 cd diy-flash-attention
 
 # 创建虚拟环境
@@ -109,7 +109,10 @@ diy-flash-attention/
 │   └── visualize_tiling.py # Tiling 可视化
 ├── docs/                  # 文档
 │   ├── tutorial.md        # 中文教程
-│   └── api.md             # API 参考
+│   ├── api.md             # API 参考
+│   ├── cheatsheet.md      # Triton 速查表
+│   ├── performance.md     # 性能指南
+│   └── faq.md             # 常见问题
 ├── scripts/               # 脚本
 │   └── run_all_benchmarks.py # 一键运行所有 benchmark
 ├── pyproject.toml         # 项目配置
@@ -192,8 +195,11 @@ make bench-flash   # FlashAttention benchmark
 make bench-all     # 运行所有 benchmark
 make report        # 生成 benchmark 报告
 
-# 测试
+# 测试 & 代码质量
 make test          # 运行所有测试
+make lint          # 代码检查 (ruff)
+make format        # 代码格式化 (ruff)
+make typecheck     # 类型检查 (mypy)
 make gpu-info      # 显示 GPU 信息
 
 # 其他

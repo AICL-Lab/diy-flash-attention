@@ -7,7 +7,7 @@
 ### 1. 克隆仓库
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/LessUp/diy-flash-attention.git
 cd diy-flash-attention
 ```
 
@@ -274,7 +274,6 @@ git push origin feature/your-feature-name
 
 如有问题，可以通过以下方式联系：
 
-- 提交 GitHub Issue
-- 发送邮件到 [email]
+- 提交 [GitHub Issue](https://github.com/LessUp/diy-flash-attention/issues)
 
 感谢你的贡献！🎉

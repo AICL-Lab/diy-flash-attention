@@ -13,10 +13,6 @@ pytestmark = pytest.mark.skipif(
     reason="CUDA not available"
 )
 
-import sys
-from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
 from kernels.flash_attn import flash_attention, reference_attention
 
 
@@ -128,6 +124,48 @@ class TestFlashAttentionConfigs:
         
         flash_out = flash_attention(q, k, v, causal=False)
         ref_out = torch.nn.functional.scaled_dot_product_attention(q, k, v, is_causal=False)
+        
+        assert torch.allclose(flash_out, ref_out, rtol=1e-2, atol=1e-2)
+
+
+class TestFlashAttention3DInput:
+    """Tests for 3D input correctness (Requirement 4.6)."""
+    
+    def test_3d_input_correctness(self):
+        """Test that 3D input produces numerically correct output."""
+        batch_heads, seq_len, head_dim = 8, 128, 64
+        
+        q = torch.randn((batch_heads, seq_len, head_dim), device="cuda", dtype=torch.float16)
+        k = torch.randn((batch_heads, seq_len, head_dim), device="cuda", dtype=torch.float16)
+        v = torch.randn((batch_heads, seq_len, head_dim), device="cuda", dtype=torch.float16)
+        
+        flash_out = flash_attention(q, k, v, causal=False)
+        
+        # Compare against reference using 4D reshape
+        q4d = q.unsqueeze(0)  # (1, batch_heads, seq_len, head_dim)
+        k4d = k.unsqueeze(0)
+        v4d = v.unsqueeze(0)
+        ref_out = torch.nn.functional.scaled_dot_product_attention(q4d, k4d, v4d, is_causal=False)
+        ref_out = ref_out.squeeze(0)
+        
+        assert flash_out.shape == q.shape
+        assert torch.allclose(flash_out, ref_out, rtol=1e-2, atol=1e-2)
+    
+    def test_3d_input_causal_correctness(self):
+        """Test that 3D causal input produces numerically correct output."""
+        batch_heads, seq_len, head_dim = 4, 64, 32
+        
+        q = torch.randn((batch_heads, seq_len, head_dim), device="cuda", dtype=torch.float16)
+        k = torch.randn((batch_heads, seq_len, head_dim), device="cuda", dtype=torch.float16)
+        v = torch.randn((batch_heads, seq_len, head_dim), device="cuda", dtype=torch.float16)
+        
+        flash_out = flash_attention(q, k, v, causal=True)
+        
+        q4d = q.unsqueeze(0)
+        k4d = k.unsqueeze(0)
+        v4d = v.unsqueeze(0)
+        ref_out = torch.nn.functional.scaled_dot_product_attention(q4d, k4d, v4d, is_causal=True)
+        ref_out = ref_out.squeeze(0)
         
         assert torch.allclose(flash_out, ref_out, rtol=1e-2, atol=1e-2)
 
