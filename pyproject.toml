@@ -10,7 +10,7 @@ readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.9"
 authors = [
-    {name = "Developer", email = "dev@example.com"}
+    {name = "LessUp", email = "lessup@users.noreply.github.com"}
 ]
 keywords = ["triton", "flash-attention", "gpu", "cuda", "deep-learning"]
 classifiers = [
@@ -28,7 +28,6 @@ classifiers = [
 dependencies = [
     "torch>=2.0.0",
     "triton>=2.1.0",
-    "numpy>=1.20.0",
 ]
 
 [project.optional-dependencies]
@@ -63,7 +62,7 @@ filterwarnings = [
 
 [tool.ruff]
 line-length = 100
-target-version = "py38"
+target-version = "py39"
 
 [tool.ruff.lint]
 select = [
@@ -78,6 +77,12 @@ ignore = [
     "E501",  # line too long (handled by formatter)
     "B008",  # do not perform function calls in argument defaults
 ]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
 
 [tool.mypy]
 python_version = "3.9"

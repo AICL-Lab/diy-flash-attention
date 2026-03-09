@@ -102,16 +102,16 @@ def _flash_attention_forward_kernel(
     acc = tl.zeros([BLOCK_M, HEAD_DIM], dtype=tl.float32)
     
     # Determine the range of K, V blocks to process
+    # For causal attention, skip K/V blocks that are entirely masked out
+    # (positions beyond the current Q block's causal boundary)
     if IS_CAUSAL:
-        # For causal attention, only process K, V up to current position
-        end_n = tl.minimum((start_m + 1) * BLOCK_M, seq_len)
+        loop_end = tl.minimum((start_m + 1) * BLOCK_M, seq_len)
     else:
-        end_n = seq_len
+        loop_end = seq_len
     
-    # Iterate over K, V blocks
-    for start_n in range(0, N_CTX, BLOCK_N):
+    # Iterate over K, V blocks (only up to loop_end for causal efficiency)
+    for start_n in range(0, loop_end, BLOCK_N):
         start_n = tl.multiple_of(start_n, BLOCK_N)
-        block_mask = start_n < end_n
         
         # Load K block
         k = tl.load(k_ptrs + start_n * stride_kn,
@@ -130,24 +130,20 @@ def _flash_attention_forward_kernel(
         
         # Mask out-of-bounds positions
         qk = tl.where((start_n + offs_n[None, :]) < seq_len, qk, float("-inf"))
-        qk = tl.where(block_mask, qk, float("-inf"))
         
         # Online softmax update
         # Step 1: Compute new max
         m_ij = tl.max(qk, axis=1)
-        m_ij = tl.where(block_mask, m_ij, m_i)
         m_new = tl.maximum(m_i, m_ij)
         
         # Step 2: Compute correction factors
         alpha = tl.exp(m_i - m_new)
-        beta = tl.where(block_mask, tl.exp(m_ij - m_new), 0.0)
         
         # Step 3: Update running sum
-        l_new = alpha * l_i + beta * tl.sum(tl.exp(qk - m_ij[:, None]), axis=1)
+        l_new = alpha * l_i + tl.sum(tl.exp(qk - m_new[:, None]), axis=1)
         
         # Step 4: Compute attention weights for this block
         p = tl.exp(qk - m_new[:, None])
-        p = tl.where(block_mask, p, 0.0)
         
         # Step 5: Load V block
         v = tl.load(v_ptrs + start_n * stride_vn,
