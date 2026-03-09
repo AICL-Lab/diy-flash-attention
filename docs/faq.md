@@ -193,7 +193,7 @@ pytest tests/test_matmul.py::TestMatmulBasic::test_square_matrix -v
 
 ### Q: 如何贡献代码？
 
-**A:** 参考 [CONTRIBUTING.md](../CONTRIBUTING.md)
+**A:** 参考 [CONTRIBUTING.md](https://github.com/LessUp/diy-flash-attention/blob/main/CONTRIBUTING.md)
 
 ### Q: 在哪里报告 Bug？
 

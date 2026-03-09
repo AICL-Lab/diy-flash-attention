@@ -73,3 +73,8 @@ benchmark_report.md
 
 # Ruff
 .ruff_cache/
+
+# Node (VitePress docs)
+node_modules/
+docs/.vitepress/dist/
+docs/.vitepress/cache/

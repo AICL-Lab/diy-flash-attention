@@ -6,6 +6,9 @@
 [![CUDA](https://img.shields.io/badge/CUDA-11.0+-green.svg)](https://developer.nvidia.com/cuda-toolkit)
 [![Triton](https://img.shields.io/badge/Triton-2.1+-orange.svg)](https://triton-lang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Deploy Docs](https://github.com/LessUp/diy-flash-attention/actions/workflows/docs.yml/badge.svg)](https://github.com/LessUp/diy-flash-attention/actions/workflows/docs.yml)
+
+> 📖 **文档站**：[https://lessup.github.io/diy-flash-attention/](https://lessup.github.io/diy-flash-attention/)
 
 > 🎯 **Vibe Coding 项目** - 通过动手实践理解 LLM 核心算法
 
