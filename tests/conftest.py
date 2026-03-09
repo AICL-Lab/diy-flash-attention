@@ -1,13 +1,5 @@
 """Pytest configuration and fixtures for DIY FlashAttention tests."""
 
-import sys
-from pathlib import Path
-
-# Ensure project root is on sys.path for imports
-_project_root = str(Path(__file__).parent.parent)
-if _project_root not in sys.path:
-    sys.path.insert(0, _project_root)
-
 import pytest
 import torch
 

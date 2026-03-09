@@ -6,9 +6,6 @@ This script helps visualize how matrix multiplication is tiled
 and how different block sizes affect the computation pattern.
 """
 
-import sys
-from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent.parent))
 
 
 def visualize_tiling(M: int, N: int, K: int, block_m: int, block_n: int, block_k: int):

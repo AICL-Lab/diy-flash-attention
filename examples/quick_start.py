@@ -6,11 +6,6 @@ This script demonstrates the basic usage of the Triton matmul and FlashAttention
 """
 
 import torch
-import sys
-from pathlib import Path
-
-# Add project root to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from kernels import triton_matmul, flash_attention
 from utils import detect_gpu, print_gpu_info

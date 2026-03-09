@@ -8,10 +8,6 @@ Modify the BLOCK_SIZE parameters and observe the TFLOPS changes.
 This is the core "Vibe Coding" experience - feel the performance changes!
 """
 
-import sys
-from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
 import torch
 import triton
 

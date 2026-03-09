@@ -9,14 +9,10 @@
 4. 批量处理性能
 """
 
-import torch
 import time
 from typing import Tuple
 
-# 添加项目根目录到路径
-import sys
-from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent.parent))
+import torch
 
 from kernels import triton_matmul, flash_attention
 from utils import detect_gpu, print_gpu_info, validate_attention
