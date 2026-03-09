@@ -8,6 +8,17 @@ export default defineConfig({
   // GitHub Pages 部署：base 需要与仓库名一致
   base: '/diy-flash-attention/',
 
+  cleanUrls: true,
+
+  head: [
+    ['meta', { name: 'theme-color', content: '#f97316' }],
+    ['meta', { name: 'og:type', content: 'website' }],
+    ['meta', { name: 'og:title', content: 'DIY FlashAttention' }],
+    ['meta', { name: 'og:description', content: '使用 Python + OpenAI Triton 从零实现 FlashAttention 算法' }],
+    ['meta', { name: 'og:url', content: 'https://lessup.github.io/diy-flash-attention/' }],
+    ['meta', { name: 'keywords', content: 'FlashAttention,Triton,CUDA,GPU,Attention,LLM,Online Softmax,Tiling' }],
+  ],
+
   markdown: {
     lineNumbers: true,
     languageAlias: {
@@ -29,6 +40,7 @@ export default defineConfig({
           { text: 'FAQ', link: '/faq' },
         ],
       },
+      { text: '变更日志', link: '/changelog' },
     ],
 
     sidebar: [
@@ -45,6 +57,12 @@ export default defineConfig({
           { text: '性能指南', link: '/performance' },
           { text: '速查表', link: '/cheatsheet' },
           { text: 'FAQ', link: '/faq' },
+        ],
+      },
+      {
+        text: '变更日志',
+        items: [
+          { text: '总览', link: '/changelog' },
         ],
       },
     ],
