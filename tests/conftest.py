@@ -6,12 +6,8 @@ import torch
 
 def pytest_configure(config):
     """Configure pytest with custom markers."""
-    config.addinivalue_line(
-        "markers", "cuda: mark test as requiring CUDA"
-    )
-    config.addinivalue_line(
-        "markers", "slow: mark test as slow running"
-    )
+    config.addinivalue_line("markers", "cuda: mark test as requiring CUDA")
+    config.addinivalue_line("markers", "slow: mark test as slow running")
 
 
 @pytest.fixture(scope="session")

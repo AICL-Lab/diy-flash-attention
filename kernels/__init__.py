@@ -1,15 +1,15 @@
 """Triton GPU kernels for matrix multiplication and FlashAttention."""
 
-from .matmul import triton_matmul
 from .flash_attn import flash_attention
+from .matmul import triton_matmul
 from .modern_features import (
-    get_optimal_matmul,
-    get_optimal_attention,
-    get_matmul_config,
-    get_attention_config,
-    check_hopper_features,
-    supports_fp8,
     AdaptiveKernelSelector,
+    check_hopper_features,
+    get_attention_config,
+    get_matmul_config,
+    get_optimal_attention,
+    get_optimal_matmul,
+    supports_fp8,
 )
 
 __all__ = [

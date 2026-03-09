@@ -20,42 +20,56 @@ def get_autotune_configs():
     return [
         triton.Config(
             {"BLOCK_SIZE_M": 128, "BLOCK_SIZE_N": 256, "BLOCK_SIZE_K": 64, "GROUP_SIZE_M": 8},
-            num_stages=3, num_warps=8
+            num_stages=3,
+            num_warps=8,
         ),
         triton.Config(
             {"BLOCK_SIZE_M": 64, "BLOCK_SIZE_N": 256, "BLOCK_SIZE_K": 32, "GROUP_SIZE_M": 8},
-            num_stages=4, num_warps=4
+            num_stages=4,
+            num_warps=4,
         ),
         triton.Config(
             {"BLOCK_SIZE_M": 128, "BLOCK_SIZE_N": 128, "BLOCK_SIZE_K": 32, "GROUP_SIZE_M": 8},
-            num_stages=4, num_warps=4
+            num_stages=4,
+            num_warps=4,
         ),
         triton.Config(
             {"BLOCK_SIZE_M": 128, "BLOCK_SIZE_N": 64, "BLOCK_SIZE_K": 32, "GROUP_SIZE_M": 8},
-            num_stages=4, num_warps=4
+            num_stages=4,
+            num_warps=4,
         ),
         triton.Config(
             {"BLOCK_SIZE_M": 64, "BLOCK_SIZE_N": 128, "BLOCK_SIZE_K": 32, "GROUP_SIZE_M": 8},
-            num_stages=4, num_warps=4
+            num_stages=4,
+            num_warps=4,
         ),
         triton.Config(
             {"BLOCK_SIZE_M": 64, "BLOCK_SIZE_N": 64, "BLOCK_SIZE_K": 32, "GROUP_SIZE_M": 8},
-            num_stages=4, num_warps=4
+            num_stages=4,
+            num_warps=4,
         ),
         triton.Config(
             {"BLOCK_SIZE_M": 32, "BLOCK_SIZE_N": 32, "BLOCK_SIZE_K": 32, "GROUP_SIZE_M": 8},
-            num_stages=4, num_warps=4
+            num_stages=4,
+            num_warps=4,
         ),
     ]
 
 
 @triton.jit
 def _matmul_body(
-    a_ptr, b_ptr, c_ptr,
-    M, N, K,
-    stride_am, stride_ak,
-    stride_bk, stride_bn,
-    stride_cm, stride_cn,
+    a_ptr,
+    b_ptr,
+    c_ptr,
+    M,
+    N,
+    K,
+    stride_am,
+    stride_ak,
+    stride_bk,
+    stride_bn,
+    stride_cm,
+    stride_cn,
     BLOCK_SIZE_M: tl.constexpr,
     BLOCK_SIZE_N: tl.constexpr,
     BLOCK_SIZE_K: tl.constexpr,
@@ -138,11 +152,18 @@ def _matmul_body(
 )
 @triton.jit
 def _matmul_kernel_autotuned(
-    a_ptr, b_ptr, c_ptr,
-    M, N, K,
-    stride_am, stride_ak,
-    stride_bk, stride_bn,
-    stride_cm, stride_cn,
+    a_ptr,
+    b_ptr,
+    c_ptr,
+    M,
+    N,
+    K,
+    stride_am,
+    stride_ak,
+    stride_bk,
+    stride_bn,
+    stride_cm,
+    stride_cn,
     BLOCK_SIZE_M: tl.constexpr,
     BLOCK_SIZE_N: tl.constexpr,
     BLOCK_SIZE_K: tl.constexpr,
@@ -150,19 +171,39 @@ def _matmul_kernel_autotuned(
 ):
     """Autotuned entry point — delegates to _matmul_body."""
     _matmul_body(
-        a_ptr, b_ptr, c_ptr, M, N, K,
-        stride_am, stride_ak, stride_bk, stride_bn, stride_cm, stride_cn,
-        BLOCK_SIZE_M, BLOCK_SIZE_N, BLOCK_SIZE_K, GROUP_SIZE_M,
+        a_ptr,
+        b_ptr,
+        c_ptr,
+        M,
+        N,
+        K,
+        stride_am,
+        stride_ak,
+        stride_bk,
+        stride_bn,
+        stride_cm,
+        stride_cn,
+        BLOCK_SIZE_M,
+        BLOCK_SIZE_N,
+        BLOCK_SIZE_K,
+        GROUP_SIZE_M,
     )
 
 
 @triton.jit
 def _matmul_kernel_manual(
-    a_ptr, b_ptr, c_ptr,
-    M, N, K,
-    stride_am, stride_ak,
-    stride_bk, stride_bn,
-    stride_cm, stride_cn,
+    a_ptr,
+    b_ptr,
+    c_ptr,
+    M,
+    N,
+    K,
+    stride_am,
+    stride_ak,
+    stride_bk,
+    stride_bn,
+    stride_cm,
+    stride_cn,
     BLOCK_SIZE_M: tl.constexpr,
     BLOCK_SIZE_N: tl.constexpr,
     BLOCK_SIZE_K: tl.constexpr,
@@ -170,9 +211,22 @@ def _matmul_kernel_manual(
 ):
     """Non-autotuned entry point for manual block size experimentation."""
     _matmul_body(
-        a_ptr, b_ptr, c_ptr, M, N, K,
-        stride_am, stride_ak, stride_bk, stride_bn, stride_cm, stride_cn,
-        BLOCK_SIZE_M, BLOCK_SIZE_N, BLOCK_SIZE_K, GROUP_SIZE_M,
+        a_ptr,
+        b_ptr,
+        c_ptr,
+        M,
+        N,
+        K,
+        stride_am,
+        stride_ak,
+        stride_bk,
+        stride_bn,
+        stride_cm,
+        stride_cn,
+        BLOCK_SIZE_M,
+        BLOCK_SIZE_N,
+        BLOCK_SIZE_K,
+        GROUP_SIZE_M,
     )
 
 
@@ -186,18 +240,18 @@ def triton_matmul(
 ) -> torch.Tensor:
     """
     Triton matrix multiplication: C = A @ B
-    
+
     Args:
-        a: Input matrix A of shape (M, K), dtype float16
-        b: Input matrix B of shape (K, N), dtype float16
+        a: Input matrix A of shape (M, K), dtype float16 or bfloat16
+        b: Input matrix B of shape (K, N), dtype float16 or bfloat16
         block_m: Block size for M dimension (optional, uses autotune if None)
         block_n: Block size for N dimension (optional, uses autotune if None)
         block_k: Block size for K dimension (optional, uses autotune if None)
         use_autotune: Whether to use autotuning (ignored if block sizes provided)
-        
+
     Returns:
-        Output matrix C of shape (M, N), dtype float16
-        
+        Output matrix C of shape (M, N), same dtype as input
+
     Raises:
         ValueError: If matrix dimensions are incompatible or invalid block sizes
         TypeError: If input dtypes are not supported
@@ -212,34 +266,35 @@ def triton_matmul(
             "Unsupported dtype for matmul. "
             f"Supported dtypes: {supported_dtypes}. Got a={a.dtype}, b={b.dtype}."
         )
-    
+
     M, K = a.shape
     K2, N = b.shape
-    
+
     if K != K2:
         raise ValueError(f"Incompatible matrix dimensions: A is ({M}, {K}), B is ({K2}, {N})")
-    
+
     # Ensure contiguous tensors
     if not a.is_contiguous():
         a = a.contiguous()
     if not b.is_contiguous():
         b = b.contiguous()
-    
-    # Convert to float16 if needed
-    if a.dtype != torch.float16:
-        a = a.to(torch.float16)
-    if b.dtype != torch.float16:
-        b = b.to(torch.float16)
-    
-    # Allocate output
-    c = torch.empty((M, N), device=a.device, dtype=torch.float16)
-    
+
+    # Determine computation dtype: preserve float16/bfloat16, downcast float32
+    compute_dtype = a.dtype if a.dtype in (torch.float16, torch.bfloat16) else torch.float16
+    if a.dtype != compute_dtype:
+        a = a.to(compute_dtype)
+    if b.dtype != compute_dtype:
+        b = b.to(compute_dtype)
+
+    # Allocate output in the same dtype as computation
+    c = torch.empty((M, N), device=a.device, dtype=compute_dtype)
+
     # Determine if using manual block sizes or autotune
     manual_blocks = block_m is not None and block_n is not None and block_k is not None
 
     if not manual_blocks and not use_autotune:
         raise ValueError("Manual block sizes are required when use_autotune=False")
-    
+
     if manual_blocks:
         # Validate block sizes
         if block_m <= 0 or block_n <= 0 or block_k <= 0:
@@ -249,18 +304,24 @@ def triton_matmul(
                 "Block sizes must not exceed matrix dimensions. "
                 f"Got blocks=({block_m}, {block_n}, {block_k}), dims=({M}, {N}, {K})."
             )
-        
+
         # Use non-autotuned kernel with specified block sizes
-        grid = lambda META: (
-            triton.cdiv(M, META["BLOCK_SIZE_M"]) * triton.cdiv(N, META["BLOCK_SIZE_N"]),
-        )
-        
+        def grid(META):
+            return (triton.cdiv(M, META["BLOCK_SIZE_M"]) * triton.cdiv(N, META["BLOCK_SIZE_N"]),)
+
         _matmul_kernel_manual[grid](
-            a, b, c,
-            M, N, K,
-            a.stride(0), a.stride(1),
-            b.stride(0), b.stride(1),
-            c.stride(0), c.stride(1),
+            a,
+            b,
+            c,
+            M,
+            N,
+            K,
+            a.stride(0),
+            a.stride(1),
+            b.stride(0),
+            b.stride(1),
+            c.stride(0),
+            c.stride(1),
             BLOCK_SIZE_M=block_m,
             BLOCK_SIZE_N=block_n,
             BLOCK_SIZE_K=block_k,
@@ -268,18 +329,24 @@ def triton_matmul(
         )
     else:
         # Use autotuned kernel
-        grid = lambda META: (
-            triton.cdiv(M, META["BLOCK_SIZE_M"]) * triton.cdiv(N, META["BLOCK_SIZE_N"]),
-        )
-        
+        def grid(META):
+            return (triton.cdiv(M, META["BLOCK_SIZE_M"]) * triton.cdiv(N, META["BLOCK_SIZE_N"]),)
+
         _matmul_kernel_autotuned[grid](
-            a, b, c,
-            M, N, K,
-            a.stride(0), a.stride(1),
-            b.stride(0), b.stride(1),
-            c.stride(0), c.stride(1),
+            a,
+            b,
+            c,
+            M,
+            N,
+            K,
+            a.stride(0),
+            a.stride(1),
+            b.stride(0),
+            b.stride(1),
+            c.stride(0),
+            c.stride(1),
         )
-    
+
     return c
 
 
@@ -294,7 +361,7 @@ def triton_matmul_fp32(
     # Convert to float16 for computation
     a_fp16 = a.to(torch.float16) if a.dtype != torch.float16 else a
     b_fp16 = b.to(torch.float16) if b.dtype != torch.float16 else b
-    
+
     result = triton_matmul(a_fp16, b_fp16)
     return result.to(torch.float32)
 
@@ -302,21 +369,21 @@ def triton_matmul_fp32(
 if __name__ == "__main__":
     # Quick test
     torch.manual_seed(0)
-    
+
     M, N, K = 512, 512, 512
     a = torch.randn((M, K), device="cuda", dtype=torch.float16)
     b = torch.randn((K, N), device="cuda", dtype=torch.float16)
-    
+
     # Triton result
     triton_output = triton_matmul(a, b)
-    
+
     # PyTorch reference
     torch_output = torch.matmul(a, b)
-    
+
     # Compare
     max_diff = (triton_output - torch_output).abs().max().item()
     print(f"Max difference: {max_diff}")
-    
+
     if max_diff < 1e-2:
         print("✓ Test passed!")
     else:

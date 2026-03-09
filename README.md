@@ -45,11 +45,11 @@ python -m venv venv
 source venv/bin/activate  # Linux/Mac
 # venv\Scripts\activate  # Windows
 
-# 安装依赖
-pip install -r requirements.txt
-
-# 或者使用 pip 安装（开发模式）
+# 安装（开发模式，推荐）
 pip install -e ".[dev]"
+
+# 或仅安装运行时依赖
+pip install -r requirements.txt
 ```
 
 ## 快速开始
@@ -64,7 +64,7 @@ python examples/quick_start.py
 import torch
 from kernels import triton_matmul, flash_attention
 
-# 矩阵乘法
+# 矩阵乘法 (支持 float16 / bfloat16，输出保持输入 dtype)
 a = torch.randn(1024, 1024, device="cuda", dtype=torch.float16)
 b = torch.randn(1024, 1024, device="cuda", dtype=torch.float16)
 c = triton_matmul(a, b)
@@ -85,9 +85,9 @@ out = flash_attention(q, k, v, seq_lens=seq_lens)
 ```
 diy-flash-attention/
 ├── kernels/               # Triton GPU Kernels
-│   ├── matmul.py          # 矩阵乘法 Kernel (含 autotune)
-│   ├── flash_attn.py      # FlashAttention Kernel (含 online softmax)
-│   └── modern_features.py # 现代 CUDA 特性 (TMA, FP8, 架构自适应)
+│   ├── matmul.py          # 矩阵乘法 Kernel (含 autotune, 支持 float16/bfloat16)
+│   ├── flash_attn.py      # FlashAttention Kernel (含 online softmax, causal 优化)
+│   └── modern_features.py # 现代 GPU 特性检测 (FP8, TMA) + 架构自适应选择
 ├── benchmarks/            # 性能测试脚本
 │   ├── bench_matmul.py    # 矩阵乘法 benchmark
 │   └── bench_flash.py     # FlashAttention benchmark
