@@ -1,4 +1,6 @@
-# DIY FlashAttention 🚀
+# DIY FlashAttention
+
+简体中文 | [English](README.en.md)
 
 使用 Python + OpenAI Triton 从零实现 FlashAttention 算法。
 

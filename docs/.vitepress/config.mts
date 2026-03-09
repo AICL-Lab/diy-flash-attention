@@ -49,9 +49,19 @@ export default defineConfig({
       },
     ],
 
+    editLink: {
+      pattern: 'https://github.com/LessUp/diy-flash-attention/edit/master/docs/:path',
+      text: '在 GitHub 上编辑此页',
+    },
+
     socialLinks: [
       { icon: 'github', link: 'https://github.com/LessUp/diy-flash-attention' },
     ],
+
+    footer: {
+      message: '基于 MIT 许可发布',
+      copyright: 'Copyright © 2025-2026 LessUp',
+    },
 
     search: {
       provider: 'local',
@@ -74,5 +84,6 @@ export default defineConfig({
     returnToTopLabel: '返回顶部',
     sidebarMenuLabel: '菜单',
     darkModeSwitchLabel: '主题',
+    externalLinkIcon: true,
   },
 })
