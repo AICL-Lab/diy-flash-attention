@@ -11,11 +11,15 @@ export default defineConfig({
   cleanUrls: true,
 
   head: [
+    ['link', { rel: 'canonical', href: 'https://lessup.github.io/diy-flash-attention/' }],
     ['meta', { name: 'theme-color', content: '#f97316' }],
-    ['meta', { name: 'og:type', content: 'website' }],
-    ['meta', { name: 'og:title', content: 'DIY FlashAttention' }],
-    ['meta', { name: 'og:description', content: '使用 Python + OpenAI Triton 从零实现 FlashAttention 算法' }],
-    ['meta', { name: 'og:url', content: 'https://lessup.github.io/diy-flash-attention/' }],
+    ['meta', { property: 'og:type', content: 'website' }],
+    ['meta', { property: 'og:title', content: 'DIY FlashAttention' }],
+    ['meta', { property: 'og:description', content: '使用 Python + OpenAI Triton 从零实现 FlashAttention 算法' }],
+    ['meta', { property: 'og:url', content: 'https://lessup.github.io/diy-flash-attention/' }],
+    ['meta', { name: 'twitter:card', content: 'summary' }],
+    ['meta', { name: 'twitter:title', content: 'DIY FlashAttention' }],
+    ['meta', { name: 'twitter:description', content: '使用 Python + OpenAI Triton 从零实现 FlashAttention 算法' }],
     ['meta', { name: 'keywords', content: 'FlashAttention,Triton,CUDA,GPU,Attention,LLM,Online Softmax,Tiling' }],
   ],
 
