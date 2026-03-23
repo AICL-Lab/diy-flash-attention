@@ -215,8 +215,33 @@ def flash_attention(
         Attention output of same shape as input
 
     Raises:
-        ValueError: If tensor shapes are incompatible
+        ValueError: If tensor shapes/devices are incompatible or inputs are not CUDA tensors
+        TypeError: If input dtypes are unsupported
     """
+    supported_dtypes = (torch.float16, torch.float32, torch.bfloat16)
+
+    if q.dim() not in (3, 4):
+        raise ValueError(f"Expected 3D or 4D tensors, got {q.dim()}D")
+
+    # Validate shapes
+    if k.dim() != q.dim() or v.dim() != q.dim():
+        raise ValueError(
+            f"Q, K, V must have the same rank. Got Q={q.dim()}D, K={k.dim()}D, V={v.dim()}D."
+        )
+    if k.shape != q.shape or v.shape != q.shape:
+        raise ValueError(f"Q, K, V shapes must match. Got Q={q.shape}, K={k.shape}, V={v.shape}")
+    if q.device != k.device or q.device != v.device:
+        raise ValueError(
+            f"Q, K, V must be on the same device. Got Q={q.device}, K={k.device}, V={v.device}."
+        )
+    if q.device.type != "cuda":
+        raise ValueError("FlashAttention requires CUDA tensors")
+    if q.dtype not in supported_dtypes or k.dtype not in supported_dtypes or v.dtype not in supported_dtypes:
+        raise TypeError(
+            "Unsupported dtype for attention. "
+            f"Supported dtypes: {supported_dtypes}. Got q={q.dtype}, k={k.dtype}, v={v.dtype}."
+        )
+
     # Handle both 3D and 4D inputs
     original_shape = q.shape
     if q.dim() == 4:
@@ -226,17 +251,11 @@ def flash_attention(
         k = k.reshape(batch * heads, seq_len, head_dim)
         v = v.reshape(batch * heads, seq_len, head_dim)
         reshape_output = True
-    elif q.dim() == 3:
+    else:
         batch_heads, seq_len, head_dim = q.shape
         batch = 1
         heads = batch_heads
         reshape_output = False
-    else:
-        raise ValueError(f"Expected 3D or 4D tensors, got {q.dim()}D")
-
-    # Validate shapes
-    if k.shape != q.shape or v.shape != q.shape:
-        raise ValueError(f"Q, K, V shapes must match. Got Q={q.shape}, K={k.shape}, V={v.shape}")
 
     supported_head_dims = (32, 64)
     if head_dim not in supported_head_dims:
@@ -250,8 +269,8 @@ def flash_attention(
     k = k.contiguous()
     v = v.contiguous()
 
-    # Ensure float16
-    if q.dtype != torch.float16:
+    # Kernel currently computes in float16
+    if q.dtype != torch.float16 or k.dtype != torch.float16 or v.dtype != torch.float16:
         q = q.to(torch.float16)
         k = k.to(torch.float16)
         v = v.to(torch.float16)
