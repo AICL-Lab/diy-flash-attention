@@ -14,180 +14,148 @@ Reference: FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awa
            https://arxiv.org/abs/2205.14135
 """
 
+from __future__ import annotations
+
 import math
+from types import SimpleNamespace
 from typing import Optional
 
 import torch
-import triton
-import triton.language as tl
+
+try:
+    import triton
+    import triton.language as tl
+
+    TRITON_AVAILABLE = True
+except ModuleNotFoundError:
+    TRITON_AVAILABLE = False
+    triton = SimpleNamespace(cdiv=lambda x, y: (x + y - 1) // y)
+    tl = SimpleNamespace(constexpr=object())
 
 
-@triton.jit
-def _flash_attention_forward_kernel(
-    # Input pointers
-    Q,
-    K,
-    V,
-    # Output pointer
-    Out,
-    # Softmax statistics (for potential backward pass)
-    L,  # log-sum-exp
-    # Sequence lengths (per batch)
-    SEQ_LENS,
-    # Dimensions
-    stride_qz,
-    stride_qh,
-    stride_qm,
-    stride_qk,
-    stride_kz,
-    stride_kh,
-    stride_kn,
-    stride_kk,
-    stride_vz,
-    stride_vh,
-    stride_vn,
-    stride_vk,
-    stride_oz,
-    stride_oh,
-    stride_om,
-    stride_ok,
-    stride_lz,
-    stride_lh,
-    stride_lm,
-    # Softmax scale
-    SM_SCALE,
-    # Head dimension
-    HEAD_DIM: tl.constexpr,
-    # Block sizes
-    BLOCK_M: tl.constexpr,
-    BLOCK_N: tl.constexpr,
-    # Sequence lengths
-    N_CTX: tl.constexpr,
-    # Head count
-    NUM_HEADS: tl.constexpr,
-    # Causal mask flag
-    IS_CAUSAL: tl.constexpr,
-):
-    """
-    FlashAttention forward kernel.
+def _require_triton() -> None:
+    if not TRITON_AVAILABLE:
+        raise ModuleNotFoundError("triton is required to run FlashAttention kernels.")
 
-    Computes: Out = softmax(Q @ K^T / sqrt(d)) @ V
 
-    Uses online softmax to avoid materializing the full N×N attention matrix.
+if TRITON_AVAILABLE:
 
-    Algorithm:
-    1. Load Q block into SRAM
-    2. For each K, V block:
-       a. Compute S = Q @ K^T * scale
-       b. Apply causal mask if needed
-       c. Update running max (m) and sum (l) for online softmax
-       d. Compute attention output incrementally
-    3. Write final output to HBM
-    """
-    # Program IDs
-    start_m = tl.program_id(0)  # Which Q block
-    off_hz = tl.program_id(1)  # Which batch/head
+    @triton.jit
+    def _flash_attention_forward_kernel(
+        Q,
+        K,
+        V,
+        Out,
+        L,
+        SEQ_LENS,
+        stride_qz,
+        stride_qh,
+        stride_qm,
+        stride_qk,
+        stride_kz,
+        stride_kh,
+        stride_kn,
+        stride_kk,
+        stride_vz,
+        stride_vh,
+        stride_vn,
+        stride_vk,
+        stride_oz,
+        stride_oh,
+        stride_om,
+        stride_ok,
+        stride_lz,
+        stride_lh,
+        stride_lm,
+        SM_SCALE,
+        HEAD_DIM: tl.constexpr,
+        BLOCK_M: tl.constexpr,
+        BLOCK_N: tl.constexpr,
+        N_CTX: tl.constexpr,
+        NUM_HEADS: tl.constexpr,
+        IS_CAUSAL: tl.constexpr,
+    ):
+        start_m = tl.program_id(0)
+        off_hz = tl.program_id(1)
 
-    # Decode batch index for per-batch sequence length
-    off_z = off_hz // NUM_HEADS
-    seq_len = tl.load(SEQ_LENS + off_z)
-    seq_len = tl.minimum(seq_len, N_CTX)
+        off_z = off_hz // NUM_HEADS
+        seq_len = tl.load(SEQ_LENS + off_z)
+        seq_len = tl.minimum(seq_len, N_CTX)
 
-    # Scaling factor
-    qk_scale = SM_SCALE
+        qk_scale = SM_SCALE
 
-    # Offsets for this block
-    offs_m = start_m * BLOCK_M + tl.arange(0, BLOCK_M)
-    offs_n = tl.arange(0, BLOCK_N)
-    offs_k = tl.arange(0, HEAD_DIM)
+        offs_m = start_m * BLOCK_M + tl.arange(0, BLOCK_M)
+        offs_n = tl.arange(0, BLOCK_N)
+        offs_k = tl.arange(0, HEAD_DIM)
 
-    # Pointers to Q, K, V for this batch/head
-    q_ptrs = Q + off_hz * stride_qz + (offs_m[:, None] * stride_qm + offs_k[None, :] * stride_qk)
-    k_ptrs = K + off_hz * stride_kz + (offs_n[:, None] * stride_kn + offs_k[None, :] * stride_kk)
-    v_ptrs = V + off_hz * stride_vz + (offs_n[:, None] * stride_vn + offs_k[None, :] * stride_vk)
+        q_ptrs = Q + off_hz * stride_qz + (offs_m[:, None] * stride_qm + offs_k[None, :] * stride_qk)
+        k_ptrs = K + off_hz * stride_kz + (offs_n[:, None] * stride_kn + offs_k[None, :] * stride_kk)
+        v_ptrs = V + off_hz * stride_vz + (offs_n[:, None] * stride_vn + offs_k[None, :] * stride_vk)
 
-    # Load Q block - stays in SRAM for entire computation
-    q = tl.load(q_ptrs, mask=offs_m[:, None] < seq_len, other=0.0)
+        q = tl.load(q_ptrs, mask=offs_m[:, None] < seq_len, other=0.0)
 
-    # Initialize accumulators for online softmax
-    # m_i: running max (for numerical stability)
-    # l_i: running sum of exp(x - m)
-    # acc: running weighted sum of V
-    m_i = tl.zeros([BLOCK_M], dtype=tl.float32) - float("inf")
-    l_i = tl.zeros([BLOCK_M], dtype=tl.float32)
-    acc = tl.zeros([BLOCK_M, HEAD_DIM], dtype=tl.float32)
+        m_i = tl.zeros([BLOCK_M], dtype=tl.float32) - float("inf")
+        l_i = tl.zeros([BLOCK_M], dtype=tl.float32)
+        acc = tl.zeros([BLOCK_M, HEAD_DIM], dtype=tl.float32)
 
-    # Determine the range of K, V blocks to process
-    # For causal attention, skip K/V blocks that are entirely masked out
-    # (positions beyond the current Q block's causal boundary)
-    if IS_CAUSAL:
-        loop_end = tl.minimum((start_m + 1) * BLOCK_M, seq_len)
-    else:
-        loop_end = seq_len
-
-    # Iterate over K, V blocks (only up to loop_end for causal efficiency)
-    for start_n in range(0, loop_end, BLOCK_N):
-        start_n = tl.multiple_of(start_n, BLOCK_N)
-
-        # Load K block
-        k = tl.load(
-            k_ptrs + start_n * stride_kn, mask=(start_n + offs_n[:, None]) < seq_len, other=0.0
-        )
-
-        # Compute Q @ K^T
-        qk = tl.zeros([BLOCK_M, BLOCK_N], dtype=tl.float32)
-        qk = tl.dot(q, tl.trans(k), qk)
-        qk *= qk_scale
-
-        # Apply causal mask
         if IS_CAUSAL:
-            causal_mask = offs_m[:, None] >= (start_n + offs_n[None, :])
-            qk = tl.where(causal_mask, qk, float("-inf"))
+            loop_end = tl.minimum((start_m + 1) * BLOCK_M, seq_len)
+        else:
+            loop_end = seq_len
 
-        # Mask out-of-bounds positions
-        qk = tl.where((start_n + offs_n[None, :]) < seq_len, qk, float("-inf"))
+        for start_n in range(0, loop_end, BLOCK_N):
+            start_n = tl.multiple_of(start_n, BLOCK_N)
+            k = tl.load(
+                k_ptrs + start_n * stride_kn,
+                mask=(start_n + offs_n[:, None]) < seq_len,
+                other=0.0,
+            )
 
-        # Online softmax update
-        # Step 1: Compute new max
-        m_ij = tl.max(qk, axis=1)
-        m_new = tl.maximum(m_i, m_ij)
+            qk = tl.zeros([BLOCK_M, BLOCK_N], dtype=tl.float32)
+            qk = tl.dot(q, tl.trans(k), qk)
+            qk *= qk_scale
 
-        # Step 2: Compute correction factors
-        alpha = tl.exp(m_i - m_new)
+            if IS_CAUSAL:
+                causal_mask = offs_m[:, None] >= (start_n + offs_n[None, :])
+                qk = tl.where(causal_mask, qk, float("-inf"))
 
-        # Step 3: Update running sum
-        l_new = alpha * l_i + tl.sum(tl.exp(qk - m_new[:, None]), axis=1)
+            qk = tl.where((start_n + offs_n[None, :]) < seq_len, qk, float("-inf"))
 
-        # Step 4: Compute attention weights for this block
-        p = tl.exp(qk - m_new[:, None])
+            m_ij = tl.max(qk, axis=1)
+            m_new = tl.maximum(m_i, m_ij)
+            alpha = tl.exp(m_i - m_new)
+            l_new = alpha * l_i + tl.sum(tl.exp(qk - m_new[:, None]), axis=1)
+            p = tl.exp(qk - m_new[:, None])
 
-        # Step 5: Load V block
-        v = tl.load(
-            v_ptrs + start_n * stride_vn, mask=(start_n + offs_n[:, None]) < seq_len, other=0.0
-        )
+            v = tl.load(
+                v_ptrs + start_n * stride_vn,
+                mask=(start_n + offs_n[:, None]) < seq_len,
+                other=0.0,
+            )
 
-        # Step 6: Update accumulator
-        # acc_new = (l_i * alpha * acc + p @ V) / l_new
-        # But we defer the division to the end
-        acc = acc * alpha[:, None]
-        acc = tl.dot(p.to(v.dtype), v, acc)
+            acc = acc * alpha[:, None]
+            acc = tl.dot(p.to(v.dtype), v, acc)
+            m_i = m_new
+            l_i = l_new
 
-        # Update running statistics
-        m_i = m_new
-        l_i = l_new
+        acc = acc / l_i[:, None]
 
-    # Final normalization
-    acc = acc / l_i[:, None]
+        l_ptrs = L + off_hz * stride_lz + offs_m * stride_lm
+        tl.store(l_ptrs, m_i + tl.log(l_i), mask=offs_m < seq_len)
 
-    # Store log-sum-exp for potential backward pass
-    l_ptrs = L + off_hz * stride_lz + offs_m * stride_lm
-    tl.store(l_ptrs, m_i + tl.log(l_i), mask=offs_m < seq_len)
+        out_ptrs = Out + off_hz * stride_oz + (offs_m[:, None] * stride_om + offs_k[None, :] * stride_ok)
+        tl.store(out_ptrs, acc.to(Out.dtype.element_ty), mask=offs_m[:, None] < seq_len)
 
-    # Store output
-    out_ptrs = (
-        Out + off_hz * stride_oz + (offs_m[:, None] * stride_om + offs_k[None, :] * stride_ok)
-    )
-    tl.store(out_ptrs, acc.to(Out.dtype.element_ty), mask=offs_m[:, None] < seq_len)
+else:
+
+    class _TritonKernelStub:
+        def __getitem__(self, _grid):
+            def launcher(*args, **kwargs):
+                _require_triton()
+
+            return launcher
+
+    _flash_attention_forward_kernel = _TritonKernelStub()
 
 
 def flash_attention(
@@ -216,37 +184,35 @@ def flash_attention(
 
     Raises:
         ValueError: If tensor shapes/devices are incompatible or inputs are not CUDA tensors
-        TypeError: If input dtypes are unsupported
+        TypeError: If input dtypes are unsupported or inconsistent
     """
     supported_dtypes = (torch.float16, torch.float32, torch.bfloat16)
 
     if q.dim() not in (3, 4):
         raise ValueError(f"Expected 3D or 4D tensors, got {q.dim()}D")
-
-    # Validate shapes
     if k.dim() != q.dim() or v.dim() != q.dim():
         raise ValueError(
             f"Q, K, V must have the same rank. Got Q={q.dim()}D, K={k.dim()}D, V={v.dim()}D."
         )
     if k.shape != q.shape or v.shape != q.shape:
         raise ValueError(f"Q, K, V shapes must match. Got Q={q.shape}, K={k.shape}, V={v.shape}")
-    if q.device != k.device or q.device != v.device:
-        raise ValueError(
-            f"Q, K, V must be on the same device. Got Q={q.device}, K={k.device}, V={v.device}."
-        )
-    if q.device.type != "cuda":
-        raise ValueError("FlashAttention requires CUDA tensors")
     if q.dtype not in supported_dtypes or k.dtype not in supported_dtypes or v.dtype not in supported_dtypes:
         raise TypeError(
-            "Unsupported dtype for attention. "
+            "Unsupported dtype for FlashAttention. "
             f"Supported dtypes: {supported_dtypes}. Got q={q.dtype}, k={k.dtype}, v={v.dtype}."
         )
+    if q.dtype != k.dtype or q.dtype != v.dtype:
+        raise TypeError(f"Q, K, V dtypes must match. Got q={q.dtype}, k={k.dtype}, v={v.dtype}.")
+    if q.device != k.device or q.device != v.device:
+        raise ValueError(f"Q, K, and V must be on the same device. Got q={q.device}, k={k.device}, v={v.device}.")
+    if q.device.type != "cuda":
+        raise ValueError("FlashAttention requires CUDA tensors for Q, K, and V.")
 
-    # Handle both 3D and 4D inputs
+    _require_triton()
+
     original_shape = q.shape
     if q.dim() == 4:
         batch, heads, seq_len, head_dim = q.shape
-        # Reshape to (batch*heads, seq_len, head_dim)
         q = q.reshape(batch * heads, seq_len, head_dim)
         k = k.reshape(batch * heads, seq_len, head_dim)
         v = v.reshape(batch * heads, seq_len, head_dim)
@@ -264,18 +230,15 @@ def flash_attention(
             f"Supported head_dim values: {supported_head_dims}. Got {head_dim}."
         )
 
-    # Ensure contiguous
     q = q.contiguous()
     k = k.contiguous()
     v = v.contiguous()
 
-    # Kernel currently computes in float16
-    if q.dtype != torch.float16 or k.dtype != torch.float16 or v.dtype != torch.float16:
+    if q.dtype != torch.float16:
         q = q.to(torch.float16)
         k = k.to(torch.float16)
         v = v.to(torch.float16)
 
-    # Prepare per-batch sequence lengths
     if seq_lens is None:
         seq_lens_tensor = torch.full((batch,), seq_len, device=q.device, dtype=torch.int32)
     else:
@@ -305,30 +268,38 @@ def flash_attention(
 
     seq_lens_tensor = seq_lens_tensor.contiguous()
 
-    # Allocate output and log-sum-exp
     batch_heads = q.shape[0]
     needs_zero_fill = seq_lens_tensor.min().item() < seq_len
     out = torch.zeros_like(q) if needs_zero_fill else torch.empty_like(q)
     L = torch.empty((batch_heads, seq_len), device=q.device, dtype=torch.float32)
 
-    # Softmax scaling factor
     if sm_scale is None:
         sm_scale = 1.0 / math.sqrt(head_dim)
 
-    # Determine block sizes based on head_dim
-    BLOCK_M = 128
-    BLOCK_N = 64
+    try:
+        from kernels.modern_features import get_attention_config
 
-    # Adjust for smaller head dimensions
-    if head_dim <= 32:
-        BLOCK_M = 64
-        BLOCK_N = 32
+        config = get_attention_config()
+        block_m = int(config.get("BLOCK_M", 128))
+        block_n = int(config.get("BLOCK_N", 64))
+    except Exception:
+        block_m = 128
+        block_n = 64
 
-    # Grid: one program per Q block per batch/head
-    num_m_blocks = triton.cdiv(seq_len, BLOCK_M)
+    if block_m <= 0 or block_n <= 0:
+        raise ValueError(f"Invalid attention block config: BLOCK_M={block_m}, BLOCK_N={block_n}")
+
+    if head_dim <= 32 and block_m > 64:
+        block_m = 64
+    if head_dim <= 32 and block_n > 32:
+        block_n = 32
+
+    block_m = max(min(block_m, seq_len), 1)
+    block_n = max(min(block_n, seq_len), 1)
+
+    num_m_blocks = triton.cdiv(seq_len, block_m)
     grid = (num_m_blocks, batch_heads)
 
-    # Launch kernel
     _flash_attention_forward_kernel[grid](
         q,
         k,
@@ -336,40 +307,34 @@ def flash_attention(
         out,
         L,
         seq_lens_tensor,
-        # Q strides
         q.stride(0),
         0,
         q.stride(1),
         q.stride(2),
-        # K strides
         k.stride(0),
         0,
         k.stride(1),
         k.stride(2),
-        # V strides
         v.stride(0),
         0,
         v.stride(1),
         v.stride(2),
-        # Out strides
         out.stride(0),
         0,
         out.stride(1),
         out.stride(2),
-        # L strides
         L.stride(0),
         0,
         L.stride(1),
         sm_scale,
         HEAD_DIM=head_dim,
-        BLOCK_M=BLOCK_M,
-        BLOCK_N=BLOCK_N,
+        BLOCK_M=block_m,
+        BLOCK_N=block_n,
         N_CTX=seq_len,
         NUM_HEADS=heads,
         IS_CAUSAL=causal,
     )
 
-    # Reshape output if needed
     if reshape_output:
         out = out.reshape(original_shape)
 
@@ -382,40 +347,27 @@ def reference_attention(
     v: torch.Tensor,
     causal: bool = False,
 ) -> torch.Tensor:
-    """
-    Reference attention implementation for validation.
-
-    This is a naive O(N²) implementation that materializes the full attention matrix.
-    Used for correctness checking against FlashAttention.
-    """
-    # Compute attention scores
+    """Reference attention implementation for validation."""
     scale = 1.0 / math.sqrt(q.shape[-1])
     scores = torch.matmul(q, k.transpose(-2, -1)) * scale
 
-    # Apply causal mask
     if causal:
         seq_len = q.shape[-2]
         mask = torch.triu(torch.ones(seq_len, seq_len, device=q.device), diagonal=1).bool()
         scores = scores.masked_fill(mask, float("-inf"))
 
-    # Softmax and weighted sum
     attn = torch.softmax(scores, dim=-1)
-    out = torch.matmul(attn, v)
-
-    return out
+    return torch.matmul(attn, v)
 
 
 if __name__ == "__main__":
-    # Quick test
     torch.manual_seed(42)
 
     batch, heads, seq_len, head_dim = 2, 4, 128, 64
-
     q = torch.randn((batch, heads, seq_len, head_dim), device="cuda", dtype=torch.float16)
     k = torch.randn((batch, heads, seq_len, head_dim), device="cuda", dtype=torch.float16)
     v = torch.randn((batch, heads, seq_len, head_dim), device="cuda", dtype=torch.float16)
 
-    # Test non-causal
     print("Testing non-causal attention...")
     flash_out = flash_attention(q, k, v, causal=False)
     ref_out = torch.nn.functional.scaled_dot_product_attention(q, k, v, is_causal=False)
@@ -424,7 +376,6 @@ if __name__ == "__main__":
     print(f"  Max difference: {max_diff:.2e}")
     print(f"  {'✓ Passed' if max_diff < 1e-2 else '✗ Failed'}")
 
-    # Test causal
     print("\nTesting causal attention...")
     flash_out_causal = flash_attention(q, k, v, causal=True)
     ref_out_causal = torch.nn.functional.scaled_dot_product_attention(q, k, v, is_causal=True)

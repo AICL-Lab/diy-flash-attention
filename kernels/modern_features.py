@@ -10,10 +10,15 @@ Note: These features require Hopper (SM90) or newer GPUs.
 On older GPUs, the module provides fallback to standard implementations.
 """
 
+from types import SimpleNamespace
 from typing import Any, Callable, Dict
 
 import torch
-import triton.language as tl
+
+try:
+    import triton.language as tl
+except ModuleNotFoundError:
+    tl = SimpleNamespace()
 
 from utils.gpu_detect import detect_gpu, get_optimal_config
 
@@ -58,7 +63,7 @@ def check_hopper_features() -> Dict[str, Any]:
 def supports_fp8() -> bool:
     """Check if current GPU supports FP8."""
     features = check_hopper_features()
-    return features["fp8_available"]
+    return bool(features["fp8_available"])
 
 
 def to_fp8_e4m3(tensor: torch.Tensor) -> torch.Tensor:

@@ -261,7 +261,7 @@ def validate_attention_edge_cases(
             config["heads"],
             config["seq_len"],
             config["head_dim"],
-            config["causal"],
+            causal=bool(config["causal"]),
             rtol=rtol,
             atol=atol,
             device=device,

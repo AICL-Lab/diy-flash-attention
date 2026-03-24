@@ -10,13 +10,103 @@ Tests verify that appropriate errors are raised for invalid inputs.
 import pytest
 import torch
 
-# Skip all tests if CUDA is not available
-pytestmark = pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA not available")
-
 from kernels.flash_attn import flash_attention
 from kernels.matmul import triton_matmul
 
+CUDA_REQUIRED = pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA not available")
 
+
+class TestCpuInputValidation:
+    """CPU-safe validation tests for explicit device and dtype checks."""
+
+    def test_matmul_rejects_cpu_tensors(self):
+        a = torch.randn((8, 8), dtype=torch.float16)
+        b = torch.randn((8, 8), dtype=torch.float16)
+
+        with pytest.raises(ValueError, match="CUDA"):
+            triton_matmul(a, b)
+
+    def test_matmul_rejects_mixed_dtypes_before_launch(self):
+        a = torch.randn((8, 8), dtype=torch.float16)
+        b = torch.randn((8, 8), dtype=torch.float32)
+
+        with pytest.raises(TypeError, match="must match"):
+            triton_matmul(a, b)
+
+    def test_attention_rejects_cpu_tensors(self):
+        q = torch.randn((1, 2, 8, 32), dtype=torch.float16)
+        k = torch.randn((1, 2, 8, 32), dtype=torch.float16)
+        v = torch.randn((1, 2, 8, 32), dtype=torch.float16)
+
+        with pytest.raises(ValueError, match="CUDA"):
+            flash_attention(q, k, v)
+
+    def test_attention_rejects_mixed_dtypes_before_launch(self):
+        q = torch.randn((1, 2, 8, 32), dtype=torch.float16)
+        k = torch.randn((1, 2, 8, 32), dtype=torch.float32)
+        v = torch.randn((1, 2, 8, 32), dtype=torch.float16)
+
+        with pytest.raises(TypeError, match="must match"):
+            flash_attention(q, k, v)
+
+    def test_attention_rejects_unsupported_dtype_before_launch(self):
+        q = torch.randint(0, 10, (1, 2, 8, 32), dtype=torch.int32)
+        k = torch.randint(0, 10, (1, 2, 8, 32), dtype=torch.int32)
+        v = torch.randint(0, 10, (1, 2, 8, 32), dtype=torch.int32)
+
+        with pytest.raises(TypeError, match="Unsupported dtype"):
+            flash_attention(q, k, v)
+
+
+@CUDA_REQUIRED
+class TestCudaOnlyValidation:
+    """Validation cases that require a real CUDA device topology."""
+
+    @pytest.mark.cuda
+    def test_attention_rejects_mixed_dtypes_on_cuda(self):
+        q = torch.randn((1, 2, 64, 32), device="cuda", dtype=torch.float16)
+        k = torch.randn((1, 2, 64, 32), device="cuda", dtype=torch.float32)
+        v = torch.randn((1, 2, 64, 32), device="cuda", dtype=torch.float16)
+
+        with pytest.raises(TypeError, match="must match"):
+            flash_attention(q, k, v)
+
+    @pytest.mark.cuda
+    def test_matmul_rejects_mixed_dtypes_on_cuda(self):
+        a = torch.randn((64, 64), device="cuda", dtype=torch.float16)
+        b = torch.randn((64, 64), device="cuda", dtype=torch.float32)
+
+        with pytest.raises(TypeError, match="must match"):
+            triton_matmul(a, b)
+
+    @pytest.mark.cuda
+    def test_matmul_rejects_cross_device_inputs_when_available(self):
+        if torch.cuda.device_count() < 2:
+            pytest.skip("requires at least 2 CUDA devices")
+
+        a = torch.randn((64, 64), device="cuda:0", dtype=torch.float16)
+        b = torch.randn((64, 64), device="cuda:1", dtype=torch.float16)
+
+        with pytest.raises(ValueError, match="same device"):
+            triton_matmul(a, b)
+
+    @pytest.mark.cuda
+    def test_attention_rejects_cross_device_inputs_when_available(self):
+        if torch.cuda.device_count() < 2:
+            pytest.skip("requires at least 2 CUDA devices")
+
+        q = torch.randn((1, 2, 64, 32), device="cuda:0", dtype=torch.float16)
+        k = torch.randn((1, 2, 64, 32), device="cuda:1", dtype=torch.float16)
+        v = torch.randn((1, 2, 64, 32), device="cuda:0", dtype=torch.float16)
+
+        with pytest.raises(ValueError, match="same device"):
+            flash_attention(q, k, v)
+
+
+
+
+@pytest.mark.cuda
+@CUDA_REQUIRED
 class TestMatmulErrorHandling:
     """Tests for matmul error handling."""
 
@@ -94,6 +184,8 @@ class TestMatmulErrorHandling:
             triton_matmul(a, b, block_m=128, block_n=64, block_k=32)
 
 
+@pytest.mark.cuda
+@CUDA_REQUIRED
 class TestFlashAttentionErrorHandling:
     """Tests for FlashAttention error handling."""
 
@@ -220,6 +312,8 @@ class TestFlashAttentionErrorHandling:
         assert result.shape == q.shape
 
 
+@pytest.mark.cuda
+@CUDA_REQUIRED
 class TestErrorMessages:
     """Tests for error message quality."""
 
@@ -251,6 +345,8 @@ class TestErrorMessages:
             assert "match" in error_msg.lower() or "shape" in error_msg.lower()
 
 
+@pytest.mark.cuda
+@CUDA_REQUIRED
 class TestDtypeHandling:
     """Tests for dtype handling."""
 
@@ -282,7 +378,18 @@ class TestDtypeHandling:
         result = flash_attention(q, k, v)
         assert result.dtype == torch.float16
 
+    def test_attention_bfloat16_conversion(self):
+        """Test that homogeneous bfloat16 inputs are converted consistently."""
+        q = torch.randn((2, 4, 64, 32), device="cuda", dtype=torch.bfloat16)
+        k = torch.randn((2, 4, 64, 32), device="cuda", dtype=torch.bfloat16)
+        v = torch.randn((2, 4, 64, 32), device="cuda", dtype=torch.bfloat16)
 
+        result = flash_attention(q, k, v)
+        assert result.dtype == torch.float16
+
+
+@pytest.mark.cuda
+@CUDA_REQUIRED
 class TestContiguityHandling:
     """Tests for non-contiguous tensor handling."""
 

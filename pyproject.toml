@@ -56,9 +56,21 @@ include = ["kernels*", "utils*", "benchmarks*"]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 addopts = "-v --tb=short"
+markers = [
+    "cuda: mark test as requiring CUDA",
+    "slow: mark test as slow running",
+]
 filterwarnings = [
     "ignore::DeprecationWarning",
 ]
+
+[tool.coverage.run]
+source = ["kernels", "utils"]
+
+[tool.coverage.report]
+fail_under = 55
+show_missing = true
+skip_covered = false
 
 [tool.ruff]
 line-length = 100

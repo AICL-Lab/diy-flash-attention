@@ -10,9 +10,6 @@ TFLOPS calculation, BenchmarkResult, and BenchmarkRunner.
 import pytest
 import torch
 
-# Skip all tests if CUDA is not available
-pytestmark = pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA not available")
-
 from utils.benchmark import (
     BenchmarkResult,
     BenchmarkRunner,
@@ -141,27 +138,60 @@ class TestBenchmarkResult:
 class TestBenchmarkFn:
     """Tests for benchmark_fn utility."""
 
+    def test_benchmark_quantile_semantics(self, monkeypatch):
+        """Test that benchmark_fn documents and returns median/p20/p80 semantics."""
+
+        def fake_do_bench(fn, warmup, rep, quantiles):
+            assert warmup == 5
+            assert rep == 10
+            assert quantiles == [0.5, 0.2, 0.8]
+            fn()
+            return 3.0, 2.0, 4.0
+
+        monkeypatch.setattr("utils.benchmark.triton.testing.do_bench", fake_do_bench)
+
+        x = torch.randn(8, 8)
+        median_ms, p20_ms, p80_ms = benchmark_fn(torch.sum, x, warmup=5, rep=10)
+
+        assert median_ms == 3.0
+        assert p20_ms == 2.0
+        assert p80_ms == 4.0
+        assert p20_ms <= median_ms <= p80_ms
+
+    def test_benchmark_with_kwargs(self, monkeypatch):
+        """Test benchmarking with keyword arguments."""
+
+        def fake_do_bench(fn, warmup, rep, quantiles):
+            fn()
+            return 1.0, 0.5, 1.5
+
+        monkeypatch.setattr("utils.benchmark.triton.testing.do_bench", fake_do_bench)
+
+        x = torch.randn(8, 8)
+        median_ms, _, _ = benchmark_fn(torch.sum, x, dim=0, warmup=5, rep=10)
+
+        assert median_ms > 0
+
+
+@pytest.mark.cuda
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA not available")
+class TestBenchmarkFnCuda:
+    """CUDA-only benchmark smoke tests."""
+
     def test_benchmark_simple_fn(self):
-        """Test benchmarking a simple function."""
         a = torch.randn(64, 64, device="cuda")
         b = torch.randn(64, 64, device="cuda")
 
-        ms, min_ms, max_ms = benchmark_fn(torch.matmul, a, b, warmup=5, rep=10)
+        median_ms, p20_ms, p80_ms = benchmark_fn(torch.matmul, a, b, warmup=5, rep=10)
 
-        assert ms > 0
-        assert min_ms > 0
-        assert max_ms > 0
-        assert min_ms <= ms <= max_ms
-
-    def test_benchmark_with_kwargs(self):
-        """Test benchmarking with keyword arguments."""
-        x = torch.randn(64, 64, device="cuda")
-
-        ms, _, _ = benchmark_fn(torch.sum, x, dim=0, warmup=5, rep=10)
-
-        assert ms > 0
+        assert median_ms > 0
+        assert p20_ms > 0
+        assert p80_ms > 0
+        assert p20_ms <= median_ms <= p80_ms
 
 
+@pytest.mark.cuda
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA not available")
 class TestBenchmarkRunner:
     """Tests for BenchmarkRunner class."""
 
