@@ -88,9 +88,15 @@ if TRITON_AVAILABLE:
         offs_n = tl.arange(0, BLOCK_N)
         offs_k = tl.arange(0, HEAD_DIM)
 
-        q_ptrs = Q + off_hz * stride_qz + (offs_m[:, None] * stride_qm + offs_k[None, :] * stride_qk)
-        k_ptrs = K + off_hz * stride_kz + (offs_n[:, None] * stride_kn + offs_k[None, :] * stride_kk)
-        v_ptrs = V + off_hz * stride_vz + (offs_n[:, None] * stride_vn + offs_k[None, :] * stride_vk)
+        q_ptrs = (
+            Q + off_hz * stride_qz + (offs_m[:, None] * stride_qm + offs_k[None, :] * stride_qk)
+        )
+        k_ptrs = (
+            K + off_hz * stride_kz + (offs_n[:, None] * stride_kn + offs_k[None, :] * stride_kk)
+        )
+        v_ptrs = (
+            V + off_hz * stride_vz + (offs_n[:, None] * stride_vn + offs_k[None, :] * stride_vk)
+        )
 
         q = tl.load(q_ptrs, mask=offs_m[:, None] < seq_len, other=0.0)
 
@@ -143,7 +149,9 @@ if TRITON_AVAILABLE:
         l_ptrs = L + off_hz * stride_lz + offs_m * stride_lm
         tl.store(l_ptrs, m_i + tl.log(l_i), mask=offs_m < seq_len)
 
-        out_ptrs = Out + off_hz * stride_oz + (offs_m[:, None] * stride_om + offs_k[None, :] * stride_ok)
+        out_ptrs = (
+            Out + off_hz * stride_oz + (offs_m[:, None] * stride_om + offs_k[None, :] * stride_ok)
+        )
         tl.store(out_ptrs, acc.to(Out.dtype.element_ty), mask=offs_m[:, None] < seq_len)
 
 else:
@@ -196,7 +204,11 @@ def flash_attention(
         )
     if k.shape != q.shape or v.shape != q.shape:
         raise ValueError(f"Q, K, V shapes must match. Got Q={q.shape}, K={k.shape}, V={v.shape}")
-    if q.dtype not in supported_dtypes or k.dtype not in supported_dtypes or v.dtype not in supported_dtypes:
+    if (
+        q.dtype not in supported_dtypes
+        or k.dtype not in supported_dtypes
+        or v.dtype not in supported_dtypes
+    ):
         raise TypeError(
             "Unsupported dtype for FlashAttention. "
             f"Supported dtypes: {supported_dtypes}. Got q={q.dtype}, k={k.dtype}, v={v.dtype}."
@@ -204,7 +216,9 @@ def flash_attention(
     if q.dtype != k.dtype or q.dtype != v.dtype:
         raise TypeError(f"Q, K, V dtypes must match. Got q={q.dtype}, k={k.dtype}, v={v.dtype}.")
     if q.device != k.device or q.device != v.device:
-        raise ValueError(f"Q, K, and V must be on the same device. Got q={q.device}, k={k.device}, v={v.device}.")
+        raise ValueError(
+            f"Q, K, and V must be on the same device. Got q={q.device}, k={k.device}, v={v.device}."
+        )
     if q.device.type != "cuda":
         raise ValueError("FlashAttention requires CUDA tensors for Q, K, and V.")
 

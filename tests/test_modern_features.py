@@ -12,7 +12,10 @@ from utils.gpu_detect import GPUArch, GPUCapabilities
 
 class TestFeatureDetection:
     def test_check_hopper_features_fallback(self, monkeypatch):
-        monkeypatch.setattr("kernels.modern_features.detect_gpu", lambda: (_ for _ in ()).throw(RuntimeError("no cuda")))
+        monkeypatch.setattr(
+            "kernels.modern_features.detect_gpu",
+            lambda: (_ for _ in ()).throw(RuntimeError("no cuda")),
+        )
 
         features = check_hopper_features()
 
@@ -23,13 +26,18 @@ class TestFeatureDetection:
         assert features["compute_capability"] == (0, 0)
 
     def test_supports_fp8_uses_feature_flag(self, monkeypatch):
-        monkeypatch.setattr("kernels.modern_features.check_hopper_features", lambda: {"fp8_available": True})
+        monkeypatch.setattr(
+            "kernels.modern_features.check_hopper_features", lambda: {"fp8_available": True}
+        )
         assert supports_fp8() is True
 
 
 class TestAdaptiveSelector:
     def test_selector_fallback_config_when_detection_fails(self, monkeypatch):
-        monkeypatch.setattr("kernels.modern_features.detect_gpu", lambda: (_ for _ in ()).throw(RuntimeError("no cuda")))
+        monkeypatch.setattr(
+            "kernels.modern_features.detect_gpu",
+            lambda: (_ for _ in ()).throw(RuntimeError("no cuda")),
+        )
 
         selector = AdaptiveKernelSelector()
 

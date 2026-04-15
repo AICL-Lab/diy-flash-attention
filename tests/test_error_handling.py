@@ -103,8 +103,6 @@ class TestCudaOnlyValidation:
             flash_attention(q, k, v)
 
 
-
-
 @pytest.mark.cuda
 @CUDA_REQUIRED
 class TestMatmulErrorHandling:

@@ -102,13 +102,17 @@ class BenchmarkRunner:
             torch_ms, _, _ = benchmark_fn(torch.matmul, a, b, warmup=self.warmup, rep=self.rep)
             torch_tflops = flops / torch_ms / 1e9
             results.append(
-                BenchmarkResult(name="PyTorch", size=(M, N, K), time_ms=torch_ms, tflops=torch_tflops)
+                BenchmarkResult(
+                    name="PyTorch", size=(M, N, K), time_ms=torch_ms, tflops=torch_tflops
+                )
             )
 
             triton_ms, _, _ = benchmark_fn(triton_fn, a, b, warmup=self.warmup, rep=self.rep)
             triton_tflops = flops / triton_ms / 1e9
             results.append(
-                BenchmarkResult(name="Triton", size=(M, N, K), time_ms=triton_ms, tflops=triton_tflops)
+                BenchmarkResult(
+                    name="Triton", size=(M, N, K), time_ms=triton_ms, tflops=triton_tflops
+                )
             )
 
             if block_configs:
@@ -124,9 +128,7 @@ class BenchmarkRunner:
                         rep=self.rep,
                     )
                     config_tflops = flops / config_ms / 1e9
-                    config_name = (
-                        f"Triton({config.get('BLOCK_M')}×{config.get('BLOCK_N')}×{config.get('BLOCK_K')})"
-                    )
+                    config_name = f"Triton({config.get('BLOCK_M')}×{config.get('BLOCK_N')}×{config.get('BLOCK_K')})"
                     results.append(
                         BenchmarkResult(
                             name=config_name,
@@ -153,9 +155,15 @@ class BenchmarkRunner:
         results = []
 
         for seq_len in seq_lengths:
-            q = torch.randn((batch_size, num_heads, seq_len, head_dim), device=self.device, dtype=dtype)
-            k = torch.randn((batch_size, num_heads, seq_len, head_dim), device=self.device, dtype=dtype)
-            v = torch.randn((batch_size, num_heads, seq_len, head_dim), device=self.device, dtype=dtype)
+            q = torch.randn(
+                (batch_size, num_heads, seq_len, head_dim), device=self.device, dtype=dtype
+            )
+            k = torch.randn(
+                (batch_size, num_heads, seq_len, head_dim), device=self.device, dtype=dtype
+            )
+            v = torch.randn(
+                (batch_size, num_heads, seq_len, head_dim), device=self.device, dtype=dtype
+            )
 
             flops = calculate_attention_flops(batch_size, num_heads, seq_len, head_dim)
             size = (batch_size, num_heads, seq_len, head_dim)
@@ -184,7 +192,9 @@ class BenchmarkRunner:
                 )
             )
 
-            flash_ms, _, _ = benchmark_fn(flash_fn, q, k, v, causal=causal, warmup=self.warmup, rep=self.rep)
+            flash_ms, _, _ = benchmark_fn(
+                flash_fn, q, k, v, causal=causal, warmup=self.warmup, rep=self.rep
+            )
             flash_tflops = flops / flash_ms / 1e9
 
             torch.cuda.reset_peak_memory_stats()

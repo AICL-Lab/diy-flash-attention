@@ -75,7 +75,6 @@ if TRITON_AVAILABLE:
             ),
         ]
 
-
     @triton.jit
     def _matmul_body(
         a_ptr,
@@ -142,7 +141,6 @@ if TRITON_AVAILABLE:
         c_mask = (offs_cm[:, None] < M) & (offs_cn[None, :] < N)
         tl.store(c_ptrs, c, mask=c_mask)
 
-
     @triton.autotune(
         configs=get_autotune_configs(),
         key=["M", "N", "K"],
@@ -184,7 +182,6 @@ if TRITON_AVAILABLE:
             BLOCK_SIZE_K,
             GROUP_SIZE_M,
         )
-
 
     @triton.jit
     def _matmul_kernel_manual(
@@ -229,14 +226,12 @@ else:
     def get_autotune_configs():
         return []
 
-
     class _TritonKernelStub:
         def __getitem__(self, _grid):
             def launcher(*args, **kwargs):
                 _require_triton()
 
             return launcher
-
 
     _matmul_kernel_autotuned = _TritonKernelStub()
     _matmul_kernel_manual = _TritonKernelStub()
@@ -283,7 +278,9 @@ def triton_matmul(
     if not a.is_cuda or not b.is_cuda:
         raise ValueError("Triton matmul requires CUDA tensors for both inputs.")
     if a.device != b.device:
-        raise ValueError(f"Input tensors must be on the same device. Got a={a.device}, b={b.device}.")
+        raise ValueError(
+            f"Input tensors must be on the same device. Got a={a.device}, b={b.device}."
+        )
 
     _require_triton()
 
