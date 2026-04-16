@@ -24,37 +24,36 @@ export default {
     app.component('CodeCopy', CodeCopy)
     app.component('BenchmarkChart', BenchmarkChart)
 
-    // Router guards for smooth transitions
-    router.onBeforeRouteChange = () => {
-      document.documentElement.style.scrollBehavior = 'auto'
-    }
-    router.onAfterRouteChanged = () => {
-      document.documentElement.style.scrollBehavior = 'smooth'
-      
-      // Add copy buttons to code blocks
-      if (typeof window !== 'undefined') {
+    // Only run browser-only code on client side
+    if (typeof window !== 'undefined') {
+      // Router guards for smooth transitions
+      router.onBeforeRouteChange = () => {
+        document.documentElement.style.scrollBehavior = 'auto'
+      }
+      router.onAfterRouteChanged = () => {
+        document.documentElement.style.scrollBehavior = 'smooth'
+
+        // Add copy buttons to code blocks
         setTimeout(() => {
           addCopyButtons()
         }, 100)
       }
-    }
 
-    // Initialize PWA
-    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/diy-flash-attention/sw.js')
-          .then(reg => console.log('SW registered:', reg))
-          .catch(err => console.log('SW registration failed:', err))
-      })
-    }
+      // Initialize PWA
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/diy-flash-attention/sw.js')
+            .then(reg => console.log('SW registered:', reg))
+            .catch(err => console.log('SW registration failed:', err))
+        })
+      }
 
-    // Keyboard shortcuts
-    if (typeof window !== 'undefined') {
+      // Keyboard shortcuts
       document.addEventListener('keydown', (e) => {
         // Cmd/Ctrl + K for search
         if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
           e.preventDefault()
-          const searchBtn = document.querySelector('.DocSearch-Button') || 
+          const searchBtn = document.querySelector('.DocSearch-Button') ||
                            document.querySelector('.VPNavBarSearch button')
           searchBtn?.click()
         }
