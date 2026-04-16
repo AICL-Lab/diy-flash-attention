@@ -1,30 +1,31 @@
 import { defineConfig } from 'vitepress'
 
 export default defineConfig({
-  lang: 'zh-CN',
+  // Site metadata
   title: 'DIY FlashAttention',
-  description: '使用 Python + OpenAI Triton 从零实现 FlashAttention 算法',
-
-  // GitHub Pages 部署：base 需要与仓库名一致
+  description: 'Implement FlashAttention from Scratch using Python + OpenAI Triton',
+  
+  // GitHub Pages deployment
   base: '/diy-flash-attention/',
 
+  // Clean URLs (no .html extension)
   cleanUrls: true,
   lastUpdated: true,
 
+  // Head metadata
   head: [
     ['link', { rel: 'canonical', href: 'https://lessup.github.io/diy-flash-attention/' }],
     ['meta', { name: 'theme-color', content: '#3b82f6' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:title', content: 'DIY FlashAttention' }],
-    ['meta', { property: 'og:description', content: '使用 Python + OpenAI Triton 从零实现 FlashAttention 算法' }],
+    ['meta', { property: 'og:description', content: 'Implement FlashAttention from Scratch using Python + OpenAI Triton' }],
     ['meta', { property: 'og:url', content: 'https://lessup.github.io/diy-flash-attention/' }],
     ['meta', { property: 'og:image', content: 'https://lessup.github.io/diy-flash-attention/og-image.png' }],
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
-    ['meta', { name: 'twitter:title', content: 'DIY FlashAttention' }],
-    ['meta', { name: 'twitter:description', content: '使用 Python + OpenAI Triton 从零实现 FlashAttention 算法' }],
-    ['meta', { name: 'keywords', content: 'FlashAttention,Triton,CUDA,GPU,Attention,LLM,Online Softmax,Tiling,Deep Learning,Transformer' }],
+    ['meta', { name: 'keywords', content: 'FlashAttention,Triton,CUDA,GPU,Attention,LLM,Online Softmax,Tiling,Deep Learning,Transformer,GPU Programming' }],
   ],
 
+  // Markdown config
   markdown: {
     lineNumbers: true,
     languageAlias: {
@@ -33,130 +34,242 @@ export default defineConfig({
     },
   },
 
+  // Theme config
   themeConfig: {
-    // 导航栏
+    // Logo
+    logo: '/logo.svg',
+
+    // Navigation
     nav: [
-      { text: '首页', link: '/' },
-      { text: '教程', link: '/tutorial' },
-      { text: 'API', link: '/api' },
+      { text: 'Home', link: '/' },
+      { text: 'Tutorial', link: '/en/tutorial' },
+      { text: 'API', link: '/en/api' },
       {
-        text: '指南',
+        text: 'Guides',
         items: [
-          { text: '性能指南', link: '/performance' },
-          { text: '速查表', link: '/cheatsheet' },
-          { text: 'FAQ', link: '/faq' },
+          { text: 'Performance', link: '/en/performance' },
+          { text: 'Cheatsheet', link: '/en/cheatsheet' },
+          { text: 'FAQ', link: '/en/faq' },
         ],
       },
-      { text: '更新日志', link: '/changelog' },
+      { text: 'Changelog', link: '/en/changelog' },
+      {
+        text: '🌐 Language',
+        items: [
+          { text: 'English', link: '/en/' },
+          { text: '中文', link: '/zh/' },
+        ],
+      },
     ],
 
-    // 侧边栏
+    // Sidebar
     sidebar: {
-      '/': [
+      '/en/': [
+        {
+          text: 'Getting Started',
+          items: [
+            { text: 'Home', link: '/en/' },
+          ],
+        },
+        {
+          text: 'Learn',
+          collapsed: false,
+          items: [
+            { text: 'Tutorial', link: '/en/tutorial' },
+            { text: 'API Reference', link: '/en/api' },
+          ],
+        },
+        {
+          text: 'Guides',
+          collapsed: false,
+          items: [
+            { text: 'Performance Guide', link: '/en/performance' },
+            { text: 'Cheatsheet', link: '/en/cheatsheet' },
+            { text: 'FAQ', link: '/en/faq' },
+          ],
+        },
+        {
+          text: 'Reference',
+          collapsed: false,
+          items: [
+            { text: 'Changelog', link: '/en/changelog' },
+          ],
+        },
+      ],
+      '/zh/': [
         {
           text: '开始',
           items: [
-            { text: '首页', link: '/' },
+            { text: '首页', link: '/zh/' },
           ],
         },
         {
           text: '学习',
           collapsed: false,
           items: [
-            { text: '教程', link: '/tutorial' },
-            { text: 'API 参考', link: '/api' },
+            { text: '教程', link: '/zh/tutorial' },
+            { text: 'API 参考', link: '/zh/api' },
           ],
         },
         {
           text: '指南',
           collapsed: false,
           items: [
-            { text: '性能指南', link: '/performance' },
-            { text: '速查表', link: '/cheatsheet' },
-            { text: '常见问题', link: '/faq' },
+            { text: '性能指南', link: '/zh/performance' },
+            { text: '速查表', link: '/zh/cheatsheet' },
+            { text: '常见问题', link: '/zh/faq' },
           ],
         },
         {
           text: '参考',
           collapsed: false,
           items: [
-            { text: '更新日志', link: '/changelog' },
+            { text: '更新日志', link: '/zh/changelog' },
           ],
         },
       ],
     },
 
-    // 社交链接
+    // Social links
     socialLinks: [
       { icon: 'github', link: 'https://github.com/LessUp/diy-flash-attention' },
     ],
 
-    // 编辑链接
+    // Edit link
     editLink: {
       pattern: 'https://github.com/LessUp/diy-flash-attention/edit/master/docs/:path',
-      text: '在 GitHub 上编辑此页',
+      text: 'Edit this page on GitHub',
     },
 
-    // 页脚
+    // Footer
     footer: {
-      message: '基于 MIT 许可发布',
+      message: 'Released under the MIT License',
       copyright: 'Copyright © 2024-2026 LessUp',
     },
 
-    // 本地搜索
+    // Local search
     search: {
       provider: 'local',
       options: {
-        translations: {
-          button: {
-            buttonText: '搜索文档',
-            buttonAriaLabel: '搜索文档',
-          },
-          modal: {
-            noResultsText: '无法找到相关结果',
-            resetButtonTitle: '清除查询条件',
-            footer: {
-              selectText: '选择',
-              navigateText: '切换',
+        locales: {
+          zh: {
+            translations: {
+              button: {
+                buttonText: '搜索文档',
+                buttonAriaLabel: '搜索文档',
+              },
+              modal: {
+                noResultsText: '无法找到相关结果',
+                resetButtonTitle: '清除查询条件',
+                footer: {
+                  selectText: '选择',
+                  navigateText: '切换',
+                },
+              },
             },
           },
         },
       },
     },
 
-    // 大纲配置
+    // Outline config
     outline: {
       level: [2, 3],
-      label: '页面导航',
+      label: 'On this page',
     },
 
-    // 文档页脚
+    // Document footer
     docFooter: {
-      prev: '上一页',
-      next: '下一页',
+      prev: 'Previous',
+      next: 'Next',
     },
 
-    // 最后更新时间
+    // Last updated
     lastUpdated: {
-      text: '最后更新于',
+      text: 'Last updated on',
       formatOptions: {
         dateStyle: 'short',
         timeStyle: 'short',
       },
     },
 
-    // 返回顶部
-    returnToTopLabel: '返回顶部',
+    // Return to top
+    returnToTopLabel: 'Return to top',
 
-    // 侧边栏菜单
-    sidebarMenuLabel: '菜单',
+    // Sidebar menu
+    sidebarMenuLabel: 'Menu',
 
-    // 深色模式
-    darkModeSwitchLabel: '主题',
-    darkModeSwitchTitle: '切换到深色模式',
-    lightModeSwitchTitle: '切换到浅色模式',
+    // Dark mode
+    darkModeSwitchLabel: 'Theme',
+    darkModeSwitchTitle: 'Switch to dark mode',
+    lightModeSwitchTitle: 'Switch to light mode',
 
-    // 外部链接图标
+    // External link icon
     externalLinkIcon: true,
+  },
+
+  // i18n locales
+  locales: {
+    root: {
+      label: 'English',
+      lang: 'en',
+      link: '/en/',
+    },
+    zh: {
+      label: '中文',
+      lang: 'zh-CN',
+      link: '/zh/',
+      themeConfig: {
+        nav: [
+          { text: '首页', link: '/zh/' },
+          { text: '教程', link: '/zh/tutorial' },
+          { text: 'API', link: '/zh/api' },
+          {
+            text: '指南',
+            items: [
+              { text: '性能指南', link: '/zh/performance' },
+              { text: '速查表', link: '/zh/cheatsheet' },
+              { text: '常见问题', link: '/zh/faq' },
+            ],
+          },
+          { text: '更新日志', link: '/zh/changelog' },
+          {
+            text: '🌐 语言',
+            items: [
+              { text: 'English', link: '/en/' },
+              { text: '中文', link: '/zh/' },
+            ],
+          },
+        ],
+        editLink: {
+          pattern: 'https://github.com/LessUp/diy-flash-attention/edit/master/docs/:path',
+          text: '在 GitHub 上编辑此页',
+        },
+        footer: {
+          message: '基于 MIT 许可发布',
+          copyright: 'Copyright © 2024-2026 LessUp',
+        },
+        outline: {
+          level: [2, 3],
+          label: '页面导航',
+        },
+        docFooter: {
+          prev: '上一页',
+          next: '下一页',
+        },
+        lastUpdated: {
+          text: '最后更新于',
+          formatOptions: {
+            dateStyle: 'short',
+            timeStyle: 'short',
+          },
+        },
+        returnToTopLabel: '返回顶部',
+        sidebarMenuLabel: '菜单',
+        darkModeSwitchLabel: '主题',
+        darkModeSwitchTitle: '切换到深色模式',
+        lightModeSwitchTitle: '切换到浅色模式',
+      },
+    },
   },
 })

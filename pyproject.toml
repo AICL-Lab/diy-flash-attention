@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "diy-flash-attention"
-version = "0.1.0"
+version = "1.0.3"
 description = "DIY FlashAttention implementation using OpenAI Triton"
 readme = "README.md"
 license = {text = "MIT"}
