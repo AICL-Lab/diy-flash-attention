@@ -35,6 +35,10 @@ GPU's parallel computing power is key to solving this problem.
 
 Understanding GPU memory hierarchy is fundamental for optimization:
 
+<GpuArchitectureVisualizer />
+
+**Interactive**: Click on different GPU architectures above to see their memory hierarchy and feature support.
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                   HBM (High Bandwidth Memory)               │

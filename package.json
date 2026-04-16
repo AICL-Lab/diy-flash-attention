@@ -1,5 +1,8 @@
 {
   "private": true,
+  "name": "diy-flash-attention-docs",
+  "version": "2.0.0",
+  "description": "DIY FlashAttention Documentation - Ultra Modern GitHub Pages",
   "scripts": {
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
@@ -7,5 +10,8 @@
   },
   "devDependencies": {
     "vitepress": "^1.6.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
