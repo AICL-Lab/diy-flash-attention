@@ -133,6 +133,10 @@ diy-flash-attention/
 ├── docs/                  # 📚 Bilingual documentation
 │   ├── en/                # English docs
 │   └── zh/                # 中文文档
+├── specs/                 # 📋 Specification documents (SDD)
+│   ├── product/           # Product requirements (PRD)
+│   ├── rfc/               # Technical design documents (RFCs)
+│   └── testing/           # BDD testing specifications
 └── changelog/             # Professional changelog management
 ```
 
@@ -195,6 +199,8 @@ Auto-detection selects optimal kernels for your GPU.
 ## 🤝 Contributing
 
 We welcome contributions! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
+
+This project follows **Spec-Driven Development (SDD)**. All features and changes must be documented in `/specs` directory before implementation. See [AGENTS.md](./AGENTS.md) for workflow details.
 
 Key areas for contribution:
 - 🔮 Hopper/Blackwell feature implementation (TMA, FP8 kernels)

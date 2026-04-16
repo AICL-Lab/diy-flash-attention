@@ -133,6 +133,10 @@ diy-flash-attention/
 ├── docs/                  # 📚 双语文档
 │   ├── en/                # 英文文档
 │   └── zh/                # 中文文档
+├── specs/                 # 📋 规范文档（SDD）
+│   ├── product/           # 产品需求文档（PRD）
+│   ├── rfc/               # 技术设计文档（RFCs）
+│   └── testing/           # BDD 测试规范
 └── changelog/             # 专业的变更日志管理
 ```
 
@@ -195,6 +199,8 @@ make clean            # 删除缓存文件
 ## 🤝 贡献
 
 欢迎贡献！请查看 [CONTRIBUTING.md](./CONTRIBUTING.md) 了解指南。
+
+本项目遵循**规范驱动开发（SDD）**。所有功能和修改必须在实现前记录于 `/specs` 目录。详见 [AGENTS.md](./AGENTS.md)。
 
 主要贡献领域：
 - 🔮 Hopper/Blackwell 特性实现 (TMA, FP8 kernel)

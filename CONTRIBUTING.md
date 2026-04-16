@@ -2,6 +2,33 @@
 
 感谢你对 DIY FlashAttention 项目的兴趣！本文档将帮助你了解如何为项目做出贡献。
 
+## 开发范式：规范驱动开发（SDD）
+
+本项目严格遵循**规范驱动开发（Spec-Driven Development, SDD）**范式。所有代码实现必须以 `/specs` 目录下的规范文档为唯一事实来源。
+
+### 规范文档位置
+
+```
+specs/
+├── product/              # 产品需求文档（PRD）
+│   └── flash-attention-prd.md    # 产品功能需求与验收标准
+├── rfc/                  # 技术设计与架构方案（RFCs）
+│   └── 0001-core-architecture.md # 核心架构设计文档
+├── api/                  # API 接口规范
+├── db/                   # 数据库模式规范（如适用）
+└── testing/              # BDD 测试用例规范
+    └── flash-attention.feature   # 行为驱动测试场景
+```
+
+### AI 和人类开发者的工作流程
+
+1. **审查规范**：在编写代码之前，首先阅读 `/specs` 目录下的相关文档
+2. **规范优先**：如果需要新功能或修改现有功能，**必须先提议修改或创建相应的规范文档**
+3. **代码实现**：编写代码时，必须 100% 遵守规范中的定义
+4. **测试验证**：根据规范中的验收标准编写测试
+
+详见 [AGENTS.md](./AGENTS.md) 中的完整工作流说明。
+
 ## 开发环境设置
 
 ### 1. 克隆仓库
@@ -259,6 +286,11 @@ git push origin feature/your-feature-name
 ### 文档结构
 
 - `README.md` - 项目概述
+- `AGENTS.md` - AI 代理工作流指令（规范驱动开发）
+- `specs/` - 规范文档（产品需求、技术 RFC、API 规范、测试规范）
+  - `specs/product/` - 产品需求文档
+  - `specs/rfc/` - 技术设计文档
+  - `specs/testing/` - BDD 测试规范
 - `docs/tutorial.md` - 教程
 - `docs/api.md` - API 参考
 - `CHANGELOG.md` - 版本历史
