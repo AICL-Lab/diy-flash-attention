@@ -68,7 +68,7 @@ filterwarnings = [
 source = ["kernels", "utils"]
 
 [tool.coverage.report]
-fail_under = 55
+fail_under = 75
 show_missing = true
 skip_covered = false
 

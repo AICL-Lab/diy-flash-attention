@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 from enum import Enum
 from typing import Optional
 
 import torch
+
+logger = logging.getLogger(__name__)
 
 
 class GPUArch(Enum):
@@ -80,6 +83,8 @@ def detect_gpu(device_id: int = 0) -> GPUCapabilities:
     # Feature detection based on architecture
     is_hopper_plus = (major, minor) >= (9, 0)
 
+    logger.debug(f"Detected GPU: {props.name}, arch={arch.value}, cc=({major}, {minor})")
+
     return GPUCapabilities(
         name=props.name,
         arch=arch,
@@ -104,10 +109,12 @@ def get_optimal_config(caps: GPUCapabilities, operation: str) -> dict:
     Returns:
         Optimal block sizes and other parameters
     """
+    logger.debug(f"Getting optimal config for {operation} on {caps.arch.value}")
+
     if operation == "matmul":
         if caps.arch in (GPUArch.HOPPER, GPUArch.BLACKWELL):
             # Larger blocks for Hopper+ with more SRAM
-            return {
+            config = {
                 "BLOCK_M": 128,
                 "BLOCK_N": 256,
                 "BLOCK_K": 64,
@@ -116,7 +123,7 @@ def get_optimal_config(caps: GPUCapabilities, operation: str) -> dict:
                 "num_warps": 8,
             }
         elif caps.arch in (GPUArch.AMPERE, GPUArch.ADA):
-            return {
+            config = {
                 "BLOCK_M": 128,
                 "BLOCK_N": 256,
                 "BLOCK_K": 64,
@@ -126,7 +133,7 @@ def get_optimal_config(caps: GPUCapabilities, operation: str) -> dict:
             }
         else:
             # Conservative config for older GPUs
-            return {
+            config = {
                 "BLOCK_M": 64,
                 "BLOCK_N": 64,
                 "BLOCK_K": 32,
@@ -137,7 +144,7 @@ def get_optimal_config(caps: GPUCapabilities, operation: str) -> dict:
 
     elif operation == "flash_attention":
         if caps.arch in (GPUArch.HOPPER, GPUArch.BLACKWELL):
-            return {
+            config = {
                 "BLOCK_M": 128,
                 "BLOCK_N": 64,
                 "BLOCK_D": 64,
@@ -145,7 +152,7 @@ def get_optimal_config(caps: GPUCapabilities, operation: str) -> dict:
                 "num_warps": 8,
             }
         elif caps.arch in (GPUArch.AMPERE, GPUArch.ADA):
-            return {
+            config = {
                 "BLOCK_M": 128,
                 "BLOCK_N": 64,
                 "BLOCK_D": 64,
@@ -153,7 +160,7 @@ def get_optimal_config(caps: GPUCapabilities, operation: str) -> dict:
                 "num_warps": 4,
             }
         else:
-            return {
+            config = {
                 "BLOCK_M": 64,
                 "BLOCK_N": 32,
                 "BLOCK_D": 64,
@@ -163,6 +170,9 @@ def get_optimal_config(caps: GPUCapabilities, operation: str) -> dict:
 
     else:
         raise ValueError(f"Unknown operation: {operation}. Use 'matmul' or 'flash_attention'.")
+
+    logger.debug(f"Selected config: {config}")
+    return config
 
 
 def print_gpu_info(caps: Optional[GPUCapabilities] = None) -> None:

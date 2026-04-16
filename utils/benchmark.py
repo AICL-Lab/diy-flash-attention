@@ -2,11 +2,16 @@
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 from types import SimpleNamespace
 from typing import Callable, Optional
 
 import torch
+
+from utils.config import BENCHMARK_QUANTILES, BENCHMARK_REPETITIONS, BENCHMARK_WARMUP
+
+logger = logging.getLogger(__name__)
 
 try:
     import triton
@@ -54,18 +59,21 @@ def calculate_attention_flops(batch: int, heads: int, seq_len: int, head_dim: in
 def benchmark_fn(
     fn: Callable,
     *args,
-    warmup: int = 25,
-    rep: int = 100,
+    warmup: int = BENCHMARK_WARMUP,
+    rep: int = BENCHMARK_REPETITIONS,
     quantiles: Optional[list] = None,
     **kwargs,
 ) -> tuple[float, float, float]:
     """Benchmark a function and return `(median_ms, p20_ms, p80_ms)`."""
     do_bench = getattr(getattr(triton, "testing", None), "do_bench", None)
-    if not callable(do_bench):
+    if do_bench is None or not callable(do_bench):
         _require_triton()
+        raise RuntimeError("triton.testing.do_bench is not available")
 
     if quantiles is None:
-        quantiles = [0.5, 0.2, 0.8]
+        quantiles = BENCHMARK_QUANTILES
+
+    logger.debug(f"Benchmarking {fn.__name__}: warmup={warmup}, rep={rep}")
 
     median_ms, p20_ms, p80_ms = do_bench(
         lambda: fn(*args, **kwargs),
@@ -79,11 +87,17 @@ def benchmark_fn(
 class BenchmarkRunner:
     """Runs and compares benchmarks between implementations."""
 
-    def __init__(self, device: str = "cuda", warmup: int = 25, rep: int = 100):
+    def __init__(
+        self,
+        device: str = "cuda",
+        warmup: int = BENCHMARK_WARMUP,
+        rep: int = BENCHMARK_REPETITIONS,
+    ):
         self.device = device
         self.warmup = warmup
         self.rep = rep
         self.results: list[BenchmarkResult] = []
+        logger.debug(f"BenchmarkRunner initialized: device={device}, warmup={warmup}, rep={rep}")
 
     def benchmark_matmul(
         self,
