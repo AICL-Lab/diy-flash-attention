@@ -34,7 +34,7 @@ def get_gpu_info() -> str:
         if torch.cuda.is_available():
             return torch.cuda.get_device_name(0)
         return "No GPU"
-    except Exception:
+    except RuntimeError:
         return "Unknown"
 
 
