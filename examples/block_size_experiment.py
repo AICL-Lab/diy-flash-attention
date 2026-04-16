@@ -88,7 +88,7 @@ def experiment_block_sizes():
                 f"{block_m:>3} × {block_n:>3} × {block_k:>3}          | {ms:<12.3f} | {tflops:<12.2f} | {note}"
             )
 
-        except Exception as e:
+        except RuntimeError as e:
             print(
                 f"{block_m:>3} × {block_n:>3} × {block_k:>3}          | {'ERROR':<12} | {'N/A':<12} | {str(e)[:20]}"
             )
@@ -179,7 +179,7 @@ def interactive_experiment():
 
         except ValueError:
             print("Invalid input. Please enter 3 integers.")
-        except Exception as e:
+        except RuntimeError as e:
             print(f"Error: {e}")
 
 

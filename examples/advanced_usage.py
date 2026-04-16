@@ -67,7 +67,7 @@ def demo_block_size_tuning():
             )
             tflops = flops / (ms / 1000) / 1e12
             print(f"{bm}×{bn}×{bk:<20} | {ms:>10.3f} | {tflops:>8.2f}")
-        except Exception as e:
+        except RuntimeError as e:
             print(f"{bm}×{bn}×{bk:<20} | {'Error':<12} | {str(e)[:20]}")
 
     # Autotune
