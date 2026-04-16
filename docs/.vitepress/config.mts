@@ -129,24 +129,6 @@ export default defineConfig({
   // ==========================================
   markdown: {
     lineNumbers: true,
-    config: (md) => {
-      // Custom containers
-      md.use(require('markdown-it-container'), 'tip', {
-        render(tokens, idx) {
-          const m = tokens[idx].info.trim().match(/^tip\s+(.*)$/)
-          if (tokens[idx].nesting === 1) {
-            return `<div class="custom-block tip"><p class="custom-block-title">${m ? m[1] : 'TIP'}</p>\n`
-          } else {
-            return `</div>\n`
-          }
-        }
-      })
-      md.use(require('markdown-it-container'), 'warning')
-      md.use(require('markdown-it-container'), 'danger')
-      
-      // Mermaid support
-      md.use(require('markdown-it-mermaid'))
-    },
     languageAlias: {
       cuda: 'cpp',
       triton: 'python',

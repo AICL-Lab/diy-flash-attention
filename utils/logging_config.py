@@ -18,7 +18,6 @@ Usage:
 from __future__ import annotations
 
 import logging
-import sys
 from typing import Optional
 
 from utils.config import LOG_DATE_FORMAT, LOG_FORMAT, LOG_LEVEL

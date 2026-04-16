@@ -76,9 +76,9 @@ jobs:
           pip install torch --index-url https://download.pytorch.org/whl/cpu
           pip install -e ".[dev]"
 
-      - name: Run CPU-compatible tests with coverage
+      - name: Run CPU-compatible tests
         run: |
-          pytest tests/ -v -m "not cuda" --ignore=tests/test_properties.py --cov=kernels --cov=utils --cov-report=term-missing
+          pytest tests/ -v -m "not cuda" --ignore=tests/test_properties.py
 
   docs:
     runs-on: ubuntu-latest
