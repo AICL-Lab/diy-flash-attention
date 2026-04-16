@@ -10,6 +10,9 @@ Note: These features require Hopper (SM90) or newer GPUs.
 On older GPUs, the module provides fallback to standard implementations.
 """
 
+from __future__ import annotations
+
+import logging
 from types import SimpleNamespace
 from typing import Any, Callable, Dict
 
@@ -21,6 +24,8 @@ except ModuleNotFoundError:
     tl = SimpleNamespace()
 
 from utils.gpu_detect import detect_gpu, get_optimal_config
+
+logger = logging.getLogger(__name__)
 
 # =============================================================================
 # Feature Detection
@@ -38,14 +43,17 @@ def check_hopper_features() -> Dict[str, Any]:
         caps = detect_gpu()
         is_hopper_plus = caps.compute_capability >= (9, 0)
 
-        return {
+        features = {
             "tma_available": is_hopper_plus and hasattr(tl, "make_tensor_descriptor"),
             "fp8_available": is_hopper_plus,
             "wgmma_available": is_hopper_plus,
             "arch": caps.arch.value,
             "compute_capability": caps.compute_capability,
         }
-    except Exception:
+        logger.debug(f"Hopper features check: {features}")
+        return features
+    except (RuntimeError, ImportError) as e:
+        logger.debug(f"Hopper features check failed: {e}")
         return {
             "tma_available": False,
             "fp8_available": False,
@@ -134,7 +142,9 @@ class AdaptiveKernelSelector:
             try:
                 self._caps = detect_gpu()
                 self._features = check_hopper_features()
-            except Exception:
+                logger.debug(f"AdaptiveKernelSelector initialized: arch={self._caps.arch.value}")
+            except (RuntimeError, ImportError) as e:
+                logger.debug(f"AdaptiveKernelSelector init failed: {e}")
                 self._caps = None
                 self._features = {
                     "tma_available": False,

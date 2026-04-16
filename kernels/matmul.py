@@ -12,10 +12,15 @@ Key concepts:
 
 from __future__ import annotations
 
+import logging
 from types import SimpleNamespace
 from typing import Optional
 
 import torch
+
+from utils.config import MATMUL_GROUP_SIZE_M
+
+logger = logging.getLogger(__name__)
 
 try:
     import triton
@@ -337,7 +342,12 @@ def triton_matmul(
             BLOCK_SIZE_M=block_m,
             BLOCK_SIZE_N=block_n,
             BLOCK_SIZE_K=block_k,
-            GROUP_SIZE_M=8,
+            GROUP_SIZE_M=MATMUL_GROUP_SIZE_M,
+        )
+
+        logger.debug(
+            f"Matmul kernel (manual): ({M}, {K}) @ ({K}, {N}) -> ({M}, {N}), "
+            f"blocks=({block_m}, {block_n}, {block_k})"
         )
     else:
 
@@ -358,6 +368,8 @@ def triton_matmul(
             c.stride(0),
             c.stride(1),
         )
+
+        logger.debug(f"Matmul kernel (autotuned): ({M}, {K}) @ ({K}, {N}) -> ({M}, {N})")
 
     return c
 

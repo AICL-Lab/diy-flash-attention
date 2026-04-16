@@ -16,11 +16,16 @@ Reference: FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awa
 
 from __future__ import annotations
 
+import logging
 import math
 from types import SimpleNamespace
 from typing import Optional
 
 import torch
+
+from utils.config import FLASH_ATTN_DEFAULT_BLOCK_M, FLASH_ATTN_DEFAULT_BLOCK_N
+
+logger = logging.getLogger(__name__)
 
 try:
     import triton
@@ -294,11 +299,11 @@ def flash_attention(
         from kernels.modern_features import get_attention_config
 
         config = get_attention_config()
-        block_m = int(config.get("BLOCK_M", 128))
-        block_n = int(config.get("BLOCK_N", 64))
-    except Exception:
-        block_m = 128
-        block_n = 64
+        block_m = int(config.get("BLOCK_M", FLASH_ATTN_DEFAULT_BLOCK_M))
+        block_n = int(config.get("BLOCK_N", FLASH_ATTN_DEFAULT_BLOCK_N))
+    except (ImportError, RuntimeError):
+        block_m = FLASH_ATTN_DEFAULT_BLOCK_M
+        block_n = FLASH_ATTN_DEFAULT_BLOCK_N
 
     if block_m <= 0 or block_n <= 0:
         raise ValueError(f"Invalid attention block config: BLOCK_M={block_m}, BLOCK_N={block_n}")
@@ -313,6 +318,11 @@ def flash_attention(
 
     num_m_blocks = triton.cdiv(seq_len, block_m)
     grid = (num_m_blocks, batch_heads)
+
+    logger.debug(
+        f"FlashAttention kernel: batch={batch}, heads={heads}, seq={seq_len}, "
+        f"head_dim={head_dim}, block_m={block_m}, block_n={block_n}, causal={causal}"
+    )
 
     _flash_attention_forward_kernel[grid](
         q,
