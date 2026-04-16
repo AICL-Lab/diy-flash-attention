@@ -73,7 +73,7 @@ def main():
     try:
         caps = detect_gpu()
         print_gpu_info(caps)
-    except Exception as e:
+    except (RuntimeError, ImportError) as e:
         print(f"Warning: Could not detect GPU info: {e}")
 
     # Validate correctness first
