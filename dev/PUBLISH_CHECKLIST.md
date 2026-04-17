@@ -18,8 +18,8 @@
 - [x] 更新 `docs/index.md` - 语言选择首页
 
 ### 2. Changelog 专业化 (Changelog Professional)
-- [x] 创建 `changelog/CHANGELOG.md` - 标准 Keep a Changelog 格式
-- [x] 创建 `changelog/CHANGELOG.zh-CN.md` - 中文版本
+- [x] 维护根目录 `CHANGELOG.md` - 标准 Keep a Changelog 格式
+- [x] 维护 `changelog/CHANGELOG.zh-CN.md` - 中文版本
 - [x] 创建 `changelog/README.md` - 目录说明
 - [x] 创建 `changelog/archive/` 和归档说明
 - [x] 移动 7 个旧 changelog 文件到归档目录

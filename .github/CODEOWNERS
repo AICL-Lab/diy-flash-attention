@@ -1,0 +1,21 @@
+# Code owners for diy-flash-attention
+# https://help.github.com/articles/about-codeowners/
+
+# Default owner for everything in the repo
+* @LessUp
+
+# Kernel code (GPU/triton)
+/kernels/ @LessUp
+
+# Utility code
+/utils/ @LessUp
+
+# Tests
+/tests/ @LessUp
+
+# Specs and documentation
+/specs/ @LessUp
+/docs/ @LessUp
+
+# CI workflows
+.github/workflows/ @LessUp
