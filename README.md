@@ -1,252 +1,195 @@
 # DIY FlashAttention
 
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![CUDA](https://img.shields.io/badge/CUDA-11.0+-green.svg)](https://developer.nvidia.com/cuda-toolkit)
-[![Triton](https://img.shields.io/badge/Triton-2.1+-orange.svg)](https://triton-lang.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/)
+[![CUDA 11+](https://img.shields.io/badge/CUDA-11.0%2B-green)](https://developer.nvidia.com/cuda-toolkit)
+[![Triton 2.1+](https://img.shields.io/badge/Triton-2.1%2B-orange)](https://triton-lang.org/)
+[![PyPI](https://img.shields.io/badge/install-pip%20install%20diy--flash--attention-3776ab)](https://pypi.org/project/diy-flash-attention/)
 [![CI](https://github.com/LessUp/diy-flash-attention/actions/workflows/ci.yml/badge.svg)](https://github.com/LessUp/diy-flash-attention/actions/workflows/ci.yml)
-[![Docs](https://github.com/LessUp/diy-flash-attention/actions/workflows/pages.yml/badge.svg)](https://github.com/LessUp/diy-flash-attention/actions/workflows/pages.yml)
+[![Docs](https://github.com/LessUp/diy-flash-attention/actions/workflows/pages.yml/badge.svg)](https://lessup.github.io/diy-flash-attention/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-yellow)](LICENSE)
 
 <div align="center">
-  <h3>🚀 Learn GPU Programming by Implementing FlashAttention from Scratch</h3>
+  <h3>Learn GPU Programming by Implementing FlashAttention from Scratch</h3>
   <p>
-    <a href="https://lessup.github.io/diy-flash-attention/">📖 Documentation</a> •
-    <a href="https://lessup.github.io/diy-flash-attention/tutorial">📚 Tutorial</a> •
-    <a href="https://lessup.github.io/diy-flash-attention/api">🔧 API</a> •
+    <a href="https://lessup.github.io/diy-flash-attention/">📖 Docs</a> •
+    <a href="https://lessup.github.io/diy-flash-attention/en/tutorial">📚 Tutorial</a> •
+    <a href="https://lessup.github.io/diy-flash-attention/en/api">🔧 API</a> •
     <a href="./README.zh-CN.md">🇨🇳 中文</a>
   </p>
 </div>
 
 ---
 
-## What is FlashAttention?
+## Why FlashAttention?
 
-**FlashAttention** is an algorithm that revolutionized how transformers compute attention:
+Standard attention computes **O(N²)** memory — a hard limit on sequence length. FlashAttention changes the game:
 
-| Aspect | Standard Attention | FlashAttention |
-|--------|-------------------|----------------|
-| Memory | O(N²) - explodes with long sequences | O(N) - linear scaling |
-| Speed | Memory-bound, slow | IO-aware, fast |
-| Precision | Full precision | Exact, no approximation |
-| Max Seq Length | Limited by GPU memory | 4-8x longer possible |
+| | Standard | FlashAttention |
+|---|---|---|
+| Memory | O(N²) | **O(N)** |
+| Max seq len | ~2K tokens | **64K+ tokens** |
+| HBM accesses | Writes full attention matrix | **Never materializes it** |
+| Precision | Full | Exact, no approximation |
 
-> **Real Impact**: With FlashAttention, you can train models with sequences up to **64K tokens** on consumer GPUs!
-
----
-
-## 🎯 What This Project Offers
-
-### 1. Learn Triton GPU Programming
-- **Block pointer arithmetic** - Master how GPUs access memory
-- **Tiling strategies** - Split problems to fit in fast SRAM
-- **Autotune optimization** - Let Triton find the best config automatically
-- **Compare with CUDA** - See how Triton abstracts complexity
-
-### 2. Understand FlashAttention Deeply
-- **Online Softmax** - The mathematical trick behind O(N) memory
-- **Causal masking** - How autoregressive models work
-- **Memory hierarchy** - Why HBM vs SRAM matters
-- **IO complexity** - The real bottleneck in GPU computing
-
-### 3. Production-Ready Code
-- ✅ Tested on GPUs from V100 to H100
-- ✅ Property-based testing with Hypothesis
-- ✅ Benchmark suite with PyTorch comparison
-- ✅ Automatic GPU architecture detection
-- ✅ Support for Hopper features (TMA, FP8)
+> At seq_len=8192, FlashAttention uses **99% less memory** (512 MB → 4 MB).
 
 ---
 
-## ⚡ Quick Start
+## What's Inside
 
-### Installation
+- **Triton kernels** — `matmul` with autotune, `flash_attention` with online softmax & causal masking
+- **GPU auto-detection** — Volta → Blackwell, picks optimal config per architecture
+- **Property-based tests** — Hypothesis validates correctness across infinite input spaces
+- **Benchmark suite** — Compare against PyTorch SDPA with TFLOPS & memory metrics
+- **Production-grade** — Type hints, ruff lint, mypy checks, CI on every push
+
+---
+
+## Quick Start
 
 ```bash
-git clone https://github.com/LessUp/diy-flash-attention.git
-cd diy-flash-attention
-python -m venv venv && source venv/bin/activate
-pip install -e ".[dev]"
+pip install diy-flash-attention   # or: pip install -e ".[dev]"
 ```
-
-### 30-Second Demo
 
 ```python
 import torch
 from kernels import triton_matmul, flash_attention
 
-# Matrix multiplication (2x faster than naive on large matrices)
+# Matrix multiplication (autotune finds optimal block sizes)
 a = torch.randn(1024, 1024, device="cuda", dtype=torch.float16)
 b = torch.randn(1024, 1024, device="cuda", dtype=torch.float16)
 c = triton_matmul(a, b)
 
-# FlashAttention (99% less memory for long sequences!)
-q = torch.randn(2, 8, 512, 64, device="cuda", dtype=torch.float16)
-k = torch.randn(2, 8, 512, 64, device="cuda", dtype=torch.float16)
-v = torch.randn(2, 8, 512, 64, device="cuda", dtype=torch.float16)
-out = flash_attention(q, k, v, causal=True)  # For GPT-style models
+# FlashAttention — 99% less memory for long sequences
+q = torch.randn(2, 8, 4096, 64, device="cuda", dtype=torch.float16)
+k = torch.randn(2, 8, 4096, 64, device="cuda", dtype=torch.float16)
+v = torch.randn(2, 8, 4096, 64, device="cuda", dtype=torch.float16)
+out = flash_attention(q, k, v, causal=True)  # GPT-style causal mask
 ```
 
-Run the full demo:
+Run the interactive demo:
 ```bash
-make demo
+make demo        # matmul + flash_attention smoke test
+make bench-all   # full benchmark suite
+make report      # generate markdown report
 ```
 
 ---
 
-## 📊 Performance Highlights
+## Benchmarks (RTX 4090)
 
-### Memory Savings
+### Memory Usage
 
-| Sequence Length | Standard Attention | FlashAttention | Memory Saved |
-|-----------------|-------------------|----------------|--------------|
-| 1024 | 8 MB | 0.5 MB | 94% ↓ |
-| 4096 | 128 MB | 2 MB | 98% ↓ |
-| 8192 | 512 MB | 4 MB | 99% ↓ |
+| Seq Len | Standard | FlashAttention | Saved |
+|---------|---------|----------------|-------|
+| 1,024   | 8 MB    | 0.5 MB         | 94% ↓ |
+| 4,096   | 128 MB  | 2 MB           | 98% ↓ |
+| 8,192   | 512 MB  | 4 MB           | 99% ↓ |
 
-### Speed Comparison (RTX 4090)
+### Throughput
 
-| Operation | PyTorch | Triton (Ours) | Speedup |
-|-----------|---------|---------------|---------|
-| MatMul 4096² | 120 TFLOPS | 140 TFLOPS | 1.17x |
-| Attention 4096 | 35.0 ms | 22.0 ms | 1.59x |
-
-Run benchmarks:
-```bash
-make bench-all
-make report
-```
+| Kernel | PyTorch SDPA | Ours (Triton) | Speedup |
+|--------|-------------|---------------|---------|
+| MatMul 4096² | 120 TFLOPS | 140 TFLOPS | **1.17x** |
+| Attention 4096 | 35.0 ms | 22.0 ms | **1.59x** |
 
 ---
 
-## 📁 Project Structure
+## Who Is This For?
+
+| You are... | You'll get... |
+|---|---|
+| ML engineer | Understand the kernel behind your transformer framework |
+| CUDA beginner | Learn Triton without reading 500 pages of docs |
+| Researcher | Reproduce and modify FlashAttention for your experiments |
+| Performance engineer | Study autotune configs and block-size trade-offs |
+
+---
+
+## GPU Support
+
+| Architecture | GPUs | Support Level |
+|---|---|---|
+| Volta (SM70) | V100 | ✅ Basic |
+| Turing (SM75) | RTX 20xx | ✅ Basic |
+| Ampere (SM80) | A100, RTX 30xx | ✅ Full |
+| Ada (SM89) | RTX 40xx | ✅ Full |
+| Hopper (SM90) | H100 | ✅ TMA, FP8 |
+| Blackwell (SM100) | B100/B200 | ✅ Latest |
+
+Auto-detection runs at import time — no config needed.
+
+---
+
+## Project Structure
 
 ```
 diy-flash-attention/
-├── kernels/               # GPU Kernels
-│   ├── matmul.py          # Matrix multiplication with autotune
-│   ├── flash_attn.py      # FlashAttention implementation
-│   └── modern_features.py # GPU capability detection
-├── benchmarks/            # Performance benchmarks
-├── tests/                 # Comprehensive test suite
-├── utils/                 # Validation & GPU detection
-├── examples/              # Usage examples
-├── docs/                  # 📚 Bilingual documentation
-│   ├── en/                # English docs
-│   └── zh/                # 中文文档
-├── specs/                 # 📋 Specification documents (SDD)
-│   ├── product/           # Product requirements (PRD)
-│   ├── rfc/               # Technical design documents (RFCs)
-│   └── testing/           # BDD testing specifications
-└── changelog/             # Professional changelog management
+├── kernels/           # Triton GPU kernels
+│   ├── matmul.py      #    Matrix multiplication with autotune
+│   ├── flash_attn.py  #    FlashAttention forward pass
+│   └── modern_features.py # Hopper+ feature detection
+├── utils/             # Benchmark, validation, GPU detection
+├── tests/             # Unit + property-based tests
+├── benchmarks/        # CLI benchmark tools
+├── examples/          # Usage demos
+├── specs/             # SDD: PRD, RFCs, BDD test specs
+└── docs/              # Bilingual docs (EN / ZH)
 ```
 
 ---
 
-## 📚 Documentation
-
-We provide comprehensive bilingual documentation:
-
-| Document | English | 中文 |
-|----------|---------|------|
-| Tutorial | [📖 Tutorial](https://lessup.github.io/diy-flash-attention/tutorial) | [📖 教程](https://lessup.github.io/diy-flash-attention/zh/tutorial) |
-| API Reference | [📚 API](https://lessup.github.io/diy-flash-attention/api) | [📚 API](https://lessup.github.io/diy-flash-attention/zh/api) |
-| Performance | [⚡ Guide](https://lessup.github.io/diy-flash-attention/performance) | [⚡ 性能指南](https://lessup.github.io/diy-flash-attention/zh/performance) |
-| FAQ | [❓ FAQ](https://lessup.github.io/diy-flash-attention/faq) | [❓ 常见问题](https://lessup.github.io/diy-flash-attention/zh/faq) |
-| Cheatsheet | [📋 Quick Ref](https://lessup.github.io/diy-flash-attention/cheatsheet) | [📋 速查表](https://lessup.github.io/diy-flash-attention/zh/cheatsheet) |
-
----
-
-## 🛠️ Development Commands
+## Development
 
 ```bash
-# Run all tests
-make test
+git clone https://github.com/LessUp/diy-flash-attention.git
+cd diy-flash-attention
+pip install -e ".[dev]"
 
-# Run benchmarks
-make bench-matmul     # Matrix multiplication
-make bench-flash      # FlashAttention
-make bench-all        # Everything
-
-# GPU info
-make gpu-info         # Show GPU capabilities
-
-# Code quality
-make lint             # Run ruff check
-make format           # Format code with ruff
-make typecheck        # Run mypy
-
-# Cleanup
-make clean            # Remove cache files
+make test        # run tests
+make lint        # ruff check
+make format      # ruff format
+make typecheck   # mypy
+make clean       # remove caches
 ```
 
----
-
-## 🖥️ Supported GPUs
-
-| Architecture | Compute | GPUs | Features |
-|--------------|---------|------|----------|
-| Volta | SM70 | V100 | ✅ Basic |
-| Turing | SM75 | RTX 20xx | ✅ Basic |
-| Ampere | SM80+ | A100, RTX 30xx | ✅ Full |
-| Ada | SM89 | RTX 40xx | ✅ Full |
-| Hopper | SM90 | H100 | ✅ TMA, FP8 |
-| Blackwell | SM100 | B100/B200 | ✅ Latest |
-
-Auto-detection selects optimal kernels for your GPU.
+This project follows **Spec-Driven Development** — all changes are defined in `/specs` before implementation. See [AGENTS.md](./AGENTS.md) for the workflow.
 
 ---
 
-## 🤝 Contributing
+## Learn More
 
-We welcome contributions! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
-
-This project follows **Spec-Driven Development (SDD)**. All features and changes must be documented in `/specs` directory before implementation. See [AGENTS.md](./AGENTS.md) for workflow details.
-
-Key areas for contribution:
-- 🔮 Hopper/Blackwell feature implementation (TMA, FP8 kernels)
-- 📊 Extended benchmark scenarios
-- 📝 Documentation improvements
-- 🐛 Bug fixes and edge cases
-
----
-
-## 📖 Learning Resources
-
-Want to understand FlashAttention deeply? Check these resources:
-
-**Papers**
+**Original papers**
 - [FlashAttention: Fast and Memory-Efficient Exact Attention](https://arxiv.org/abs/2205.14135)
 - [FlashAttention-2: Faster Attention with Better Parallelism](https://arxiv.org/abs/2307.08691)
 
-**Technical**
-- [Triton Documentation](https://triton-lang.org/)
-- [CUDA Programming Guide](https://docs.nvidia.com/cuda/)
-
-**Tutorials**
-- Our [step-by-step tutorial](https://lessup.github.io/diy-flash-attention/tutorial) covers everything from GPU basics to FlashAttention implementation
-
----
-
-## 📋 Requirements
-
-- Python >= 3.9
-- CUDA >= 11.0
-- PyTorch >= 2.0.0
-- Triton >= 2.1.0
-- NVIDIA GPU (Volta or newer)
+**Tutorials & guides**
+- [Step-by-step tutorial](https://lessup.github.io/diy-flash-attention/en/tutorial) — from GPU basics to FlashAttention
+- [API reference](https://lessup.github.io/diy-flash-attention/en/api) — kernel signatures, autotune configs
+- [Performance guide](https://lessup.github.io/diy-flash-attention/en/performance) — block size tuning, memory profiling
+- [Cheatsheet](https://lessup.github.io/diy-flash-attention/en/cheatsheet) — quick reference for common patterns
 
 ---
 
-## 📄 License
+## Contributing
 
-MIT License - Open source, free to use and modify.
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines. Good first areas:
+
+- 🔮 Implement Hopper TMA / FP8 kernels
+- 📊 Extend benchmark coverage (sparse attention, grouped query)
+- 📝 Improve docs or add examples
+- 🐛 Fix edge cases or add property tests
 
 ---
+
+## License
+
+[MIT License](LICENSE) — free to use, modify, and distribute.
 
 <div align="center">
   <p>
     ⭐ Star this repo if you find it helpful!<br>
-    🐛 Found a bug? <a href="https://github.com/LessUp/diy-flash-attention/issues">Report an issue</a><br>
-    💡 Have an idea? <a href="https://github.com/LessUp/diy-flash-attention/discussions">Start a discussion</a>
+    <a href="https://github.com/LessUp/diy-flash-attention/issues">🐛 Report a bug</a> •
+    <a href="https://github.com/LessUp/diy-flash-attention/discussions">💡 Request a feature</a>
   </p>
 </div>
