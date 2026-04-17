@@ -8,10 +8,10 @@ hero:
   actions:
     - theme: brand
       text: 教程
-      link: /tutorial
+      link: /zh/tutorial
     - theme: alt
       text: API 参考
-      link: /api
+      link: /zh/api
     - theme: alt
       text: GitHub
       link: https://github.com/LessUp/diy-flash-attention

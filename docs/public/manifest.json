@@ -1,112 +1,18 @@
 {
   "name": "DIY FlashAttention",
   "short_name": "FlashAttention",
-  "description": "Master GPU programming by implementing FlashAttention from scratch. Learn Triton with hands-on tutorials.",
+  "description": "Master GPU programming by implementing FlashAttention from scratch. Learn Triton CUDA kernels with interactive tutorials and benchmarks.",
   "start_url": "/diy-flash-attention/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#10b981",
-  "orientation": "portrait-primary",
   "scope": "/diy-flash-attention/",
-  "lang": "en-US",
-  "dir": "ltr",
-  "categories": ["education", "developer tools", "reference"],
   "icons": [
     {
-      "src": "/diy-flash-attention/icons/icon-72x72.png",
-      "sizes": "72x72",
-      "type": "image/png",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "/diy-flash-attention/icons/icon-96x96.png",
-      "sizes": "96x96",
-      "type": "image/png",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "/diy-flash-attention/icons/icon-128x128.png",
-      "sizes": "128x128",
-      "type": "image/png",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "/diy-flash-attention/icons/icon-144x144.png",
-      "sizes": "144x144",
-      "type": "image/png",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "/diy-flash-attention/icons/icon-152x152.png",
-      "sizes": "152x152",
-      "type": "image/png",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "/diy-flash-attention/icons/icon-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "/diy-flash-attention/icons/icon-384x384.png",
-      "sizes": "384x384",
-      "type": "image/png",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "/diy-flash-attention/icons/icon-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable any"
+      "src": "/diy-flash-attention/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
     }
-  ],
-  "screenshots": [
-    {
-      "src": "/diy-flash-attention/screenshots/home.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Homepage of DIY FlashAttention"
-    },
-    {
-      "src": "/diy-flash-attention/screenshots/tutorial.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Tutorial page with code examples"
-    },
-    {
-      "src": "/diy-flash-attention/screenshots/mobile.png",
-      "sizes": "750x1334",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Mobile view"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "Tutorial",
-      "short_name": "Tutorial",
-      "description": "Start learning FlashAttention",
-      "url": "/diy-flash-attention/en/tutorial",
-      "icons": [{ "src": "/diy-flash-attention/icons/tutorial.png", "sizes": "96x96" }]
-    },
-    {
-      "name": "API Reference",
-      "short_name": "API",
-      "description": "Browse the API documentation",
-      "url": "/diy-flash-attention/en/api",
-      "icons": [{ "src": "/diy-flash-attention/icons/api.png", "sizes": "96x96" }]
-    },
-    {
-      "name": "中文文档",
-      "short_name": "中文",
-      "description": "切换到中文文档",
-      "url": "/diy-flash-attention/zh/",
-      "icons": [{ "src": "/diy-flash-attention/icons/zh.png", "sizes": "96x96" }]
-    }
-  ],
-  "related_applications": [],
-  "prefer_related_applications": false
+  ]
 }

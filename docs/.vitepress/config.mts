@@ -1,8 +1,7 @@
 import { defineConfig } from 'vitepress'
 
 // ============================================
-// DIY FlashAttention - Ultimate VitePress Config
-// Version: 3.0 - Maximum Aggression Mode
+// DIY FlashAttention - VitePress Config v4.0
 // ============================================
 
 export default defineConfig({
@@ -13,98 +12,64 @@ export default defineConfig({
   title: 'DIY FlashAttention',
   titleTemplate: ':title | DIY FlashAttention',
   description: 'Master GPU programming by implementing FlashAttention from scratch. Learn Triton CUDA kernels with interactive tutorials and benchmarks.',
-  
+
   base: '/diy-flash-attention/',
   cleanUrls: true,
   lastUpdated: true,
-  ignoreDeadLinks: [
-    /^https?:\/\/localhost/,
-    /^#/
-  ],
+  ignoreDeadLinks: [/^https?:\/\/localhost/, /^#/],
 
   // ==========================================
-  // Head - Maximum SEO
+  // Head - Essential SEO only
+  // (VitePress auto-injects charset, viewport, canonical, title, description)
   // ==========================================
   head: [
-    // Charset & Viewport
-    ['meta', { charset: 'UTF-8' }],
-    ['meta', { name: 'viewport', content: 'width=device-width, initial-scale=1.0, maximum-scale=5.0' }],
-    ['meta', { 'http-equiv': 'X-UA-Compatible', content: 'IE=edge,chrome=1' }],
-    
     // PWA
     ['link', { rel: 'manifest', href: '/diy-flash-attention/manifest.json' }],
     ['meta', { name: 'theme-color', content: '#10b981' }],
-    ['meta', { name: 'msapplication-TileColor', content: '#10b981' }],
     ['meta', { name: 'apple-mobile-web-app-capable', content: 'yes' }],
     ['meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' }],
     ['meta', { name: 'apple-mobile-web-app-title', content: 'FlashAttention' }],
-    
-    // SEO
-    ['link', { rel: 'canonical', href: 'https://lessup.github.io/diy-flash-attention/' }],
+
+    // SEO extras
     ['meta', { name: 'author', content: 'LessUp' }],
-    ['meta', { name: 'robots', content: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' }],
-    
-    // Keywords
-    ['meta', { name: 'keywords', content: 'FlashAttention,Triton,CUDA,GPU,GPU Programming,Attention Mechanism,LLM,Large Language Model,Online Softmax,Tiling,Memory-efficient Attention,Transformer,Deep Learning,Machine Learning,PyTorch,Python,Kernel Optimization,H100,A100,RTX 4090,Matrix Multiplication,Parallel Computing,CUDA Kernel,Triton Kernel,GPU Optimization,Flash Attention,AI Acceleration' }],
-    
+    ['meta', { name: 'robots', content: 'index, follow, max-image-preview:large' }],
+    ['meta', { name: 'keywords', content: 'FlashAttention,Triton,CUDA,GPU,GPU Programming,Attention Mechanism,LLM,Online Softmax,Tiling,PyTorch,Kernel Optimization,H100,A100,Matrix Multiplication' }],
+
     // Open Graph
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:site_name', content: 'DIY FlashAttention' }],
     ['meta', { property: 'og:title', content: 'DIY FlashAttention - Master GPU Programming' }],
     ['meta', { property: 'og:description', content: 'Implement FlashAttention from scratch. Learn Triton GPU programming with hands-on tutorials and production-ready code.' }],
     ['meta', { property: 'og:url', content: 'https://lessup.github.io/diy-flash-attention/' }],
-    ['meta', { property: 'og:image', content: 'https://lessup.github.io/diy-flash-attention/og-image.png' }],
-    ['meta', { property: 'og:image:width', content: '1200' }],
-    ['meta', { property: 'og:image:height', content: '630' }],
     ['meta', { property: 'og:locale', content: 'en_US' }],
     ['meta', { property: 'og:locale:alternate', content: 'zh_CN' }],
-    
+
     // Twitter
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
-    ['meta', { name: 'twitter:site', content: '@lessup' }],
-    ['meta', { name: 'twitter:creator', content: '@lessup' }],
     ['meta', { name: 'twitter:title', content: 'DIY FlashAttention - Master GPU Programming' }],
-    ['meta', { name: 'twitter:description', content: 'Implement FlashAttention from scratch. Learn Triton GPU programming with hands-on tutorials.' }],
-    
+    ['meta', { name: 'twitter:description', content: 'Implement FlashAttention from scratch. Learn Triton GPU programming.' }],
+
     // Fonts
     ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],
     ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' }],
-    
-    // Icons
+
+    // Icon (SVG, lightweight)
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/diy-flash-attention/logo.svg' }],
-    
+
     // JSON-LD Structured Data
     ['script', { type: 'application/ld+json' }, JSON.stringify({
       '@context': 'https://schema.org',
-      '@graph': [
-        {
-          '@type': 'WebSite',
-          name: 'DIY FlashAttention',
-          url: 'https://lessup.github.io/diy-flash-attention/',
-          potentialAction: {
-            '@type': 'SearchAction',
-            target: 'https://lessup.github.io/diy-flash-attention/search?q={search_term_string}',
-            'query-input': 'required name=search_term_string'
-          }
-        },
-        {
-          '@type': 'TechArticle',
-          headline: 'DIY FlashAttention Tutorial',
-          description: 'Master GPU programming by implementing FlashAttention from scratch using Python and Triton.',
-          author: { '@type': 'Organization', name: 'LessUp' },
-          publisher: {
-            '@type': 'Organization',
-            name: 'LessUp',
-            logo: { '@type': 'ImageObject', url: 'https://lessup.github.io/diy-flash-attention/logo.png' }
-          },
-          mainEntityOfPage: { '@type': 'WebPage', '@id': 'https://lessup.github.io/diy-flash-attention/' },
-          about: [
-            { '@type': 'Thing', name: 'GPU Programming' },
-            { '@type': 'Thing', name: 'CUDA' },
-            { '@type': 'Thing', name: 'Triton' },
-            { '@type': 'Thing', name: 'FlashAttention' }
-          ]
-        }
+      '@type': 'TechArticle',
+      headline: 'DIY FlashAttention Tutorial',
+      description: 'Master GPU programming by implementing FlashAttention from scratch using Python and Triton.',
+      author: { '@type': 'Organization', name: 'LessUp' },
+      publisher: { '@type': 'Organization', name: 'LessUp' },
+      mainEntityOfPage: { '@type': 'WebPage', '@id': 'https://lessup.github.io/diy-flash-attention/' },
+      about: [
+        { '@type': 'Thing', name: 'GPU Programming' },
+        { '@type': 'Thing', name: 'CUDA' },
+        { '@type': 'Thing', name: 'Triton' },
+        { '@type': 'Thing', name: 'FlashAttention' }
       ]
     })]
   ],
@@ -113,15 +78,7 @@ export default defineConfig({
   // Sitemap
   // ==========================================
   sitemap: {
-    hostname: 'https://lessup.github.io',
-    transformItems(items) {
-      return items.map((item) => {
-        item.changefreq = 'weekly'
-        item.priority = item.url === '/diy-flash-attention/' ? 1.0 : 
-                       item.url.includes('tutorial') ? 0.9 : 0.8
-        return item
-      })
-    }
+    hostname: 'https://lessup.github.io/diy-flash-attention/',
   },
 
   // ==========================================
@@ -161,7 +118,7 @@ export default defineConfig({
   themeConfig: {
     logo: { src: '/logo.svg', width: 24, height: 24 },
     siteTitle: 'DIY FlashAttention',
-    
+
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Tutorial', link: '/en/tutorial' },
@@ -226,7 +183,7 @@ export default defineConfig({
           collapsed: false,
           items: [
             { text: '简介', link: '/zh/' },
-            { text: '快速上手', link: '/zh/tutorial' },
+            { text: '快速上手', link: '/zh/tutorial#quick-start' },
           ]
         },
         {
@@ -266,7 +223,7 @@ export default defineConfig({
     },
 
     footer: {
-      message: '<a href="/diy-flash-attention/en/changelog">Changelog</a> • <a href="https://github.com/LessUp/diy-flash-attention/blob/master/LICENSE">MIT License</a>',
+      message: '<a href="/diy-flash-attention/en/changelog">Changelog</a> · <a href="https://github.com/LessUp/diy-flash-attention/blob/master/LICENSE">MIT License</a>',
       copyright: 'Copyright © 2024-2026 <a href="https://github.com/LessUp">LessUp</a>'
     },
 
@@ -305,7 +262,7 @@ export default defineConfig({
 
     outline: { level: [2, 3], label: 'On this page' },
     docFooter: { prev: '← Previous', next: 'Next →' },
-    
+
     lastUpdated: {
       text: '🕐 Updated on',
       formatOptions: { dateStyle: 'medium', timeStyle: 'short' }
@@ -314,9 +271,9 @@ export default defineConfig({
     returnToTopLabel: '↑ Return to top',
     sidebarMenuLabel: 'Menu',
     darkModeSwitchLabel: '🌓',
-    darkModeSwitchTitle: 'Switch to dark mode',
     lightModeSwitchTitle: 'Switch to light mode',
-    codeCopyButtonTitle: '📋 Copy',
+    darkModeSwitchTitle: 'Switch to dark mode',
+    codeCopyButtonTitle: 'Copy',
     externalLinkIcon: true,
   },
 
@@ -364,8 +321,8 @@ export default defineConfig({
         returnToTopLabel: '↑ 返回顶部',
         sidebarMenuLabel: '菜单',
         darkModeSwitchLabel: '🌓',
-        darkModeSwitchTitle: '切换到深色模式',
         lightModeSwitchTitle: '切换到浅色模式',
+        darkModeSwitchTitle: '切换到深色模式',
       }
     }
   }

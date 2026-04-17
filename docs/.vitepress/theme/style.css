@@ -1,11 +1,9 @@
 /**
  * ============================================
  * DIY FlashAttention - Base Styles
- * Custom CSS Variables and Base Configuration
  * ============================================
  */
 
-/* Import Inter font */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
@@ -14,14 +12,45 @@
   --vp-c-brand-2: #059669;
   --vp-c-brand-3: #047857;
   --vp-c-brand-soft: rgba(16, 185, 129, 0.14);
-  
+
+  /* Accent Colors */
+  --vp-c-accent-1: #3b82f6;
+  --vp-c-accent-2: #2563eb;
+
   /* Fonts */
   --vp-font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --vp-font-family-mono: 'JetBrains Mono', 'Fira Code', Menlo, Monaco, 'Courier New', monospace;
-  
-  /* Transitions */
+  --vp-font-family-mono: 'JetBrains Mono', 'Fira Code', Menlo, Monaco, monospace;
+
+  /* Spacing Scale */
+  --vp-space-xs: 0.25rem;
+  --vp-space-sm: 0.5rem;
+  --vp-space-md: 1rem;
+  --vp-space-lg: 1.5rem;
+  --vp-space-xl: 2rem;
+
+  /* Border Radius */
+  --vp-radius-sm: 6px;
+  --vp-radius-md: 8px;
+  --vp-radius-lg: 12px;
+  --vp-radius-xl: 16px;
+  --vp-radius-full: 9999px;
+
+  /* Shadows */
+  --vp-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --vp-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --vp-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --vp-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  --vp-shadow-glow: 0 0 20px rgba(16, 185, 129, 0.3);
+
+  /* Animation Timing */
   --vp-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --vp-transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --vp-transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark {
+  --vp-c-bg-gradient: linear-gradient(135deg, #064e3b 0%, #065f46 50%, #1e3a5f 100%);
+  --vp-shadow-glow: 0 0 30px rgba(16, 185, 129, 0.2);
 }
 
 html {
@@ -30,4 +59,6 @@ html {
 
 body {
   font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }

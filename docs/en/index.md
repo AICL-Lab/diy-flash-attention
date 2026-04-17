@@ -33,7 +33,7 @@ features:
     details: Unit tests + Property-based testing (Hypothesis), covering correctness, edge cases, and memory scaling
     icon: ✅
   - title: Bilingual Documentation
-    details: Complete documentation available in both English and Chinese - Tutorial, API Reference, Performance Guide, Cheatsheet, and FAQ
+    details: Complete documentation available in both English and Chinese
     icon: 📖
 ---
 
@@ -54,7 +54,7 @@ features:
 import torch
 from kernels import triton_matmul, flash_attention
 
-# Matrix Multiplication (float16/bfloat16 supported, autotune for optimal config)
+# Matrix Multiplication (float16/bfloat16, autotune for optimal config)
 a = torch.randn(1024, 1024, device="cuda", dtype=torch.float16)
 b = torch.randn(1024, 1024, device="cuda", dtype=torch.float16)
 c = triton_matmul(a, b)
@@ -70,5 +70,5 @@ out = flash_attention(q, k, v, causal=True)
 
 - **Tiling** — Split large matrices into tiles for SRAM computation, reducing HBM access
 - **Online Softmax** — Compute softmax incrementally by tiles, reducing memory from O(N²) to O(N)
-- **Autotune** — Automatically search for optimal Block Size configurations, adapting to different matrix sizes
-- **Architecture Adaptation** — Automatically detect GPU architecture and select optimal kernel implementations
+- **Autotune** — Automatically search for optimal Block Size configurations
+- **Architecture Adaptation** — Auto-detect GPU architecture and select optimal kernel implementations
