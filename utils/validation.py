@@ -9,14 +9,16 @@ from typing import Callable, Tuple
 
 import torch
 
+from utils.config import DEFAULT_ATOL, DEFAULT_RTOL, DEFAULT_SEED
+
 
 def validate_matmul(
     triton_fn: Callable,
     m: int,
     n: int,
     k: int,
-    rtol: float = 1e-3,
-    atol: float = 1e-3,
+    rtol: float = DEFAULT_RTOL,
+    atol: float = DEFAULT_ATOL,
     dtype: torch.dtype = torch.float16,
     device: str = "cuda",
     verbose: bool = False,
@@ -36,7 +38,7 @@ def validate_matmul(
     Returns:
         Tuple of (is_valid, max_diff)
     """
-    torch.manual_seed(42)
+    torch.manual_seed(DEFAULT_SEED)
 
     # Generate random matrices
     a = torch.randn((m, k), device=device, dtype=dtype)
@@ -74,8 +76,8 @@ def validate_attention(
     seq_len: int,
     head_dim: int,
     causal: bool = False,
-    rtol: float = 1e-3,
-    atol: float = 1e-3,
+    rtol: float = DEFAULT_RTOL,
+    atol: float = DEFAULT_ATOL,
     dtype: torch.dtype = torch.float16,
     device: str = "cuda",
     verbose: bool = False,
@@ -99,7 +101,7 @@ def validate_attention(
     Returns:
         Tuple of (is_valid, max_diff)
     """
-    torch.manual_seed(42)
+    torch.manual_seed(DEFAULT_SEED)
 
     # Generate random Q, K, V
     q = torch.randn((batch, heads, seq_len, head_dim), device=device, dtype=dtype)
@@ -134,8 +136,8 @@ def validate_attention(
 
 def validate_matmul_edge_cases(
     triton_fn: Callable,
-    rtol: float = 1e-3,
-    atol: float = 1e-3,
+    rtol: float = DEFAULT_RTOL,
+    atol: float = DEFAULT_ATOL,
     device: str = "cuda",
     verbose: bool = True,
 ) -> Tuple[bool, dict]:
@@ -222,8 +224,8 @@ def validate_matmul_edge_cases(
 
 def validate_attention_edge_cases(
     flash_fn: Callable,
-    rtol: float = 1e-3,
-    atol: float = 1e-3,
+    rtol: float = DEFAULT_RTOL,
+    atol: float = DEFAULT_ATOL,
     device: str = "cuda",
     verbose: bool = True,
 ) -> Tuple[bool, dict]:

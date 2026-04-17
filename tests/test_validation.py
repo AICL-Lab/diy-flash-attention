@@ -219,7 +219,3 @@ class TestValidationVerbose:
         captured = capsys.readouterr()
         assert "Validation" in captured.out
         assert "Max difference" in captured.out
-
-
-if __name__ == "__main__":
-    pytest.main([__file__, "-v"])

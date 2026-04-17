@@ -403,7 +403,3 @@ class TestContiguityHandling:
         # Should handle non-contiguous by making contiguous internally
         result = triton_matmul(a_t.contiguous(), b_t.t().contiguous())
         assert result.shape == (64, 64)
-
-
-if __name__ == "__main__":
-    pytest.main([__file__, "-v"])

@@ -1,8 +1,7 @@
 """
 Configuration constants for DIY FlashAttention.
 
-This module centralizes all hardcoded configuration values for easy tuning
-and consistency across the codebase.
+Centralizes all hardcoded values for easy tuning and consistency.
 """
 
 from __future__ import annotations
@@ -46,6 +45,12 @@ BENCHMARK_REPETITIONS: int = 100
 #: Default quantiles for benchmark statistics [median, lower, upper]
 BENCHMARK_QUANTILES: list[float] = [0.5, 0.2, 0.8]
 
+#: Bytes per megabyte (consistent unit across codebase)
+BYTES_PER_MB: int = 1024**2
+
+#: Bytes per gigabyte
+BYTES_PER_GB: int = 1024**3
+
 # =============================================================================
 # GPU Detection Configuration
 # =============================================================================
@@ -57,14 +62,17 @@ FP8_MIN_COMPUTE_CAPABILITY: tuple[int, int] = (9, 0)
 TMA_MIN_COMPUTE_CAPABILITY: tuple[int, int] = (9, 0)
 
 # =============================================================================
-# Logging Configuration
+# Validation Configuration
 # =============================================================================
 
-#: Default log level
-LOG_LEVEL: str = "INFO"
+#: Default relative tolerance for validation comparisons
+DEFAULT_RTOL: float = 1e-3
 
-#: Log format string
-LOG_FORMAT: str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+#: Default absolute tolerance for validation comparisons
+DEFAULT_ATOL: float = 1e-3
 
-#: Log date format
-LOG_DATE_FORMAT: str = "%Y-%m-%d %H:%M:%S"
+#: Pass/fail tolerance threshold for kernel smoke tests
+SMOKE_TEST_RTOL: float = 1e-2
+
+#: Default random seed for reproducible test data
+DEFAULT_SEED: int = 42

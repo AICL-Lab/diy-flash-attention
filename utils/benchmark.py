@@ -9,7 +9,7 @@ from typing import Callable, Optional
 
 import torch
 
-from utils.config import BENCHMARK_QUANTILES, BENCHMARK_REPETITIONS, BENCHMARK_WARMUP
+from utils.config import BENCHMARK_QUANTILES, BENCHMARK_REPETITIONS, BENCHMARK_WARMUP, BYTES_PER_MB
 
 logger = logging.getLogger(__name__)
 
@@ -195,7 +195,7 @@ class BenchmarkRunner:
 
             torch.cuda.reset_peak_memory_stats()
             _ = torch.nn.functional.scaled_dot_product_attention(q, k, v, is_causal=causal)
-            torch_mem = torch.cuda.max_memory_allocated() / 1e6
+            torch_mem = torch.cuda.max_memory_allocated() / BYTES_PER_MB
             results.append(
                 BenchmarkResult(
                     name="PyTorch SDPA",
@@ -213,7 +213,7 @@ class BenchmarkRunner:
 
             torch.cuda.reset_peak_memory_stats()
             _ = flash_fn(q, k, v, causal=causal)
-            flash_mem = torch.cuda.max_memory_allocated() / 1e6
+            flash_mem = torch.cuda.max_memory_allocated() / BYTES_PER_MB
             results.append(
                 BenchmarkResult(
                     name="FlashAttention",

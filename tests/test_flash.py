@@ -198,7 +198,3 @@ class TestFlashAttentionEdgeCases:
 
 
 # Error handling tests are in test_error_handling.py
-
-
-if __name__ == "__main__":
-    pytest.main([__file__, "-v"])

@@ -309,7 +309,3 @@ class TestTflopsCalculation:
         tflops_2ms = flops / 2.0 / 1e9  # 500 TFLOPS
 
         assert tflops_1ms == 2 * tflops_2ms
-
-
-if __name__ == "__main__":
-    pytest.main([__file__, "-v"])

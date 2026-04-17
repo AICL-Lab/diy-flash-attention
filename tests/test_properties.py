@@ -342,7 +342,3 @@ class TestMemoryScalingProperty:
                 f"Memory scaling appears quadratic: ratio={ratio:.2f}, "
                 f"linear={linear_expected:.2f}, quadratic={quadratic_expected:.2f}"
             )
-
-
-if __name__ == "__main__":
-    pytest.main([__file__, "-v", "--tb=short"])

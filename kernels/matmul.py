@@ -374,24 +374,6 @@ def triton_matmul(
     return c
 
 
-def triton_matmul_fp32(
-    a: torch.Tensor,
-    b: torch.Tensor,
-) -> torch.Tensor:
-    """
-    Triton matrix multiplication with float32 output casting.
-
-    This helper runs the underlying Triton kernel in float16 and casts the
-    result to float32 for easier comparison against PyTorch references.
-    It does not perform true float32 kernel computation.
-    """
-    a_fp16 = a.to(torch.float16) if a.dtype != torch.float16 else a
-    b_fp16 = b.to(torch.float16) if b.dtype != torch.float16 else b
-
-    result = triton_matmul(a_fp16, b_fp16)
-    return result.to(torch.float32)
-
-
 if __name__ == "__main__":
     torch.manual_seed(0)
 
