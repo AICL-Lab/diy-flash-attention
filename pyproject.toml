@@ -45,9 +45,10 @@ bench-flash = "benchmarks.bench_flash:main"
 
 [project.urls]
 Homepage = "https://github.com/LessUp/diy-flash-attention"
-Documentation = "https://github.com/LessUp/diy-flash-attention#readme"
+Documentation = "https://lessup.github.io/diy-flash-attention/"
 Repository = "https://github.com/LessUp/diy-flash-attention"
 Issues = "https://github.com/LessUp/diy-flash-attention/issues"
+Changelog = "https://github.com/LessUp/diy-flash-attention/blob/master/CHANGELOG.md"
 
 [tool.setuptools.packages.find]
 include = ["kernels*", "utils*", "benchmarks*"]
