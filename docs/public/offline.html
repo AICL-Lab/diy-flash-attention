@@ -3,165 +3,50 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Offline - DIY FlashAttention</title>
-  <meta name="theme-color" content="#10b981">
+  <title>Offline | DIY FlashAttention</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      min-height: 100vh;
+      background: #0f172a;
+      color: #f8fafc;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 50%, #f0f9ff 100%);
-      color: #1f2937;
+      min-height: 100vh;
+      margin: 0;
+      text-align: center;
+    }
+    .container {
       padding: 2rem;
     }
-    
-    .container {
-      text-align: center;
-      max-width: 500px;
-    }
-    
-    .icon {
-      font-size: 5rem;
-      margin-bottom: 1.5rem;
-      animation: pulse 2s ease-in-out infinite;
-    }
-    
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.1); opacity: 0.8; }
-    }
-    
     h1 {
       font-size: 2rem;
-      font-weight: 800;
       margin-bottom: 1rem;
-      background: linear-gradient(135deg, #10b981, #3b82f6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: #06b6d4;
     }
-    
     p {
-      font-size: 1.1rem;
-      color: #6b7280;
-      margin-bottom: 2rem;
-      line-height: 1.6;
+      color: #94a3b8;
+      margin-bottom: 1.5rem;
     }
-    
-    .button {
+    a {
+      color: #06b6d4;
+      text-decoration: none;
+      padding: 0.75rem 1.5rem;
+      border: 1px solid #06b6d4;
+      border-radius: 8px;
       display: inline-block;
-      padding: 0.875rem 2rem;
-      background: linear-gradient(135deg, #10b981, #059669);
-      color: white;
-      text-decoration: none;
-      border-radius: 9999px;
-      font-weight: 600;
       transition: all 0.3s;
-      box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3);
     }
-    
-    .button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.4);
-    }
-    
-    .cached-pages {
-      margin-top: 3rem;
-      padding-top: 2rem;
-      border-top: 1px solid #e5e7eb;
-    }
-    
-    .cached-pages h2 {
-      font-size: 1.1rem;
-      margin-bottom: 1rem;
-      color: #374151;
-    }
-    
-    .cached-list {
-      list-style: none;
-    }
-    
-    .cached-list li {
-      margin: 0.5rem 0;
-    }
-    
-    .cached-list a {
-      color: #10b981;
-      text-decoration: none;
-      font-weight: 500;
-    }
-    
-    .cached-list a:hover {
-      text-decoration: underline;
-    }
-    
-    @media (prefers-color-scheme: dark) {
-      body {
-        background: linear-gradient(135deg, #064e3b 0%, #065f46 50%, #1e3a5f 100%);
-        color: #f3f4f6;
-      }
-      
-      h1 {
-        background: linear-gradient(135deg, #34d399, #60a5fa);
-        -webkit-background-clip: text;
-      }
-      
-      p {
-        color: #9ca3af;
-      }
-      
-      .cached-pages {
-        border-color: #374151;
-      }
-      
-      .cached-pages h2 {
-        color: #d1d5db;
-      }
+    a:hover {
+      background: rgba(6, 182, 212, 0.1);
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="icon">📡</div>
-    <h1>You're Offline</h1>
-    <p>It looks like you've lost your internet connection. Don't worry - you can still access previously cached pages!</p>
-    <a href="/diy-flash-attention/" class="button">🏠 Go Home</a>
-    
-    <div class="cached-pages">
-      <h2>📚 Available Offline</h2>
-      <ul class="cached-list">
-        <li><a href="/diy-flash-attention/en/tutorial">Tutorial</a></li>
-        <li><a href="/diy-flash-attention/en/api">API Reference</a></li>
-        <li><a href="/diy-flash-attention/en/cheatsheet">Cheatsheet</a></li>
-        <li><a href="/diy-flash-attention/zh/">中文文档</a></li>
-      </ul>
-    </div>
+    <h1>📡 DIY FlashAttention is offline</h1>
+    <p>The documentation site could not be reached. Check your connection and try loading the project pages again.</p>
+    <a href="/diy-flash-attention/">Try Again</a>
   </div>
-  
-  <script>
-    // 检测网络恢复
-    window.addEventListener('online', () => {
-      window.location.reload();
-    });
-    
-    // 显示网络状态
-    function updateNetworkStatus() {
-      if (navigator.onLine) {
-        document.querySelector('h1').textContent = 'Back Online!';
-        document.querySelector('p').textContent = 'Connection restored. Reloading...';
-        setTimeout(() => window.location.reload(), 1500);
-      }
-    }
-    
-    window.addEventListener('offline', updateNetworkStatus);
-    window.addEventListener('online', updateNetworkStatus);
-  </script>
 </body>
 </html>

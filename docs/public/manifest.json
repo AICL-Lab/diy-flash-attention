@@ -1,18 +1,20 @@
 {
   "name": "DIY FlashAttention",
-  "short_name": "FlashAttention",
-  "description": "Master GPU programming by implementing FlashAttention from scratch. Learn Triton CUDA kernels with interactive tutorials and benchmarks.",
+  "short_name": "DIY FlashAttn",
+  "description": "Learn Triton by implementing FlashAttention from scratch. Educational kernels, benchmarks, and bilingual docs.",
   "start_url": "/diy-flash-attention/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#10b981",
+  "background_color": "#0f172a",
+  "theme_color": "#06b6d4",
+  "orientation": "any",
   "scope": "/diy-flash-attention/",
   "icons": [
     {
       "src": "/diy-flash-attention/logo.svg",
-      "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any"
+      "sizes": "120x120"
     }
-  ]
+  ],
+  "categories": ["education", "development", "technology"],
+  "lang": "en-US"
 }

@@ -2,73 +2,86 @@
 layout: home
 
 hero:
-  name: DIY FlashAttention
-  text: FlashAttention from Scratch
-  tagline: Hands-on Implementation Using Python + OpenAI Triton
+  name: "DIY"
+  text: "FlashAttention"
+  tagline: |
+    A compact Triton project for learning attention kernels, benchmarks, and GPU-aware configuration
+    
+    <div class="badge-group">
+      <span class="badge">⚡ 99% Memory Reduction</span>
+      <span class="badge purple">🚀 1.6x Speedup</span>
+      <span class="badge yellow">🎯 Hands-on Learning</span>
+    </div>
+
   actions:
     - theme: brand
-      text: Tutorial
+      text: 🚀 Start Tutorial
       link: /en/tutorial
     - theme: alt
-      text: API Reference
-      link: /en/api
+      text: 📊 Benchmark Guide
+      link: /en/performance
     - theme: alt
-      text: GitHub
+      text: 💻 GitHub
       link: https://github.com/LessUp/diy-flash-attention
 
 features:
-  - title: Triton Programming Model
-    details: Learn block pointer arithmetic, tiling, and autotune automatic optimization through implementing matrix multiplication kernels
-    icon: ⚡
-  - title: FlashAttention Re-implementation
-    details: Implement the core attention acceleration algorithm in LLMs with O(N) memory complexity, supporting Causal Masking and variable-length sequences
-    icon: 🧠
-  - title: Performance Benchmarking
-    details: Quantify optimization effects through benchmarking, compare with PyTorch SDPA, and explore Block Size impact on performance
-    icon: 📊
-  - title: Modern GPU Support
-    details: Auto-detect GPU architectures (Volta → Blackwell), supports TMA, FP8, and Warpgroup MMA feature detection
-    icon: 🖥️
-  - title: Complete Test Coverage
-    details: Unit tests + Property-based testing (Hypothesis), covering correctness, edge cases, and memory scaling
-    icon: ✅
-  - title: Bilingual Documentation
-    details: Complete documentation available in both English and Chinese
-    icon: 📖
+  - icon: 🔷
+    title: Read Real Triton Code
+    details: Study the actual matmul and FlashAttention kernels instead of abstract slides.
+    link: /en/tutorial
+
+  - icon: ⚡
+    title: Follow the Attention Algorithm
+    details: Trace online softmax, SRAM tiling, and causal masking through a compact forward implementation.
+    link: /en/tutorial
+
+  - icon: 📊
+    title: Benchmark Against PyTorch
+    details: Compare speed and memory behavior against PyTorch SDPA with repository-native scripts.
+    link: /en/performance
+
+  - icon: 🖥️
+    title: Inspect Architecture Helpers
+    details: Explore Volta → Blackwell feature detection, Hopper TMA flags, and FP8-aware helpers.
+    link: /en/api
 ---
 
-## Tech Stack
+## Why This Page Exists
 
-| Component | Technology | Description |
-|-----------|------------|-------------|
-| Language | Python 3.9+ | Primary language |
-| GPU Programming | OpenAI Triton 2.1+ | GPU Kernel development framework |
-| Deep Learning | PyTorch 2.0+ | Tensor operations and reference implementation |
-| GPU Runtime | CUDA 11.0+ | GPU compute driver |
-| Testing | pytest + Hypothesis | Unit tests + Property-based tests |
-| Code Quality | Ruff + mypy | Lint + Type checking |
+This page is the **project overview** for readers who want to decide where to go next without reading the whole README first.
 
-## Quick Start
+| Guide | Description |
+|-------|-------------|
+| [Tutorial](/en/tutorial) | Best entry if you want to understand the implementation line by line |
+| [API Reference](/en/api) | Best entry if you want the supported kernel and helper contract |
+| [Performance](/en/performance) | Best entry if you care about benchmark evidence and trade-offs |
+| [Cheatsheet](/en/cheatsheet) | Best entry if you already know Triton and want a quick refresher |
+| [FAQ](/en/faq) | Best entry if you want environment and troubleshooting guidance |
 
-```python
-import torch
-from kernels import triton_matmul, flash_attention
+## What This Repository Covers
 
-# Matrix Multiplication (float16/bfloat16, autotune for optimal config)
-a = torch.randn(1024, 1024, device="cuda", dtype=torch.float16)
-b = torch.randn(1024, 1024, device="cuda", dtype=torch.float16)
-c = triton_matmul(a, b)
+<div class="highlight-box">
+  <p><strong>Scope:</strong> Triton matmul, forward-only FlashAttention, GPU capability helpers, tests, and benchmark scripts.</p>
+  <p><strong>Approach:</strong> Keep the code compact enough to read end-to-end while still being real enough to benchmark and validate.</p>
+  <p><strong>Why it helps:</strong> You get a tractable way to learn how attention kernels are structured without jumping into a huge framework.</p>
+</div>
 
-# FlashAttention (batch=2, heads=8, seq_len=512, head_dim=64)
-q = torch.randn(2, 8, 512, 64, device="cuda", dtype=torch.float16)
-k = torch.randn(2, 8, 512, 64, device="cuda", dtype=torch.float16)
-v = torch.randn(2, 8, 512, 64, device="cuda", dtype=torch.float16)
-out = flash_attention(q, k, v, causal=True)
-```
+## Project strengths
 
-## Key Concepts
+- **Compact implementation**: small enough to finish reading, not a toy sketch
+- **Benchmark evidence**: compare directly against PyTorch SDPA
+- **Architecture awareness**: inspect Volta → Blackwell helper logic
+- **Bilingual docs**: English and Chinese pages stay aligned
 
-- **Tiling** — Split large matrices into tiles for SRAM computation, reducing HBM access
-- **Online Softmax** — Compute softmax incrementally by tiles, reducing memory from O(N²) to O(N)
-- **Autotune** — Automatically search for optimal Block Size configurations
-- **Architecture Adaptation** — Auto-detect GPU architecture and select optimal kernel implementations
+<div class="cta-section">
+  <div class="cta-title">Start where your curiosity is strongest</div>
+  <div class="cta-desc">Tutorial for understanding, performance pages for evidence, API docs for precise contracts.</div>
+  <div class="cta-buttons">
+    <a href="/diy-flash-attention/en/tutorial" class="cta-btn primary">
+      <span>📚</span> Read Tutorial
+    </a>
+    <a href="https://github.com/LessUp/diy-flash-attention" class="cta-btn secondary">
+      <span>⭐</span> Star on GitHub
+    </a>
+  </div>
+</div>

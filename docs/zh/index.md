@@ -2,73 +2,86 @@
 layout: home
 
 hero:
-  name: DIY FlashAttention
-  text: 从零实现 FlashAttention
-  tagline: 使用 Python + OpenAI Triton 动手实践 LLM 核心算法
+  name: "DIY"
+  text: "FlashAttention"
+  tagline: |
+    用一个紧凑但真实的 Triton 项目学习 attention kernel、benchmark 和 GPU 自适应配置
+    
+    <div class="badge-group">
+      <span class="badge">⚡ 内存减少 99%</span>
+      <span class="badge purple">🚀 1.6倍加速</span>
+      <span class="badge yellow">🎯 动手实践</span>
+    </div>
+
   actions:
     - theme: brand
-      text: 教程
+      text: 🚀 开始教程
       link: /zh/tutorial
     - theme: alt
-      text: API 参考
-      link: /zh/api
+      text: 📊 Benchmark 指南
+      link: /zh/performance
     - theme: alt
-      text: GitHub
+      text: 💻 GitHub
       link: https://github.com/LessUp/diy-flash-attention
 
 features:
-  - title: Triton 编程模型
-    details: 通过实现矩阵乘法 Kernel 学习 Block 指针运算、Tiling 和 Autotune 自动调优
-    icon: ⚡
-  - title: FlashAttention 复现
-    details: 实现 LLM 中最核心的注意力机制加速算法，O(N) 内存复杂度，支持 Causal Masking 和变长序列
-    icon: 🧠
-  - title: 性能对比
-    details: 通过 Benchmark 量化优化效果，对比 PyTorch SDPA，感受 Block Size 对性能的影响
-    icon: 📊
-  - title: 现代 GPU 支持
-    details: 自动检测 GPU 架构（Volta → Blackwell），支持 TMA、FP8、Warpgroup MMA 特性检测
-    icon: 🖥️
-  - title: 完整测试覆盖
-    details: 单元测试 + 属性测试 (Hypothesis)，覆盖正确性、边界条件和内存缩放
-    icon: ✅
-  - title: 中文文档
-    details: 教程、API 参考、性能指南、速查表、FAQ 全中文编写
-    icon: 📖
+  - icon: 🔷
+    title: 阅读真实 Triton 代码
+    details: 直接学习仓库中的 matmul 与 FlashAttention 核函数，而不是抽象幻灯片。
+    link: /zh/tutorial
+
+  - icon: ⚡
+    title: 跟踪注意力算法
+    details: 通过紧凑的前向实现理解 online softmax、SRAM 分块与因果掩码。
+    link: /zh/tutorial
+
+  - icon: 📊
+    title: 对比 PyTorch Benchmark
+    details: 使用仓库自带脚本对比 PyTorch SDPA 的速度与内存表现。
+    link: /zh/performance
+
+  - icon: 🖥️
+    title: 查看架构辅助逻辑
+    details: 浏览 Volta → Blackwell 的特性检测、Hopper TMA 标志和 FP8 辅助函数。
+    link: /zh/api
 ---
 
-## 技术栈
+## 这个页面的作用
 
-| 组件 | 技术 | 说明 |
-|------|------|------|
-| 语言 | Python 3.9+ | 主语言 |
-| GPU 编程 | OpenAI Triton 2.1+ | GPU Kernel 编写框架 |
-| 深度学习 | PyTorch 2.0+ | 张量运算与参考实现 |
-| GPU 运行时 | CUDA 11.0+ | GPU 计算驱动 |
-| 测试 | pytest + Hypothesis | 单元测试 + 属性测试 |
-| 代码质量 | Ruff + mypy | Lint + 类型检查 |
+这是面向读者的**项目总览页**，帮助你先判断从哪条路径进入，而不是先去读完整 README。
 
-## 快速开始
+| 指南 | 说明 |
+|------|------|
+| [教程](/zh/tutorial) | 想按实现细节逐步理解时，从这里开始 |
+| [API 参考](/zh/api) | 想确认支持的 kernel 与 helper 契约时，从这里开始 |
+| [性能指南](/zh/performance) | 想看 benchmark 证据与性能取舍时，从这里开始 |
+| [速查表](/zh/cheatsheet) | 已经了解 Triton、只想快速回顾时，从这里开始 |
+| [常见问题](/zh/faq) | 想看环境与排障建议时，从这里开始 |
 
-```python
-import torch
-from kernels import triton_matmul, flash_attention
+## 这个仓库覆盖什么
 
-# 矩阵乘法 (支持 float16 / bfloat16, Autotune 自动选择最优配置)
-a = torch.randn(1024, 1024, device="cuda", dtype=torch.float16)
-b = torch.randn(1024, 1024, device="cuda", dtype=torch.float16)
-c = triton_matmul(a, b)
+<div class="highlight-box">
+  <p><strong>范围：</strong>Triton matmul、仅前向 FlashAttention、GPU 能力探测、测试与 benchmark 脚本。</p>
+  <p><strong>方法：</strong>把代码规模控制在可完整阅读的范围内，但仍保留真实 benchmark 和验证价值。</p>
+  <p><strong>价值：</strong>你可以在不跳进超大训练框架的前提下，建立 attention kernel 的整体直觉。</p>
+</div>
 
-# FlashAttention (batch=2, heads=8, seq_len=512, head_dim=64)
-q = torch.randn(2, 8, 512, 64, device="cuda", dtype=torch.float16)
-k = torch.randn(2, 8, 512, 64, device="cuda", dtype=torch.float16)
-v = torch.randn(2, 8, 512, 64, device="cuda", dtype=torch.float16)
-out = flash_attention(q, k, v, causal=True)
-```
+## 仓库的优势
 
-## 核心概念
+- **实现紧凑**：能读完，而不是只有概念图
+- **性能有证据**：直接对比 PyTorch SDPA
+- **架构自适应可见**：可以检查 Volta → Blackwell 辅助逻辑
+- **双语文档**：英文与中文页面保持对应
 
-- **Tiling（分块）** — 将大矩阵分割成小块在 SRAM 中计算，减少 HBM 访问
-- **Online Softmax** — 分块增量计算 softmax，内存从 O(N²) 降至 O(N)
-- **Autotune** — 自动搜索最优 Block Size 配置，适配不同矩阵规模
-- **架构自适应** — 自动检测 GPU 架构，选择最优 Kernel 实现和参数
+<div class="cta-section">
+  <div class="cta-title">从你最关心的部分开始</div>
+  <div class="cta-desc">教程适合理解实现，性能页适合看证据，API 参考适合看精确定义。</div>
+  <div class="cta-buttons">
+    <a href="/diy-flash-attention/zh/tutorial" class="cta-btn primary">
+      <span>📚</span> 阅读教程
+    </a>
+    <a href="https://github.com/LessUp/diy-flash-attention" class="cta-btn secondary">
+      <span>⭐</span> Star on GitHub
+    </a>
+  </div>
+</div>

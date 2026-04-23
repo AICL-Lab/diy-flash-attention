@@ -2,132 +2,165 @@
 layout: home
 
 hero:
-  name: "DIY FlashAttention"
-  text: "Master GPU Programming"
+  name: "DIY"
+  text: "FlashAttention"
   tagline: |
-    Implement FlashAttention from scratch using Python & OpenAI Triton
-
-    <div class="hero-badges">
+    Learn Triton by reading, benchmarking, and modifying a compact FlashAttention implementation
+    
+    <div class="badge-group">
       <span class="badge">⚡ 99% Memory Reduction</span>
-      <span class="badge">🚀 1.6x Speedup</span>
-      <span class="badge">🎯 Production Ready</span>
+      <span class="badge purple">🚀 1.6x Speedup</span>
+      <span class="badge yellow">🎯 Hands-on Learning</span>
     </div>
 
   actions:
     - theme: brand
-      text: 🚀 Get Started
+      text: 🚀 Start with the Tutorial
       link: /en/tutorial
+    - theme: alt
+      text: 📊 Explore Benchmarks
+      link: /en/performance
     - theme: alt
       text: 💻 GitHub
       link: https://github.com/LessUp/diy-flash-attention
 
 features:
-  - icon: ⚡
-    title: Learn Triton
-    details: Master block pointer arithmetic, tiling strategies, and autotune optimization through hands-on matrix multiplication kernels.
+  - icon: 🔷
+    title: Read Real Kernels
+    details: Study the actual Triton matmul and FlashAttention kernels instead of toy pseudocode.
     link: /en/tutorial
 
-  - icon: 🧠
-    title: FlashAttention
-    details: Implement the core attention acceleration algorithm from scratch with O(N) memory complexity and causal masking support.
-    link: /en/tutorial#part-4
+  - icon: ⚡
+    title: Learn the O(N) Trick
+    details: Understand online softmax, causal masking, and SRAM tiling without materializing the full attention matrix.
+    link: /en/tutorial
 
   - icon: 📊
-    title: Performance
-    details: Benchmark against PyTorch SDPA, quantify optimization effects, and explore how block size impacts GPU performance.
+    title: Benchmark Against PyTorch
+    details: Compare throughput and memory behavior against PyTorch SDPA with repository-native benchmark scripts.
     link: /en/performance
 
   - icon: 🖥️
-    title: Modern GPU Support
-    details: Auto-detect GPU architectures from Volta to Blackwell. Support for Hopper features like TMA and FP8.
-    link: /en/api#gpu-detection
-
-  - icon: ✅
-    title: Tested & Verified
-    details: Comprehensive test suite with property-based testing using Hypothesis. Validated on V100 through H100.
-    link: https://github.com/LessUp/diy-flash-attention/tree/master/tests
-
-  - icon: 🌍
-    title: Bilingual Docs
-    details: Complete documentation in English and Chinese (中文). Tutorial, API reference, guides, and FAQ in both languages.
-    link: /zh/
+    title: Inspect Architecture Helpers
+    details: See how the project handles Volta → Blackwell feature detection, Hopper TMA, and FP8-aware configuration.
+    link: /en/api
 ---
 
-<style>
-.hero-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  justify-content: center;
-  margin-top: 1.5rem;
-}
+## Why This Repository Exists
 
-.badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.5rem 1rem;
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.2);
-  border-radius: 9999px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--vp-c-brand-1);
-  backdrop-filter: blur(10px);
-  transition: all 0.3s;
-}
+This site is the **project landing page**, not just a copied README. It helps you decide where to jump in:
 
-.badge:hover {
-  background: rgba(16, 185, 129, 0.2);
-  transform: translateY(-2px);
-}
+| If you want to... | Start here |
+| --- | --- |
+| understand the kernel design | [Tutorial](/en/tutorial) |
+| inspect the public API and helpers | [API Reference](/en/api) |
+| compare performance vs PyTorch SDPA | [Performance Guide](/en/performance) |
+| scan the code from GitHub first | [Repository](https://github.com/LessUp/diy-flash-attention) |
 
-@media (max-width: 768px) {
-  .hero-badges { flex-direction: column; align-items: center; }
-}
-</style>
+## What Makes It Useful
 
-## 🌐 Choose Your Language
-
-<div class="language-selector">
-  <a href="/diy-flash-attention/en/" class="lang-card">
-    <span class="lang-icon">🇺🇸</span>
-    <span class="lang-name">English</span>
-    <span class="lang-desc">Complete documentation in English</span>
-  </a>
-  <a href="/diy-flash-attention/zh/" class="lang-card">
-    <span class="lang-icon">🇨🇳</span>
-    <span class="lang-name">中文</span>
-    <span class="lang-desc">完整中文文档</span>
-  </a>
+<div class="feature-highlight">
+  <div class="feature-content">
+    <h3>Compact enough to finish, real enough to matter</h3>
+    <p>This repository keeps the scope narrow on purpose: Triton matmul, forward-only FlashAttention, architecture-aware helpers, tests, and benchmarks.</p>
+    <p>That makes it easier to understand the full stack end-to-end without getting lost in a giant training framework.</p>
+  </div>
+  <div class="feature-visual">
+    <div class="code-preview">
+      <div class="code-preview-header">
+        <span class="code-dot red"></span>
+        <span class="code-dot yellow"></span>
+        <span class="code-dot green"></span>
+        <span class="code-preview-filename">flash_attention.py</span>
+      </div>
+      <pre><code class="language-python">@triton.jit
+    def flash_attn_kernel(...):
+        # load a Q tile into SRAM
+        pid_m = tl.program_id(0)
+        # iterate over K/V tiles
+        # maintain online softmax state
+        # write the normalized output tile</code></pre>
+    </div>
+  </div>
 </div>
 
-<style>
-.language-selector {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-  margin: 2rem 0;
-}
+## What You Can Inspect Here
 
-.lang-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 2rem;
-  background: var(--vp-c-bg-soft);
-  border: 2px solid var(--vp-c-divider);
-  border-radius: 1rem;
-  text-decoration: none;
-  transition: all 0.3s;
-}
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-value">2</div>
+    <div class="stat-label">Core Triton Kernels</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">O(N)</div>
+    <div class="stat-label">Attention Memory Path</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">Volta→Blackwell</div>
+    <div class="stat-label">Architecture Coverage</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">EN / 中文</div>
+    <div class="stat-label">Docs Languages</div>
+  </div>
+</div>
 
-.lang-card:hover {
-  border-color: var(--vp-c-brand-1);
-  transform: translateY(-4px);
-  box-shadow: 0 10px 40px rgba(16, 185, 129, 0.15);
-}
+### Included in this project
 
-.lang-icon { font-size: 3rem; margin-bottom: 1rem; }
-.lang-name { font-size: 1.5rem; font-weight: 700; color: var(--vp-c-text-1); margin-bottom: 0.5rem; }
-.lang-desc { font-size: 0.875rem; color: var(--vp-c-text-2); text-align: center; }
-</style>
+- **Triton matmul** — autotune plus manual block-size control
+- **FlashAttention forward** — causal masking, 3D/4D inputs, variable sequence lengths
+- **Architecture helpers** — feature detection, FP8 conversion helpers, configuration selection
+- **Benchmarks and docs** — PyTorch comparisons, walkthroughs, cheatsheets, bilingual pages
+
+## Choose Your Starting Point
+
+<div class="audience-grid">
+  <div class="audience-card">
+    <div class="audience-avatar">🧑‍💻</div>
+    <div class="audience-title">Read the kernels</div>
+    <div class="audience-benefit">Start with the tutorial if you want to trace the implementation line by line</div>
+    <span class="audience-skill">Best path: Tutorial</span>
+  </div>
+  <div class="audience-card">
+    <div class="audience-avatar">🔬</div>
+    <div class="audience-title">Check the contract</div>
+    <div class="audience-benefit">Use the API and OpenSpec docs if you want a precise view of supported behavior</div>
+    <span class="audience-skill">Best path: API + OpenSpec</span>
+  </div>
+  <div class="audience-card">
+    <div class="audience-avatar">🚀</div>
+    <div class="audience-title">Benchmark the trade-offs</div>
+    <div class="audience-benefit">Use the performance guide if you care about timing, memory, and block-size tuning</div>
+    <span class="audience-skill">Best path: Performance</span>
+  </div>
+  <div class="audience-card">
+    <div class="audience-avatar">📚</div>
+    <div class="audience-title">Browse in your language</div>
+    <div class="audience-benefit">Use English or Chinese docs depending on how you prefer to read technical walkthroughs</div>
+    <span class="audience-skill">Best path: EN / 中文</span>
+  </div>
+</div>
+
+<div class="cta-section">
+  <div class="cta-title">Start with the part you care about most</div>
+  <div class="cta-desc">Tutorial for understanding, API for contracts, performance pages for evidence, GitHub for code.</div>
+  <div class="cta-buttons">
+    <a href="/diy-flash-attention/en/tutorial" class="cta-btn primary">
+      <span>🚀</span> Start Tutorial
+    </a>
+    <a href="https://github.com/LessUp/diy-flash-attention" class="cta-btn secondary">
+      <span>⭐</span> Star on GitHub
+    </a>
+  </div>
+</div>
+
+## Language
+
+<div class="lang-switcher">
+  <a href="/diy-flash-attention/en/" class="lang-link active">
+    <span>🇺🇸</span> English
+  </a>
+  <a href="/diy-flash-attention/zh/" class="lang-link">
+    <span>🇨🇳</span> 中文
+  </a>
+</div>
