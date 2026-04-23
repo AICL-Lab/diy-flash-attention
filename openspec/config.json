@@ -1,0 +1,21 @@
+{
+  "version": "1.0.0",
+  "project": {
+    "name": "diy-flash-attention",
+    "description": "DIY FlashAttention implementation using OpenAI Triton"
+  },
+  "templates": {
+    "feature": "./templates/feature.md",
+    "bugfix": "./templates/bugfix.md",
+    "rfc": "./templates/rfc.md"
+  },
+  "paths": {
+    "specs": "./specs",
+    "changes": "./changes",
+    "archive": "./changes/archive",
+    "changelog": "../../changelog"
+  },
+  "defaults": {
+    "proposalType": "feature"
+  }
+}
