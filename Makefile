@@ -1,4 +1,4 @@
-.PHONY: install test lint format typecheck bench-matmul bench-flash demo clean help
+.PHONY: install install-dev test test-cpu test-gpu lint format typecheck docs hooks-install hooks-run validate-openspec bench-matmul bench-flash demo clean help
 
 # Default target
 help:
@@ -19,10 +19,16 @@ help:
 	@echo "    make bench-all    - Run all benchmarks"
 	@echo ""
 	@echo "  Test & Quality:"
-	@echo "    make test         - Run all tests"
+	@echo "    make test         - Run the default CPU-safe test path"
+	@echo "    make test-cpu     - Run tests that work without CUDA kernels"
+	@echo "    make test-gpu     - Run the full GPU test suite"
 	@echo "    make lint         - Lint code with ruff"
 	@echo "    make format       - Format code with ruff"
 	@echo "    make typecheck    - Type check with mypy"
+	@echo "    make docs         - Build the VitePress docs site"
+	@echo "    make validate-openspec - Validate main specs and active changes"
+	@echo "    make hooks-install - Install repo-local git hooks"
+	@echo "    make hooks-run    - Run pre-commit across all files"
 	@echo "    make gpu-info     - Show GPU information"
 	@echo ""
 	@echo "    make clean        - Clean cache files"
@@ -42,6 +48,12 @@ install-dev:
 
 # Run tests
 test:
+	$(MAKE) test-cpu
+
+test-cpu:
+	pytest tests/ -v -m "not cuda" --ignore=tests/test_properties.py
+
+test-gpu:
 	pytest tests/ -v
 
 # Lint code with ruff
@@ -55,6 +67,24 @@ format:
 # Type check with mypy
 typecheck:
 	mypy kernels/ utils/
+
+docs:
+	npm run docs:build
+
+validate-openspec:
+	openspec validate --specs --json
+	@python3 -c 'import json, subprocess; data = json.loads(subprocess.check_output(["openspec", "list", "--json"], text=True)); print("\\n".join([c.get("id") or c.get("name") or "" for c in data.get("changes", [])]))' | while read -r change; do \
+		[ -n "$$change" ] || continue; \
+		echo "Validating change: $$change"; \
+		openspec validate "$$change" --json; \
+	done
+
+hooks-install:
+	git config core.hooksPath .githooks
+	pre-commit install --hook-type pre-commit
+
+hooks-run:
+	pre-commit run --all-files
 
 # Run quick start demo
 demo:

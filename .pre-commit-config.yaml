@@ -1,6 +1,6 @@
 # Pre-commit hooks configuration
-# Install: pip install pre-commit && pre-commit install
-# Run manually: pre-commit run --all-files
+# Install: make hooks-install
+# Run manually: make hooks-run
 
 repos:
   # Ruff - Fast Python linter and formatter
@@ -19,6 +19,7 @@ repos:
     hooks:
       - id: check-yaml
         args: [--unsafe]
+      - id: check-json
       - id: check-toml
       - id: end-of-file-fixer
       - id: trailing-whitespace
