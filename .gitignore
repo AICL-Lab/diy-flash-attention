@@ -78,3 +78,6 @@ benchmark_report.md
 node_modules/
 docs/.vitepress/dist/
 docs/.vitepress/cache/
+
+# Claude Code
+.claude/
