@@ -1,7 +1,5 @@
 # docs/ - 文档站点
 
-> **导航**: [← 项目根目录](../CLAUDE.md)
-
 ## 模块概述
 
 本目录包含 DIY FlashAttention 的 VitePress 文档站点，支持中英双语。
