@@ -15,7 +15,7 @@ Use Claude in this repository as a **spec-driven cleanup and stabilization engin
 
 - `/opsx:explore` for ambiguity, architecture drift, or cross-cutting investigation
 - `/opsx:propose` for new non-trivial work
-- `/opsx:apply stabilize-project-for-archive` for the current cleanup program
+- `/opsx:apply <current-change>` for the active cleanup change selected from `openspec list --json`
 - `/review` before merge or before declaring a large cleanup slice finished
 
 ## Cost and focus guidance
@@ -199,7 +199,7 @@ docs/
 | `engineering-workflow` | CI/质量工具 |
 | `project-governance` | OpenSpec 工作流 |
 
-**当前变更**: `stabilize-project-for-archive`
+**当前变更**: 以 `openspec list --json` 为准；仓库范围清理应保持单一活跃 change
 
 ---
 

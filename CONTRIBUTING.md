@@ -1,262 +1,91 @@
 # 贡献指南
 
-感谢你对 DIY FlashAttention 项目的兴趣！本文档将帮助你了解如何为项目做出贡献。
+感谢你为 DIY FlashAttention 做改进。这个仓库的目标不是持续扩张功能，而是把它维持成一个**教育性、forward-only、OpenSpec-first** 的 Triton FlashAttention 参考实现。
 
-## 开发范式：规范驱动开发（SDD）
+## 先理解项目边界
 
-本项目严格遵循**规范驱动开发（Spec-Driven Development, SDD）**范式。所有代码实现必须以 `/specs` 目录下的规范文档为唯一事实来源。
+- **这是教学实现，不是完整训练框架。**
+- 默认关注点是 `kernels/`、`utils/`、`tests/`、`benchmarks/`、`examples/`。
+- 公开表面包括 `README.md`、`README.zh-CN.md`、`docs/`、GitHub Pages 和 GitHub About。
+- 非平凡修改必须通过 OpenSpec change 承接，而不是直接改代码。
 
-### 规范文档位置
+## OpenSpec-first 工作流
 
-```
-specs/
-├── product/              # 产品需求文档（PRD）
-│   └── flash-attention-prd.md    # 产品功能需求与验收标准
-├── rfc/                  # 技术设计与架构方案（RFCs）
-│   └── 0001-core-architecture.md # 核心架构设计文档
-├── api/                  # API 接口规范
-├── db/                   # 数据库模式规范（如适用）
-└── testing/              # BDD 测试用例规范
-    └── flash-attention.feature   # 行为驱动测试场景
-```
+1. 先查看当前变更：
 
-### AI 和人类开发者的工作流程
+   ```bash
+   openspec list --json
+   ```
 
-1. **审查规范**：在编写代码之前，首先阅读 `/specs` 目录下的相关文档
-2. **规范优先**：如果需要新功能或修改现有功能，**必须先提议修改或创建相应的规范文档**
-3. **代码实现**：编写代码时，必须 100% 遵守规范中的定义
-4. **测试验证**：根据规范中的验收标准编写测试
+2. 选择或创建活跃 change，并阅读：
 
-详见 [AGENTS.md](./AGENTS.md) 中的完整工作流说明。
+   - `openspec/changes/<change>/proposal.md`
+   - `openspec/changes/<change>/design.md`
+   - `openspec/changes/<change>/tasks.md`
+   - `openspec/specs/<capability>/spec.md`
 
-## 开发环境设置
+3. 如果没有相关活跃 change，先创建/propose，再开始实现。
+4. 改动时同步更新相邻的 spec、测试、文档和配置，避免 README / Pages / CI / About 漂移。
+5. 非平凡实现切片完成后先做 review，再准备 merge 或 archive。
 
-### 1. 克隆仓库
+对于仓库级清理，请保持**同一时间只有一个活跃 cleanup/finalization change**。
 
-```bash
-git clone https://github.com/LessUp/diy-flash-attention.git
-cd diy-flash-attention
-```
+## 本地开发
 
-### 2. 创建虚拟环境
+### Python 环境
 
 ```bash
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-# venv\Scripts\activate  # Windows
-```
-
-### 3. 安装开发依赖
-
-```bash
+python -m venv .venv
+source .venv/bin/activate
 pip install -e ".[dev]"
-# 或者
-pip install -r requirements.txt
-pip install hypothesis pytest-cov
 ```
 
-### 4. 验证安装
+### 文档依赖
+
+如果你会修改 `docs/`、`package.json`、VitePress 配置或 GitHub Pages 相关内容，再执行：
 
 ```bash
-make test
-make gpu-info
+npm ci
 ```
 
-## 代码规范
+## 验证基线
 
-### Python 风格
-
-- 遵循 PEP 8 规范
-- 使用类型注解
-- 函数和类需要 docstring
-- 最大行长度 100 字符
-
-### Triton Kernel 规范
-
-- 使用描述性的变量名
-- 添加注释解释关键算法步骤
-- 使用 `tl.constexpr` 标记编译时常量
-- 处理边界条件 (masking)
-
-### 示例
-
-```python
-@triton.jit
-def example_kernel(
-    input_ptr,
-    output_ptr,
-    n_elements,
-    BLOCK_SIZE: tl.constexpr,  # 编译时常量
-):
-    """
-    示例 kernel - 简要描述功能
-    
-    Args:
-        input_ptr: 输入数据指针
-        output_ptr: 输出数据指针
-        n_elements: 元素数量
-        BLOCK_SIZE: 每个 block 处理的元素数
-    """
-    # 获取当前 program ID
-    pid = tl.program_id(0)
-    
-    # 计算偏移量
-    offsets = pid * BLOCK_SIZE + tl.arange(0, BLOCK_SIZE)
-    
-    # 边界检查
-    mask = offsets < n_elements
-    
-    # 加载、计算、存储
-    data = tl.load(input_ptr + offsets, mask=mask)
-    result = data * 2  # 示例计算
-    tl.store(output_ptr + offsets, result, mask=mask)
-```
-
-## 测试要求
-
-### 单元测试
-
-每个新功能都需要对应的单元测试：
-
-```python
-# tests/test_new_feature.py
-import pytest
-import torch
-
-class TestNewFeature:
-    def test_basic_functionality(self):
-        """测试基本功能"""
-        # 准备输入
-        # 调用函数
-        # 验证输出
-        pass
-    
-    def test_edge_cases(self):
-        """测试边界情况"""
-        pass
-    
-    def test_error_handling(self):
-        """测试错误处理"""
-        with pytest.raises(ValueError):
-            # 触发错误的代码
-            pass
-```
-
-### 属性测试
-
-对于核心算法，添加属性测试：
-
-```python
-from hypothesis import given, strategies as st, settings
-
-class TestNewFeatureProperty:
-    @settings(max_examples=100, deadline=None)
-    @given(
-        size=st.integers(min_value=16, max_value=256),
-    )
-    def test_correctness_property(self, size):
-        """
-        Feature: new-feature, Property N: Description
-        Validates: Requirements X.Y
-        """
-        # 生成随机输入
-        # 计算结果
-        # 验证属性
-        pass
-```
-
-### 运行测试
+提交前至少运行与改动相关的现有命令；仓库级修改通常需要完整基线：
 
 ```bash
-# 运行所有测试
-make test
-
-# 运行特定测试
-pytest tests/test_new_feature.py -v
-
-# 运行测试并显示覆盖率
-pytest tests/ --cov=kernels --cov=utils --cov-report=html
+make lint
+make typecheck
+pytest tests/ -v -m "not cuda" --ignore=tests/test_properties.py
+npm run docs:build
+openspec validate
 ```
 
-## 提交规范
+说明：
 
-### Commit 消息格式
+- GPU 相关测试在无 CUDA 环境下可以跳过，但不要伪造通过。
+- 如果你修改了 README / docs / workflows / About 文案，请确保它们讲的是同一个项目故事。
 
-使用 [Conventional Commits](https://www.conventionalcommits.org/) 格式：
+## 改动风格
 
-```
-<type>(<scope>): <description>
+- 优先做**小而完整**的修改，而不是大而散的半成品。
+- 优先删除过期、重复、低价值内容，而不是继续叠加样板。
+- 不要引入新的基础设施，除非它能明显降低本仓库的长期维护成本。
+- 不要把临时 change 名称、外部协议、不可复用的个人工作流写进长期文档。
 
-[optional body]
+## Pull Request 建议
 
-[optional footer]
-```
-
-### Type 类型
-
-- `feat`: 新功能
-- `fix`: Bug 修复
-- `docs`: 文档更新
-- `test`: 测试相关
-- `refactor`: 代码重构
-- `perf`: 性能优化
-- `chore`: 构建/工具相关
-
-### 示例
-
-```
-feat(kernels): 添加 FP8 矩阵乘法支持
-
-- 实现 FP8 E4M3 和 E5M2 格式转换
-- 添加 Hopper GPU 检测
-- 包含 fallback 到 FP16
-
-Closes #123
-```
-
-## Pull Request 流程
-
-### 1. 创建分支
-
-```bash
-git checkout -b feature/your-feature-name
-```
-
-### 2. 开发和测试
-
-```bash
-# 编写代码
-# 添加测试
-make test
-```
-
-### 3. 提交更改
-
-```bash
-git add .
-git commit -m "feat(scope): description"
-```
-
-### 4. 推送并创建 PR
-
-```bash
-git push origin feature/your-feature-name
-# 在 GitHub 上创建 Pull Request
-```
-
-### PR 检查清单
-
-- [ ] 代码遵循项目风格规范
-- [ ] 添加了必要的测试
-- [ ] 所有测试通过
-- [ ] 更新了相关文档
-- [ ] Commit 消息符合规范
+- 用短生命周期分支，避免本地/云端长期分叉。
+- 在 PR 描述里写清楚关联的 OpenSpec change。
+- 对跨文件重构、治理文档重写、CI/工具链调整这类变更，先做 review 再合并。
 
 ## 报告问题
 
-### Bug 报告
+请尽量附带：
 
-请包含以下信息：
+- 复现步骤
+- 使用的 Python / CUDA / Triton / PyTorch 版本
+- GPU 型号与环境信息
+- 相关日志、报错、截图或最小复现片段
 
 1. **环境信息**
    - Python 版本

@@ -1,8 +1,9 @@
 ## Description
 Briefly describe the changes in this PR.
 
-## Related Issue
-Closes # (issue number)
+## Related OpenSpec Change
+- Change: `openspec/changes/<change-name>/`
+- Issue / discussion (optional): Closes #
 
 ## Type of Change
 - [ ] Bug fix (non-breaking change that fixes an issue)
@@ -11,20 +12,19 @@ Closes # (issue number)
 - [ ] Documentation update
 - [ ] CI / Workflow improvement
 
-## Spec Compliance
-This project follows **Spec-Driven Development (SDD)**. Please confirm:
-- [ ] Relevant spec documents in `/specs/` have been created or updated
-- [ ] Code implementation matches the spec definitions
-- [ ] Tests cover all acceptance criteria from the spec
+## OpenSpec Compliance
+- [ ] Relevant change artifacts and/or affected `openspec/specs/<capability>/spec.md` files were reviewed or updated
+- [ ] Code/docs/config changes match the OpenSpec intent
+- [ ] Adjacent tests and documentation were updated when behavior or messaging changed
 
 ## Testing
-- [ ] CPU tests pass (`pytest tests/ -v -m "not cuda"`)
-- [ ] Lint passes (`ruff check . && ruff format --check .`)
-- [ ] Type checks pass (`mypy kernels utils`)
+- [ ] `make lint`
+- [ ] `make typecheck`
+- [ ] `pytest tests/ -v -m "not cuda" --ignore=tests/test_properties.py`
+- [ ] `npm run docs:build` (if docs / Pages / metadata-adjacent files changed)
 - [ ] New unit tests added (if applicable)
 
 ## Checklist
 - [ ] My code follows the project's coding style
-- [ ] I have added comments where necessary
 - [ ] I have updated the documentation (if applicable)
-- [ ] My changes generate no new warnings
+- [ ] I used review for a broad or risky cleanup slice

@@ -12,7 +12,7 @@ Use OpenSpec as the only change-management system for non-trivial work:
 4. Use `apply` or `/opsx:apply <change>` to execute tasks from the selected change.
 5. Use `archive` or `/opsx:archive <change>` once tasks are complete.
 
-For repository-wide cleanup, continue the active change `stabilize-project-for-archive` unless there is a strong reason to split scope.
+For repository-wide cleanup, keep exactly one active finalization/change thread at a time. If no relevant active change exists, create one instead of editing directly against completed work.
 
 ## What matters in this repo
 

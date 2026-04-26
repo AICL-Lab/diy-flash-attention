@@ -2,35 +2,29 @@
 
 ## Supported Versions
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 1.0.x   | ✅ Yes             |
-| < 1.0   | ❌ No              |
+This repository is maintained as an archive-ready educational project. The default branch is the only supported line for security fixes; older tags and historical snapshots should be treated as read-only reference material.
 
 ## Reporting a Vulnerability
 
-We take security issues seriously. If you discover a security vulnerability, please follow these steps:
+If you discover a security issue:
 
-1. **DO NOT** open a public issue.
-2. Email the maintainer directly at the email associated with the repository.
-3. Include the following information:
-   - Description of the vulnerability
-   - Steps to reproduce (if applicable)
-   - Potential impact assessment
+1. **Do not** open a public issue with exploit details.
+2. Use GitHub Security Advisories if available, or contact the maintainer privately via the address associated with the repository.
+3. Include:
+   - a clear description of the issue
+   - the affected file, command, or workflow
+   - reproduction steps or a minimal proof of concept
+   - impact and any suggested mitigation
 
-We will acknowledge receipt within 48 hours and provide a detailed response within 7 days.
+Response times are best-effort; this repository is maintained lightly, but credible security reports will be reviewed and triaged.
 
-## Security Best Practices for Contributors
+## Contributor Guidance
 
 - Never commit API keys, tokens, or credentials to the repository.
-- Use `pip-audit` to scan dependencies for known vulnerabilities (runs in CI).
-- Ensure all user input is validated before being passed to kernel operations.
-- Follow the [Spec-Driven Development (SDD)](AGENTS.md) workflow to maintain code quality.
+- Keep dependencies and version requirements aligned across config files, CI, and docs.
+- Follow the OpenSpec-first workflow described in [`AGENTS.md`](../AGENTS.md) when changing behavior or workflows.
+- Report unsafe defaults in docs, examples, or automation just as you would report code defects.
 
 ## Dependency Security
 
-This project uses:
-- `torch` >= 2.0.0
-- `triton` >= 2.1.0
-
-Always use the latest stable versions to benefit from security patches.
+The project depends primarily on `torch` and `triton`. If a dependency-level vulnerability affects this repository's documented setup or workflows, update the relevant config, docs, and CI guidance together.

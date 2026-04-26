@@ -576,9 +576,9 @@ make report
 2. **修改源码实验**
    - 尝试不同的 Block Size
    - 添加新的 autotune 配置
-   - 实现其他 GPU kernel
+   - 在你自己的 GPU 上对比 benchmark 结果
 
-3. **探索高级主题**
+3. **探索超出当前仓库范围的高级主题**
    - FlashAttention Backward Pass
    - TMA (Tensor Memory Accelerator)
    - FP8 计算

@@ -214,8 +214,9 @@ make clean       # 清理缓存
 
 ```bash
 openspec list --json
-openspec status --change stabilize-project-for-archive --json
-openspec instructions apply --change stabilize-project-for-archive --json
+# 从上面的列表中选择当前活跃 change
+openspec status --change <change-name> --json
+openspec instructions apply --change <change-name> --json
 ```
 
 流程约束见 [AGENTS.md](./AGENTS.md)、[CLAUDE.md](./CLAUDE.md) 和 [openspec/specs/README.md](./openspec/specs/README.md)。
@@ -252,12 +253,12 @@ openspec instructions apply --change stabilize-project-for-archive --json
 
 ## 贡献
 
-详见 [CONTRIBUTING.md](./CONTRIBUTING.md)。推荐的入门方向：
+详见 [CONTRIBUTING.md](./CONTRIBUTING.md)。当前最有价值的贡献通常是让仓库更清晰、更可信：
 
-- 🔮 实现 Hopper TMA / FP8 核函数
-- 📊 扩展 benchmark 覆盖（稀疏注意力、分组查询、**反向传播**）
-- 📝 改进文档或添加示例
-- 🐛 修复边缘情况或增加属性测试
+- 📝 改进文档、示例，以及 README 与 Pages 之间的串联
+- 🐛 修复边缘情况或收紧错误处理
+- ✅ 为现有的 forward-only 行为补强测试
+- 🧹 删除不再有帮助的陈旧流程/文档/配置噪声
 
 ---
 

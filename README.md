@@ -214,8 +214,9 @@ This project follows **OpenSpec-driven development**. For non-trivial work:
 
 ```bash
 openspec list --json
-openspec status --change stabilize-project-for-archive --json
-openspec instructions apply --change stabilize-project-for-archive --json
+# choose the active change from the list above
+openspec status --change <change-name> --json
+openspec instructions apply --change <change-name> --json
 ```
 
 See [AGENTS.md](./AGENTS.md), [CLAUDE.md](./CLAUDE.md), and [openspec/specs/README.md](./openspec/specs/README.md) for the workflow contract.
@@ -252,12 +253,12 @@ See [GitHub Issues](https://github.com/LessUp/diy-flash-attention/issues) for mo
 
 ## Contributing
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines. Good first areas:
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines. The most useful contributions usually keep the repository clearer and more trustworthy:
 
-- 🔮 Implement Hopper TMA / FP8 kernels
-- 📊 Extend benchmark coverage (sparse attention, grouped query, **backward pass**)
-- 📝 Improve docs or add examples
-- 🐛 Fix edge cases or add property tests
+- 📝 Improve docs, examples, or cross-links between README and Pages
+- 🐛 Fix edge cases or tighten error handling
+- ✅ Add or refine tests around current forward-only behavior
+- 🧹 Remove stale process/docs/config clutter that no longer helps readers
 
 ---
 

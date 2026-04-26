@@ -342,9 +342,9 @@ make report
 2. **Experiment with Source Code**
    - Try different Block Sizes
    - Add new autotune configs
-   - Implement other GPU kernels
+   - Compare benchmark results against your own GPU
 
-3. **Explore Advanced Topics**
+3. **Explore Advanced Topics Outside This Repo's Current Scope**
    - FlashAttention Backward Pass
    - TMA (Tensor Memory Accelerator)
    - FP8 computation

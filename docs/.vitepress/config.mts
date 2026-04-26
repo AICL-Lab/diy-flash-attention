@@ -9,7 +9,7 @@ export default defineConfig({
   lang: 'en-US',
   title: 'DIY FlashAttention',
   titleTemplate: ':title | DIY FlashAttention',
-  description: 'Learn Triton by implementing FlashAttention from scratch. Educational kernels, benchmarks, architecture-aware helpers, and bilingual docs.',
+  description: 'Forward-only educational FlashAttention in Triton, with benchmarks, architecture-aware helpers, and bilingual docs.',
   
   base: '/diy-flash-attention/',
   cleanUrls: true,
@@ -30,14 +30,14 @@ export default defineConfig({
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:site_name', content: 'DIY FlashAttention' }],
     ['meta', { property: 'og:title', content: 'DIY FlashAttention | Learn Triton by Building Attention Kernels' }],
-    ['meta', { property: 'og:description', content: 'Educational Triton kernels, FlashAttention walkthroughs, benchmarks, and architecture-aware helpers.' }],
+    ['meta', { property: 'og:description', content: 'Forward-only educational FlashAttention in Triton, with benchmarks, architecture-aware helpers, and bilingual docs.' }],
     ['meta', { property: 'og:url', content: 'https://lessup.github.io/diy-flash-attention/' }],
     ['meta', { property: 'og:image', content: 'https://lessup.github.io/diy-flash-attention/og-image.svg' }],
     
     // Twitter
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
     ['meta', { name: 'twitter:title', content: 'DIY FlashAttention' }],
-    ['meta', { name: 'twitter:description', content: 'Learn Triton by implementing FlashAttention from scratch.' }],
+    ['meta', { name: 'twitter:description', content: 'Forward-only educational FlashAttention in Triton, with benchmarks and bilingual docs.' }],
     ['meta', { name: 'twitter:image', content: 'https://lessup.github.io/diy-flash-attention/og-image.svg' }],
     
     // Fonts
@@ -175,7 +175,7 @@ export default defineConfig({
     },
 
     footer: {
-      message: 'Educational Triton FlashAttention project · MIT License',
+      message: 'Forward-only educational Triton FlashAttention project · MIT License',
       copyright: 'Copyright © 2024-2026 LessUp',
     },
 

@@ -7,12 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-- 🌍 **Internationalization**: Complete bilingual documentation (English/Chinese)
-  - English documentation in `docs/en/`
-  - Chinese documentation in `docs/zh/`
-  - Language switcher in VitePress config
-- 📚 **Enhanced Documentation**: Comprehensive professional documentation overhaul
+### Changed
+- OpenSpec governance, documentation, and archive-readiness cleanup are in progress.
 
 ## [1.0.3] - 2026-04-16
 
@@ -25,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - 📝 **Documentation**: Comprehensive changelog and spec documentation review
   - Validated all 6 changelog files for consistency
-  - Reviewed `.kiro/specs/` alignment with implementation
+  - Reviewed OpenSpec/docs alignment with implementation
   - Verified VitePress configuration completeness
 
 ### Infrastructure
@@ -172,37 +168,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | 1.0.2 | 2025-02-27 | Patch | Python 3.9+ fix, new tests |
 | 1.0.1 | 2025-02-27 | Patch | Spec sync |
 | 1.0.0 | 2024-12-31 | Minor | Initial release |
-
----
-
-## Roadmap
-
-### [1.1.0] - Planned
-
-- [ ] FlashAttention Backward Pass
-- [ ] TMA (Tensor Memory Accelerator) full implementation for Hopper+
-- [ ] FP8 matrix multiplication kernel
-- [ ] Extended benchmark scenarios with profiling integration
-
-### [1.2.0] - Planned
-
-- [ ] Multi-Query Attention (MQA) support
-- [ ] Grouped-Query Attention (GQA) support
-- [ ] Variable sequence length optimizations
-- [ ] Flash-Decoding implementation
-
----
-
-## Versioning Policy
-
-This project follows [Semantic Versioning](https://semver.org/):
-
-- **MAJOR**: Incompatible API changes
-- **MINOR**: Backwards-compatible new features
-- **PATCH**: Backwards-compatible bug fixes
-
----
-
-## Archives
-
-Detailed changelogs for each release are archived in [`archive/`](./archive/).

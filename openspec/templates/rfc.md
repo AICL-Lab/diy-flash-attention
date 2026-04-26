@@ -14,8 +14,9 @@ The proposed change or new architecture.
 - Risks: ...
 - Migration: ...
 
-## Related Specs
-- Links to openspec/specs/
+## Related Capabilities
+- `openspec/specs/<capability>/spec.md`
+- Any delta specs under `openspec/changes/<change-name>/specs/`
 
 ## Implementation
 - [ ] Phase 1: ...

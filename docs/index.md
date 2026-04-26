@@ -5,8 +5,8 @@ hero:
   name: "DIY"
   text: "FlashAttention"
   tagline: |
-    Learn Triton by reading, benchmarking, and modifying a compact FlashAttention implementation
-    
+    Learn Triton through a forward-only educational FlashAttention implementation
+
     <div class="badge-group">
       <span class="badge">⚡ 99% Memory Reduction</span>
       <span class="badge purple">🚀 1.6x Speedup</span>
