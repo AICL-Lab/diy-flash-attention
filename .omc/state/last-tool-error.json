@@ -1,7 +1,0 @@
-{
-  "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"sleep 2 && git push origin master 2>&1\",\"timeout\":60000,\"description\":\"重试推送到远程\"}",
-  "error": "Exit code 128\nfatal: unable to access 'https://github.com/LessUp/diy-flash-attention.git/': gnutls_handshake() failed: The TLS connection was non-properly terminated.",
-  "timestamp": "2026-04-27T04:08:41.662Z",
-  "retry_count": 2
-}
