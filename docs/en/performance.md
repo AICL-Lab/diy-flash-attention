@@ -158,7 +158,7 @@ def memory_report():
     allocated = torch.cuda.memory_allocated() / 1024**3
     reserved = torch.cuda.memory_reserved() / 1024**3
     peak = torch.cuda.max_memory_allocated() / 1024**3
-    
+
     print(f"Allocated: {allocated:.2f} GB")
     print(f"Reserved:  {reserved:.2f} GB")
     print(f"Peak:      {peak:.2f} GB")
@@ -207,7 +207,7 @@ features = check_hopper_features()
 
 if features["tma_available"]:
     print("TMA available - async loading possible")
-    
+
 if features["fp8_available"]:
     print("FP8 available - low precision compute possible")
 

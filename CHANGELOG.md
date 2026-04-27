@@ -7,8 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.4] - 2026-04-27
+
 ### Changed
-- OpenSpec governance, documentation, and archive-readiness cleanup are in progress.
+- 🔧 **Python 版本**: 升级最低支持版本至 Python 3.10（3.9 已 EOL）
+- 🔧 **pre-commit**: 更新 ruff 至 v0.11.7，pre-commit-hooks 至 v5.0.0
+
+### Removed
+- 🗑️ 删除冗余的 `dev/` 目录（5 个低价值临时文档）
+- 🗑️ 删除冗余的 `changelog/archive/` 目录（与 CHANGELOG.md 重复）
+- 🗑️ 删除 `requirements.txt`（统一使用 pyproject.toml）
+- 🗑️ 删除 `.githooks/` 目录（统一使用 pre-commit 框架）
+
+### Infrastructure
+- ✅ OpenSpec change 状态清理（归档已完成的 change）
+- ✅ Git Hook 配置统一为 pre-commit 框架
+- ✅ 项目达到 archive-ready 状态
+
+---
 
 ## [1.0.3] - 2026-04-16
 

@@ -83,11 +83,11 @@
     flex-direction: column;
     gap: 1rem;
   }
-  
+
   .path-step {
     border-radius: var(--vp-radius-lg) !important;
   }
-  
+
   .path-step:not(:last-child)::after {
     display: none;
   }
@@ -469,7 +469,7 @@
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
-  
+
   .feature-highlight.reverse {
     direction: ltr;
   }

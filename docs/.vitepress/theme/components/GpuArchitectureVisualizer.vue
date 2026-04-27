@@ -1,8 +1,8 @@
 <template>
   <div class="gpu-visualizer">
     <div class="controls">
-      <button 
-        v-for="arch in architectures" 
+      <button
+        v-for="arch in architectures"
         :key="arch.id"
         :class="['arch-btn', { active: selectedArch === arch.id }]"
         @click="selectArch(arch.id)"
@@ -10,7 +10,7 @@
         {{ arch.name }}
       </button>
     </div>
-    
+
     <div class="architecture-display">
       <Transition name="fade" mode="out-in">
         <div :key="selectedArch" class="arch-details">
@@ -18,10 +18,10 @@
             <h3>{{ currentArch.name }}</h3>
             <span class="arch-badge">{{ currentArch.sm }}</span>
           </div>
-          
+
           <div class="memory-hierarchy">
-            <div 
-              v-for="(level, index) in currentArch.memory" 
+            <div
+              v-for="(level, index) in currentArch.memory"
               :key="index"
               class="memory-level"
               :style="{ animationDelay: `${index * 100}ms` }"
@@ -36,10 +36,10 @@
               </div>
             </div>
           </div>
-          
+
           <div class="features">
-            <div 
-              v-for="feature in currentArch.features" 
+            <div
+              v-for="feature in currentArch.features"
               :key="feature.name"
               class="feature-tag"
               :class="{ supported: feature.supported }"

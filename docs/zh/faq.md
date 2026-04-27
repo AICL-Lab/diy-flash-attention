@@ -135,7 +135,7 @@ print(f"Time: {(time.time() - start) / 100 * 1000:.3f} ms")
 
 ### Q: 如何选择最优 Block Size？
 
-**A:** 
+**A:**
 
 **推荐方式**：使用 autotune（默认）
 

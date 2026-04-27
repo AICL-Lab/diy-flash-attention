@@ -104,7 +104,7 @@ def add_kernel(
 ):
     """
     Vector addition: output = x + y
-    
+
     Key concepts:
     1. tl.program_id(0): Get current block ID
     2. tl.arange(): Create index sequence
@@ -115,7 +115,7 @@ def add_kernel(
     block_start = pid * BLOCK_SIZE
     offsets = block_start + tl.arange(0, BLOCK_SIZE)
     mask = offsets < n_elements
-    
+
     x = tl.load(x_ptr + offsets, mask=mask, other=0.0)
     y = tl.load(y_ptr + offsets, mask=mask, other=0.0)
     output = x + y
@@ -127,7 +127,7 @@ def add(x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
     output = torch.empty_like(x)
     n_elements = output.numel()
     grid = lambda meta: (triton.cdiv(n_elements, meta['BLOCK_SIZE']),)
-    
+
     add_kernel[grid](
         x, y, output, n_elements,
         BLOCK_SIZE=1024,
@@ -144,16 +144,16 @@ def add(x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
 ```python
 def standard_attention(Q, K, V):
     # Q: (batch, heads, seq_len, head_dim)
-    
+
     # Step 1: Compute attention scores
     S = Q @ K.transpose(-2, -1) / sqrt(d)  # O(N²) memory
-    
+
     # Step 2: Softmax
     P = softmax(S, dim=-1)  # O(N²)
-    
+
     # Step 3: Weighted sum
     O = P @ V  # O(N²)
-    
+
     return O
 ```
 
@@ -196,30 +196,30 @@ Standard softmax requires two passes:
 def online_softmax(Q, K, V):
     """
     Online Softmax Algorithm
-    
+
     Key insight: Maintain running max and running sum
     Can update incrementally without storing full matrix
     """
     m = -inf      # running max
     l = 0         # running sum of exp
     O = 0         # running output
-    
+
     for K_j, V_j in blocks(K, V):
         # 1. Compute current block's attention scores
         S_j = Q @ K_j.T / sqrt(d)
-        
+
         # 2. Update running max
         m_new = max(m, max(S_j, axis=1))
-        
+
         # 3. Update running sum (correct previous values)
         l_new = exp(m - m_new) * l + sum(exp(S_j - m_new[:, None]), axis=1)
-        
+
         # 4. Update output (also requires correction)
-        O_new = (exp(m - m_new)[:, None] * O * l[:, None] + 
+        O_new = (exp(m - m_new)[:, None] * O * l[:, None] +
                  exp(S_j - m_new[:, None]) @ V_j) / l_new[:, None]
-        
+
         m, l, O = m_new, l_new, O_new
-    
+
     return O
 ```
 

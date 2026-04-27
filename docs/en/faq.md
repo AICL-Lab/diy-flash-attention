@@ -252,7 +252,7 @@ out_orig = flash_attention(q_test, k, v, causal=True)
 out_mod = flash_attention(q_test, k_modified, v, causal=True)
 
 # First half should be identical
-first_half_diff = (out_orig[:, :, :seq_len//2, :] - 
+first_half_diff = (out_orig[:, :, :seq_len//2, :] -
                    out_mod[:, :, :seq_len//2, :]).abs().max()
 print(f"Causality check: {first_half_diff.item():.2e} (should be ~0)")
 ```
@@ -318,9 +318,9 @@ print(f"FP8: {features['fp8_available']}")
 **Method 1: Small inputs for manual verification**
 
 ```python
-a = torch.tensor([[1.0, 2.0], [3.0, 4.0]], 
+a = torch.tensor([[1.0, 2.0], [3.0, 4.0]],
                  device="cuda", dtype=torch.float16)
-b = torch.tensor([[5.0, 6.0], [7.0, 8.0]], 
+b = torch.tensor([[5.0, 6.0], [7.0, 8.0]],
                  device="cuda", dtype=torch.float16)
 
 result = triton_matmul(a, b)
@@ -386,5 +386,5 @@ is_valid, max_diff = validate_matmul(
 
    ## Error Message
    ```
-   
+
    ```

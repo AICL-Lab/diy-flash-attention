@@ -78,6 +78,18 @@ openspec validate
 - 在 PR 描述里写清楚关联的 OpenSpec change。
 - 对跨文件重构、治理文档重写、CI/工具链调整这类变更，先做 review 再合并。
 
+## 文档结构
+
+- `README.md` / `README.zh-CN.md` - 项目概述（中英双语）
+- `AGENTS.md` - AI 代理工作流指令
+- `CONTRIBUTING.md` - 贡献指南（本文件）
+- `openspec/` - OpenSpec 规范管理
+  - `specs/<capability>/spec.md` - 能力规范
+  - `changes/<change>/` - 活跃变更
+  - `changes/archive/` - 已归档变更
+- `docs/` - VitePress 文档站点（中英双语）
+- `CHANGELOG.md` - 版本历史
+
 ## 报告问题
 
 请尽量附带：
@@ -86,50 +98,6 @@ openspec validate
 - 使用的 Python / CUDA / Triton / PyTorch 版本
 - GPU 型号与环境信息
 - 相关日志、报错、截图或最小复现片段
-
-1. **环境信息**
-   - Python 版本
-   - PyTorch 版本
-   - Triton 版本
-   - GPU 型号和 CUDA 版本
-
-2. **问题描述**
-   - 期望行为
-   - 实际行为
-   - 复现步骤
-
-3. **错误信息**
-   - 完整的错误堆栈
-   - 相关日志
-
-### 功能请求
-
-请描述：
-
-1. 你想要的功能
-2. 使用场景
-3. 可能的实现方式（可选）
-
-## 文档贡献
-
-### 文档结构
-
-- `README.md` - 项目概述
-- `AGENTS.md` - AI 代理工作流指令（规范驱动开发）
-- `specs/` - 规范文档（产品需求、技术 RFC、API 规范、测试规范）
-  - `specs/product/` - 产品需求文档
-  - `specs/rfc/` - 技术设计文档
-  - `specs/testing/` - BDD 测试规范
-- `docs/tutorial.md` - 教程
-- `docs/api.md` - API 参考
-- `CHANGELOG.md` - 版本历史
-- `CONTRIBUTING.md` - 贡献指南
-
-### 文档风格
-
-- 使用中文编写
-- 代码示例需要可运行
-- 添加必要的注释和解释
 
 ## 联系方式
 

@@ -8,7 +8,7 @@
         <span class="legend-item"><span class="arrow"></span> Data Flow</span>
       </div>
     </div>
-    
+
     <div class="viz-container">
       <!-- HBM Layer -->
       <div class="memory-layer hbm-layer">
@@ -20,18 +20,18 @@
           <div class="tensor o">O<br><small>Output</small></div>
         </div>
       </div>
-      
+
       <!-- Arrow Down -->
       <div class="flow-arrow down" :class="{ active: isAnimating }">
         <span class="arrow-label">Load Tiles</span>
       </div>
-      
+
       <!-- SRAM Layer -->
       <div class="memory-layer sram-layer">
         <div class="layer-label">SRAM (Shared Memory - Fast!)</div>
         <div class="compute-blocks">
-          <div 
-            v-for="(block, idx) in computeBlocks" 
+          <div
+            v-for="(block, idx) in computeBlocks"
             :key="idx"
             class="compute-block"
             :class="{ active: currentBlock === idx }"
@@ -47,12 +47,12 @@
           </div>
         </div>
       </div>
-      
+
       <!-- Arrow Up -->
       <div class="flow-arrow up" :class="{ active: isAnimating }">
         <span class="arrow-label">Write Back</span>
       </div>
-      
+
       <!-- Stats -->
       <div class="stats" v-if="showStats">
         <div class="stat">
@@ -69,7 +69,7 @@
         </div>
       </div>
     </div>
-    
+
     <div class="viz-controls">
       <button @click="startAnimation" :disabled="isAnimating">
         {{ isAnimating ? 'Running...' : '▶ Start Animation' }}
@@ -79,7 +79,7 @@
         <input type="checkbox" v-model="showStats"> Show Stats
       </label>
     </div>
-    
+
     <div class="explanation" v-if="currentStep">
       <strong>Step {{ currentStep.number }}:</strong> {{ currentStep.description }}
     </div>
@@ -116,23 +116,23 @@ const steps = [
 async function startAnimation() {
   if (isAnimating.value) return
   isAnimating.value = true
-  
+
   for (let i = 0; i < computeBlocks.length; i++) {
     currentBlock.value = i
     currentStep.value = steps[0]
     await sleep(500)
-    
+
     for (const op of computeBlocks[i].ops) {
       currentOp.value = op
       currentStep.value = steps[['load', 'matmul', 'softmax', 'acc'].indexOf(op) + 1] || steps[4]
       await sleep(400)
     }
   }
-  
+
   currentOp.value = 'write'
   currentStep.value = steps[4]
   await sleep(500)
-  
+
   isAnimating.value = false
   currentBlock.value = -1
   currentOp.value = ''

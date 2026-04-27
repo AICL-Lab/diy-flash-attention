@@ -117,7 +117,7 @@ configs = [
 ]
 
 for config in configs:
-    c = triton_matmul(a, b, 
+    c = triton_matmul(a, b,
         block_m=config["BLOCK_M"],
         block_n=config["BLOCK_N"],
         block_k=config["BLOCK_K"]
@@ -132,7 +132,7 @@ for config in configs:
 def check_sram_usage(block_m, block_n, block_k, dtype_bytes=2):
     """
     估算 SRAM 使用量。
-    
+
     SRAM 限制:
     - Ampere (SM80): ~164 KB per SM
     - Ada (SM89): ~192 KB per SM
@@ -142,13 +142,13 @@ def check_sram_usage(block_m, block_n, block_k, dtype_bytes=2):
     a_sram = block_m * block_k * dtype_bytes
     b_sram = block_k * block_n * dtype_bytes
     acc_sram = block_m * block_n * 4  # float32 累加器
-    
+
     total = a_sram + b_sram + acc_sram
     print(f"SRAM 使用量: {total / 1024:.1f} KB")
-    
+
     if total > 164 * 1024:
         print("⚠️ 可能超出 Ampere SRAM 限制!")
-    
+
     return total
 
 check_sram_usage(128, 256, 64)
@@ -256,7 +256,7 @@ def memory_report():
     allocated = torch.cuda.memory_allocated() / 1024**3
     reserved = torch.cuda.memory_reserved() / 1024**3
     peak = torch.cuda.max_memory_allocated() / 1024**3
-    
+
     print(f"已分配: {allocated:.2f} GB")
     print(f"已预留: {reserved:.2f} GB")
     print(f"峰值:   {peak:.2f} GB")

@@ -6,7 +6,7 @@ hero:
   text: "FlashAttention"
   tagline: |
     用一个紧凑但真实的 Triton 项目学习 attention kernel、benchmark 和 GPU 自适应配置
-    
+
     <div class="badge-group">
       <span class="badge">⚡ 内存减少 99%</span>
       <span class="badge purple">🚀 1.6倍加速</span>

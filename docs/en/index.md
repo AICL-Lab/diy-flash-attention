@@ -6,7 +6,7 @@ hero:
   text: "FlashAttention"
   tagline: |
     A compact Triton project for learning attention kernels, benchmarks, and GPU-aware configuration
-    
+
     <div class="badge-group">
       <span class="badge">⚡ 99% Memory Reduction</span>
       <span class="badge purple">🚀 1.6x Speedup</span>

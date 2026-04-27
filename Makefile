@@ -40,7 +40,7 @@ help:
 
 # Install dependencies
 install:
-	pip install -r requirements.txt
+	pip install .
 
 # Install in development mode
 install-dev:
@@ -80,7 +80,6 @@ validate-openspec:
 	done
 
 hooks-install:
-	git config core.hooksPath .githooks
 	pre-commit install --hook-type pre-commit
 
 hooks-run:

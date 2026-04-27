@@ -63,7 +63,7 @@ GPU 的并行计算能力正是解决这个问题的关键。
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**关键洞察**: 
+**关键洞察**:
 - HBM 容量大但慢，SRAM 容量小但快
 - FlashAttention 的核心思想：**让数据尽可能留在 SRAM 中**
 
@@ -134,7 +134,7 @@ def add_kernel(
 ):
     """
     向量加法: output = x + y
-    
+
     关键概念:
     1. tl.program_id(0): 获取当前 block 的 ID
     2. tl.arange(): 创建索引序列
@@ -143,21 +143,21 @@ def add_kernel(
     """
     # 1. 获取当前 block 的 ID
     pid = tl.program_id(0)
-    
+
     # 2. 计算这个 block 负责的元素范围
     block_start = pid * BLOCK_SIZE
     offsets = block_start + tl.arange(0, BLOCK_SIZE)
-    
+
     # 3. 创建 mask 处理边界 (当 n_elements 不是 BLOCK_SIZE 的倍数)
     mask = offsets < n_elements
-    
+
     # 4. 加载数据 (只加载有效的元素)
     x = tl.load(x_ptr + offsets, mask=mask, other=0.0)
     y = tl.load(y_ptr + offsets, mask=mask, other=0.0)
-    
+
     # 5. 计算
     output = x + y
-    
+
     # 6. 存储结果 (只存储有效的元素)
     tl.store(output_ptr + offsets, output, mask=mask)
 
@@ -166,17 +166,17 @@ def add(x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
     """向量加法的 wrapper 函数"""
     output = torch.empty_like(x)
     n_elements = output.numel()
-    
+
     # 计算 grid 大小
     grid = lambda meta: (triton.cdiv(n_elements, meta['BLOCK_SIZE']),)
-    
+
     # 启动 kernel
     add_kernel[grid](
         x, y, output,
         n_elements,
         BLOCK_SIZE=1024,  # 每个 block 处理 1024 个元素
     )
-    
+
     return output
 
 
@@ -184,10 +184,10 @@ def add(x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
 if __name__ == "__main__":
     x = torch.randn(10000, device="cuda", dtype=torch.float16)
     y = torch.randn(10000, device="cuda", dtype=torch.float16)
-    
+
     result = add(x, y)
     expected = x + y
-    
+
     print(f"Max diff: {(result - expected).abs().max().item():.2e}")
 ```
 
@@ -201,7 +201,7 @@ def kernel(..., BLOCK_SIZE: tl.constexpr):
     # BLOCK_SIZE 在编译时确定，可以用于:
     # 1. 数组大小
     offsets = tl.arange(0, BLOCK_SIZE)  # ✅ 正确
-    
+
     # 2. 控制流
     if BLOCK_SIZE > 64:  # ✅ 编译时分支
         ...
@@ -343,17 +343,17 @@ Group 3: Block 3, 7, 11, 15
 ```python
 def standard_attention(Q, K, V):
     # Q: (batch, heads, seq_len, head_dim)
-    
+
     # 步骤 1: 计算 attention scores
     S = Q @ K.transpose(-2, -1) / sqrt(d)  # (batch, heads, seq_len, seq_len)
     # 内存: O(N²) - 对于 N=8192, 需要 128 MB per head!
-    
+
     # 步骤 2: Softmax
     P = softmax(S, dim=-1)  # O(N²)
-    
+
     # 步骤 3: 加权求和
     O = P @ V  # O(N²)
-    
+
     return O
 ```
 
@@ -396,7 +396,7 @@ def standard_attention(Q, K, V):
 def online_softmax(Q, K, V):
     """
     Online Softmax 算法
-    
+
     关键洞察:
     - 维护 running max 和 running sum
     - 可以增量更新，无需存储完整矩阵
@@ -405,26 +405,26 @@ def online_softmax(Q, K, V):
     m = -inf      # running max (每个 query 位置)
     l = 0         # running sum of exp
     O = 0         # running output
-    
+
     # 对每个 K, V 块
     for K_j, V_j in blocks(K, V):
         # 1. 计算当前块的 attention scores
         S_j = Q @ K_j.T / sqrt(d)  # (BLOCK_M, BLOCK_N)
-        
+
         # 2. 更新 running max
         m_new = maximum(m, max(S_j, axis=1))
-        
+
         # 3. 更新 running sum (需要修正之前的值)
         # exp(m - m_new) 修正因子，因为 max 变了
         l_new = exp(m - m_new) * l + sum(exp(S_j - m_new[:, None]), axis=1)
-        
+
         # 4. 更新 output (同样需要修正)
-        O_new = (exp(m - m_new)[:, None] * O * l[:, None] + 
+        O_new = (exp(m - m_new)[:, None] * O * l[:, None] +
                  exp(S_j - m_new[:, None]) @ V_j) / l_new[:, None]
-        
+
         # 5. 更新状态
         m, l, O = m_new, l_new, O_new
-    
+
     return O
 ```
 

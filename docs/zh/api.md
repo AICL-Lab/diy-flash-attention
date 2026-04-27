@@ -49,19 +49,19 @@ def triton_matmul(
         a (torch.Tensor): 输入矩阵 A，形状 (M, K)。
             支持数据类型: float16, float32, bfloat16。
             必须是 2D CUDA tensor。
-        
+
         b (torch.Tensor): 输入矩阵 B，形状 (K, N)。
             支持数据类型: float16, float32, bfloat16。
             必须是 2D CUDA tensor，且与 a 同 dtype、同 device。
-        
+
         block_m (int, optional): M 维度的 block size。
             如果指定，必须同时指定 block_n 和 block_k。
             默认使用 autotune 自动选择。
-        
+
         block_n (int, optional): N 维度的 block size。
-        
+
         block_k (int, optional): K 维度的 block size。
-        
+
         use_autotune (bool): 是否使用 autotune。
             默认 True。仅在未指定 block size 时生效。
 
@@ -71,13 +71,13 @@ def triton_matmul(
             - float32 输入 → 输出 float16（内部转换为 float16 计算）
 
     抛出:
-        ValueError: 
+        ValueError:
             - 输入不是 2D tensor
             - 输入不是 CUDA tensor
             - 输入不在同一 device
             - 维度不兼容 (A.shape[1] != B.shape[0])
             - block size 非法 (非正数或超过矩阵维度)
-        
+
         TypeError:
             - 输入 dtype 不受支持
             - 输入 dtype 不一致
@@ -146,19 +146,19 @@ def flash_attention(
             形状: (batch, heads, seq_len, head_dim) 或 (batch*heads, seq_len, head_dim)。
             支持数据类型: float16, float32, bfloat16。
             必须是 CUDA tensor。
-        
+
         k (torch.Tensor): Key tensor。形状和 dtype 必须与 q 相同。
-        
+
         v (torch.Tensor): Value tensor。形状和 dtype 必须与 q 相同。
-        
+
         causal (bool): 是否使用因果 masking（用于自回归模型）。
             默认 False。
             当 True 时，位置 i 只能关注位置 <= i 的 token。
-        
+
         sm_scale (float, optional): Softmax 缩放因子。
             默认 1 / sqrt(head_dim)。
             对于标准 attention，建议使用默认值。
-        
+
         seq_lens (torch.Tensor, optional): 每个样本的有效序列长度。
             形状: (batch,)。
             数据类型: int32。
@@ -177,7 +177,7 @@ def flash_attention(
             - 输入不在同一 device
             - head_dim 不是 32 或 64
             - seq_lens 形状或值非法
-        
+
         TypeError:
             - 输入 dtype 不受支持
             - 输入 dtype 不一致
@@ -362,7 +362,7 @@ from utils import GPUArch
 
 class GPUArch(Enum):
     """GPU 架构枚举。"""
-    
+
     VOLTA = "sm_70"      # V100
     TURING = "sm_75"     # RTX 20xx
     AMPERE = "sm_80"     # A100, RTX 30xx
@@ -386,15 +386,15 @@ from utils import BenchmarkRunner
 class BenchmarkRunner:
     """
     运行和管理 benchmark。
-    
+
     参数:
         device (str): 运行设备。默认 "cuda"。
         warmup (int): 预热迭代次数。默认 25。
         rep (int): 重复测量次数。默认 100。
-    
+
     示例:
         矩阵乘法 benchmark::
-        
+
             from utils import BenchmarkRunner
             from kernels import triton_matmul
 
@@ -425,13 +425,13 @@ class BenchmarkRunner:
     ) -> list[BenchmarkResult]:
         """
         运行矩阵乘法 benchmark。
-        
+
         参数:
             triton_fn: Triton matmul 函数
             sizes: 矩阵大小列表 [(M, N, K), ...]
             block_configs: 可选的 block size 配置列表
             dtype: 数据类型
-        
+
         返回:
             BenchmarkResult 列表
         """
@@ -513,7 +513,7 @@ def benchmark_fn(
 ) -> tuple[float, float, float]:
     """
     对单个函数进行 benchmark。
-    
+
     参数:
         fn: 要测试的函数
         *args: 传递给 fn 的位置参数
@@ -521,10 +521,10 @@ def benchmark_fn(
         rep: 测量次数
         quantiles: 分位数列表
         **kwargs: 传递给 fn 的关键字参数
-    
+
     返回:
         tuple[float, float, float]: (median_ms, p20_ms, p80_ms)
-    
+
     示例:
         ::
 
@@ -563,7 +563,7 @@ def validate_matmul(
 ) -> tuple[bool, float]:
     """
     验证 Triton matmul 与 PyTorch 参考实现的一致性。
-    
+
     参数:
         triton_fn: Triton matmul 函数
         m, n, k: 矩阵维度
@@ -572,10 +572,10 @@ def validate_matmul(
         dtype: 数据类型
         device: 设备
         verbose: 是否打印详细信息
-    
+
     返回:
         tuple[bool, float]: (是否通过验证, 最大差异)
-    
+
     示例:
         ::
 
@@ -613,7 +613,7 @@ def validate_attention(
 ) -> tuple[bool, float]:
     """
     验证 FlashAttention 与 PyTorch SDPA 的一致性。
-    
+
     参数:
         flash_fn: FlashAttention 函数
         batch: 批次大小
@@ -626,10 +626,10 @@ def validate_attention(
         dtype: 数据类型
         device: 设备
         verbose: 是否打印详细信息
-    
+
     返回:
         tuple[bool, float]: (是否通过验证, 最大差异)
-    
+
     示例:
         ::
 
@@ -662,7 +662,7 @@ from kernels import check_hopper_features
 def check_hopper_features() -> dict[str, Any]:
     """
     检测当前 GPU 的 Hopper+ 特性支持情况。
-    
+
     返回:
         dict: 包含以下键:
             - tma_available (bool): TMA 支持
@@ -670,7 +670,7 @@ def check_hopper_features() -> dict[str, Any]:
             - wgmma_available (bool): Warpgroup MMA 支持
             - arch (str): 架构名称
             - compute_capability (tuple): 计算能力
-    
+
     示例:
         ::
 
@@ -695,7 +695,7 @@ from kernels import AdaptiveKernelSelector
 class AdaptiveKernelSelector:
     """
     根据 GPU 架构选择最优 kernel 实现。
-    
+
     示例:
         ::
 

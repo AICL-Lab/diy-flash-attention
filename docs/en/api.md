@@ -38,20 +38,20 @@ def triton_matmul(
     Matrix multiplication using Triton: C = A @ B
 
     Args:
-        a: Input matrix A, shape (M, K). 
+        a: Input matrix A, shape (M, K).
            Supported dtypes: float16, float32, bfloat16.
            Must be 2D CUDA tensor.
-        
+
         b: Input matrix B, shape (K, N).
            Must be same dtype and device as a.
-        
+
         block_m: M dimension block size (optional).
                  Must specify all three if used.
-        
+
         block_n: N dimension block size.
-        
+
         block_k: K dimension block size.
-        
+
         use_autotune: Whether to use autotune (default: True).
                       Only active when block sizes not specified.
 
@@ -113,16 +113,16 @@ def flash_attention(
            Shape: (batch, heads, seq_len, head_dim) or (batch*heads, seq_len, head_dim).
            Supported dtypes: float16, float32, bfloat16.
            Must be CUDA tensor.
-        
+
         k: Key tensor. Must match q's shape and dtype.
-        
+
         v: Value tensor. Must match q's shape and dtype.
-        
+
         causal: Whether to apply causal masking (for autoregressive models).
                 Default: False. When True, position i can only attend to positions ≤ i.
-        
+
         sm_scale: Softmax scale factor. Default: 1 / sqrt(head_dim).
-        
+
         seq_lens: Effective sequence length per sample, shape (batch,).
                   dtype: int32. Used for variable-length sequences.
                   Positions beyond effective length are zeroed.
@@ -226,7 +226,7 @@ from utils import GPUArch
 
 class GPUArch(Enum):
     """GPU Architecture Enumeration."""
-    
+
     VOLTA = "sm_70"      # V100
     TURING = "sm_75"     # RTX 20 series
     AMPERE = "sm_80"     # A100, RTX 30 series

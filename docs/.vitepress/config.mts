@@ -10,7 +10,7 @@ export default defineConfig({
   title: 'DIY FlashAttention',
   titleTemplate: ':title | DIY FlashAttention',
   description: 'Forward-only educational FlashAttention in Triton, with benchmarks, architecture-aware helpers, and bilingual docs.',
-  
+
   base: '/diy-flash-attention/',
   cleanUrls: true,
   lastUpdated: true,
@@ -21,11 +21,11 @@ export default defineConfig({
     // PWA
     ['link', { rel: 'manifest', href: '/diy-flash-attention/manifest.json' }],
     ['meta', { name: 'theme-color', content: '#06b6d4' }],
-    
+
     // SEO
     ['meta', { name: 'author', content: 'LessUp' }],
     ['meta', { name: 'keywords', content: 'DIY FlashAttention, Triton, CUDA, FlashAttention, GPU programming, attention kernels, educational project' }],
-    
+
     // Open Graph
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:site_name', content: 'DIY FlashAttention' }],
@@ -33,18 +33,18 @@ export default defineConfig({
     ['meta', { property: 'og:description', content: 'Forward-only educational FlashAttention in Triton, with benchmarks, architecture-aware helpers, and bilingual docs.' }],
     ['meta', { property: 'og:url', content: 'https://lessup.github.io/diy-flash-attention/' }],
     ['meta', { property: 'og:image', content: 'https://lessup.github.io/diy-flash-attention/og-image.svg' }],
-    
+
     // Twitter
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
     ['meta', { name: 'twitter:title', content: 'DIY FlashAttention' }],
     ['meta', { name: 'twitter:description', content: 'Forward-only educational FlashAttention in Triton, with benchmarks and bilingual docs.' }],
     ['meta', { name: 'twitter:image', content: 'https://lessup.github.io/diy-flash-attention/og-image.svg' }],
-    
+
     // Fonts
     ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],
     ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' }],
     ['link', { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap' }],
-    
+
     // Icons
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/diy-flash-attention/logo.svg' }],
 
@@ -84,7 +84,7 @@ export default defineConfig({
   themeConfig: {
     logo: { src: '/logo.svg', width: 28, height: 28 },
     siteTitle: 'DIY FlashAttention',
-    
+
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Tutorial', link: '/en/tutorial' },

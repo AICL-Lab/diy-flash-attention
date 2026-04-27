@@ -7,22 +7,22 @@
         <span class="legend-item triton">Triton (Ours)</span>
       </div>
     </div>
-    
+
     <div class="chart-container">
-      <div 
-        v-for="(item, index) in data" 
+      <div
+        v-for="(item, index) in data"
         :key="index"
         class="chart-row"
       >
         <div class="row-label">{{ item.label }}</div>
         <div class="row-bars">
-          <div 
+          <div
             class="bar pytorch-bar"
             :style="{ width: getWidth(item.pytorch) + '%' }"
           >
             <span class="bar-value">{{ item.pytorch }}</span>
           </div>
-          <div 
+          <div
             class="bar triton-bar"
             :style="{ width: getWidth(item.triton) + '%' }"
           >
@@ -32,7 +32,7 @@
         </div>
       </div>
     </div>
-    
+
     <div class="chart-footer">
       <span class="metric-label">{{ yAxisLabel }}</span>
     </div>
