@@ -13,6 +13,7 @@ from .modern_features import (
     get_optimal_matmul,
     supports_fp8,
 )
+from .persistent_kernels import persistent_matmul
 
 __all__ = [
     "triton_matmul",
@@ -21,6 +22,7 @@ __all__ = [
     "BackendSelector",
     "KernelVariant",
     "select_attention_kernel",
+    "persistent_matmul",
     "get_optimal_matmul",
     "get_optimal_attention",
     "get_matmul_config",
