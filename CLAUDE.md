@@ -1,5 +1,9 @@
 # CLAUDE.md
 
+## Language Preference (语言偏好)
+
+**重要**: 请始终使用**中文**回复用户，思考过程也尽量使用中文展示。
+
 ## Purpose
 
 Use Claude in this repository as a **spec-driven cleanup and stabilization engineer**, not as a generic content generator.
@@ -128,14 +132,19 @@ graph TB
 
 | 文件 | 职责 | 关键导出 |
 |------|------|----------|
-| `flash_attn.py` | FlashAttention 前向实现，在线 softmax，因果掩码 | `flash_attention()` |
+| `flash_attn.py` | FlashAttention V1 前向实现，列并行，在线 softmax | `flash_attention()` |
+| `flash_attn_v2.py` | FlashAttention V2 行并行（条纹并行），Ampere+ 优化 | `flash_attention_v2()` |
 | `matmul.py` | 高性能矩阵乘法，自动调优块大小 | `triton_matmul()` |
+| `persistent_kernels.py` | 持久化线程块内核，教学用 | `persistent_matmul()` |
+| `backend_selector.py` | 统一内核调度，自动选择 V1/V2 | `BackendSelector`, `select_attention_kernel()` |
+| `mask_dsl.py` | BlockMask 掩码抽象，支持 causal/full/sliding/prefix_lm | `BlockMask`, `create_block_mask()` |
 | `modern_features.py` | Hopper+ 特性检测 (TMA, FP8)，自适应内核选择 | `AdaptiveKernelSelector`, `supports_fp8()` |
 | `__init__.py` | 包入口，统一导出 | 所有公开 API |
 
 **支持的数据类型**: float16, float32, bfloat16
 **支持的 head_dim**: 32, 64
 **支持因果掩码**: 是
+**V2 vs V1**: V2 使用行并行模式，在 Ampere+ 上性能提升 5-15%
 
 ### utils/ - 工具函数
 
@@ -145,6 +154,7 @@ graph TB
 | `benchmark.py` | 性能基准测试，TFLOPS 计算 | `BenchmarkRunner`, `BenchmarkResult` |
 | `validation.py` | 数值正确性验证 | `validate_matmul()`, `validate_attention()` |
 | `config.py` | 配置常量集中管理 | `MATMUL_*`, `FLASH_ATTN_*`, `BENCHMARK_*` |
+| `profiling.py` | GPU 内存层级分析，occupancy 估算 | `GPUMemoryProfile`, `estimate_occupancy()` |
 
 ### tests/ - 测试套件
 
