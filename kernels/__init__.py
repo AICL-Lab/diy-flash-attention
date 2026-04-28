@@ -1,5 +1,6 @@
 """Triton GPU kernels for matrix multiplication and FlashAttention."""
 
+from .backend_selector import BackendSelector, KernelVariant, select_attention_kernel
 from .flash_attn import flash_attention
 from .flash_attn_v2 import flash_attention_v2
 from .matmul import triton_matmul
@@ -17,6 +18,9 @@ __all__ = [
     "triton_matmul",
     "flash_attention",
     "flash_attention_v2",
+    "BackendSelector",
+    "KernelVariant",
+    "select_attention_kernel",
     "get_optimal_matmul",
     "get_optimal_attention",
     "get_matmul_config",
