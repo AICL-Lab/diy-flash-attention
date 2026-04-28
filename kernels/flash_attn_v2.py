@@ -266,7 +266,9 @@ def flash_attention_v2(
     if q.dtype != k.dtype or q.dtype != v.dtype:
         raise TypeError(f"Q, K, V dtypes must match. Got q={q.dtype}, k={q.dtype}, v={v.dtype}")
     if q.device != k.device or q.device != v.device:
-        raise ValueError(f"Q, K, V must be on same device. Got q={q.device}, k={k.device}, v={v.device}")
+        raise ValueError(
+            f"Q, K, V must be on same device. Got q={q.device}, k={k.device}, v={v.device}"
+        )
     if q.device.type != "cuda":
         raise ValueError("FlashAttention requires CUDA tensors")
 
@@ -306,7 +308,9 @@ def flash_attention_v2(
         if seq_lens_tensor.dim() != 1:
             raise ValueError("seq_lens must be 1D")
         if seq_lens_tensor.numel() != batch:
-            raise ValueError(f"seq_lens length must match batch size. Got {seq_lens_tensor.numel()} vs {batch}")
+            raise ValueError(
+                f"seq_lens length must match batch size. Got {seq_lens_tensor.numel()} vs {batch}"
+            )
         if seq_lens_tensor.min().item() <= 0:
             raise ValueError("seq_lens values must be positive")
         if seq_lens_tensor.max().item() > seq_len:

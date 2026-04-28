@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Callable
-
 import pytest
 
 from kernels import BackendSelector, KernelVariant, select_attention_kernel

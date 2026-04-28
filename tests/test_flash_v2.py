@@ -18,15 +18,9 @@ class TestFlashAttentionV2Basic:
         torch.manual_seed(42)
         batch, seq_len, heads, head_dim = 1, 128, 8, 64
 
-        q = torch.randn(
-            batch, seq_len, heads, head_dim, dtype=torch.float16, device="cuda"
-        )
-        k = torch.randn(
-            batch, seq_len, heads, head_dim, dtype=torch.float16, device="cuda"
-        )
-        v = torch.randn(
-            batch, seq_len, heads, head_dim, dtype=torch.float16, device="cuda"
-        )
+        q = torch.randn(batch, seq_len, heads, head_dim, dtype=torch.float16, device="cuda")
+        k = torch.randn(batch, seq_len, heads, head_dim, dtype=torch.float16, device="cuda")
+        v = torch.randn(batch, seq_len, heads, head_dim, dtype=torch.float16, device="cuda")
 
         # Our implementation
         output_v2 = flash_attention_v2(q, k, v)
@@ -49,15 +43,9 @@ class TestFlashAttentionV2Basic:
         torch.manual_seed(42)
         batch, seq_len, heads, head_dim = 2, 256, 8, 64
 
-        q = torch.randn(
-            batch, seq_len, heads, head_dim, dtype=torch.float16, device="cuda"
-        )
-        k = torch.randn(
-            batch, seq_len, heads, head_dim, dtype=torch.float16, device="cuda"
-        )
-        v = torch.randn(
-            batch, seq_len, heads, head_dim, dtype=torch.float16, device="cuda"
-        )
+        q = torch.randn(batch, seq_len, heads, head_dim, dtype=torch.float16, device="cuda")
+        k = torch.randn(batch, seq_len, heads, head_dim, dtype=torch.float16, device="cuda")
+        v = torch.randn(batch, seq_len, heads, head_dim, dtype=torch.float16, device="cuda")
 
         # V2 causal
         output_v2 = flash_attention_v2(q, k, v, causal=True)
@@ -66,9 +54,7 @@ class TestFlashAttentionV2Basic:
         q_t = q.transpose(1, 2)
         k_t = k.transpose(1, 2)
         v_t = v.transpose(1, 2)
-        output_baseline = F.scaled_dot_product_attention(
-            q_t, k_t, v_t, is_causal=True
-        )
+        output_baseline = F.scaled_dot_product_attention(q_t, k_t, v_t, is_causal=True)
         output_baseline = output_baseline.transpose(1, 2)
 
         assert torch.allclose(output_v2, output_baseline, rtol=1e-2, atol=1e-3)
@@ -104,15 +90,9 @@ class TestFlashAttentionV2SeqLens:
         torch.manual_seed(42)
         batch, max_seq_len, heads, head_dim = 2, 256, 8, 64
 
-        q = torch.randn(
-            batch, max_seq_len, heads, head_dim, dtype=torch.float16, device="cuda"
-        )
-        k = torch.randn(
-            batch, max_seq_len, heads, head_dim, dtype=torch.float16, device="cuda"
-        )
-        v = torch.randn(
-            batch, max_seq_len, heads, head_dim, dtype=torch.float16, device="cuda"
-        )
+        q = torch.randn(batch, max_seq_len, heads, head_dim, dtype=torch.float16, device="cuda")
+        k = torch.randn(batch, max_seq_len, heads, head_dim, dtype=torch.float16, device="cuda")
+        v = torch.randn(batch, max_seq_len, heads, head_dim, dtype=torch.float16, device="cuda")
 
         # Seq lens: first seq is 128, second is 200
         seq_lens = torch.tensor([128, 200], dtype=torch.int32, device="cuda")
@@ -134,15 +114,9 @@ class TestFlashAttentionV2HeadDim:
         torch.manual_seed(42)
         batch, seq_len, heads = 1, 128, 8
 
-        q = torch.randn(
-            batch, seq_len, heads, head_dim, dtype=torch.float16, device="cuda"
-        )
-        k = torch.randn(
-            batch, seq_len, heads, head_dim, dtype=torch.float16, device="cuda"
-        )
-        v = torch.randn(
-            batch, seq_len, heads, head_dim, dtype=torch.float16, device="cuda"
-        )
+        q = torch.randn(batch, seq_len, heads, head_dim, dtype=torch.float16, device="cuda")
+        k = torch.randn(batch, seq_len, heads, head_dim, dtype=torch.float16, device="cuda")
+        v = torch.randn(batch, seq_len, heads, head_dim, dtype=torch.float16, device="cuda")
 
         output = flash_attention_v2(q, k, v)
 

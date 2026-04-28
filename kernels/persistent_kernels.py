@@ -15,7 +15,6 @@ from __future__ import annotations
 
 import logging
 from types import SimpleNamespace
-from typing import Optional
 
 import torch
 
@@ -77,10 +76,6 @@ if TRITON_AVAILABLE:
             m_start = m_tile * BLOCK_M
             n_start = n_tile * BLOCK_N
 
-            # Bounds check
-            m_end = min(m_start + BLOCK_M, M)
-            n_end = min(n_start + BLOCK_N, N)
-
             # Offsets for this tile
             offs_m = m_start + tl.arange(0, BLOCK_M)
             offs_n = n_start + tl.arange(0, BLOCK_N)
@@ -96,7 +91,6 @@ if TRITON_AVAILABLE:
             # Loop over K dimension
             for k_start in range(0, K, BLOCK_K):
                 k_end = min(k_start + BLOCK_K, K)
-                k_mask = offs_k < (k_end - k_start)
                 k_size = k_end - k_start
 
                 # Load A block

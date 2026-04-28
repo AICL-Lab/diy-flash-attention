@@ -253,22 +253,22 @@ if __name__ == "__main__":
 
     # Test causal
     causal = create_block_mask("causal", 256, 256, 32)
-    print(f"\nCausal mask (8x8 blocks):")
+    print("\nCausal mask (8x8 blocks):")
     print(causal.mask_matrix.int())
 
     # Test full
     full = create_block_mask("full", 256, 256, 32)
-    print(f"\nFull mask (8x8 blocks):")
+    print("\nFull mask (8x8 blocks):")
     print(f"  All ones: {torch.all(full.mask_matrix == 1).item()}")
 
     # Test sliding window
     sliding = create_block_mask("sliding_window", 256, 256, 32, sliding_window=64)
-    print(f"\nSliding window mask (window=64):")
+    print("\nSliding window mask (window=64):")
     print(sliding.mask_matrix.int())
 
     # Test prefix LM
     prefix = create_block_mask("prefix_lm", 256, 256, 32, prefix_len=64)
-    print(f"\nPrefix LM mask (prefix=64):")
+    print("\nPrefix LM mask (prefix=64):")
     print(prefix.mask_matrix.int())
 
     # Test composition
@@ -276,6 +276,8 @@ if __name__ == "__main__":
     print("Testing mask composition...")
 
     composed = compose_block_masks(causal, full, operation="intersect")
-    print(f"Intersect causal + full = causal: {torch.equal(composed.mask_matrix, causal.mask_matrix)}")
+    print(
+        f"Intersect causal + full = causal: {torch.equal(composed.mask_matrix, causal.mask_matrix)}"
+    )
 
     print("\n✓ All BlockMask tests passed")
