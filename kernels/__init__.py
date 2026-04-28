@@ -3,6 +3,7 @@
 from .backend_selector import BackendSelector, KernelVariant, select_attention_kernel
 from .flash_attn import flash_attention
 from .flash_attn_v2 import flash_attention_v2
+from .mask_dsl import BlockMask, compose_block_masks, create_block_mask
 from .matmul import triton_matmul
 from .modern_features import (
     AdaptiveKernelSelector,
@@ -23,6 +24,9 @@ __all__ = [
     "KernelVariant",
     "select_attention_kernel",
     "persistent_matmul",
+    "BlockMask",
+    "create_block_mask",
+    "compose_block_masks",
     "get_optimal_matmul",
     "get_optimal_attention",
     "get_matmul_config",
