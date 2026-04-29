@@ -8,6 +8,7 @@ from .profiling import (
     estimate_occupancy,
     get_gpu_memory_hierarchy,
 )
+from .triton_helpers import TRITON_AVAILABLE, TritonKernelStub, require_triton
 from .validation import validate_attention, validate_matmul
 
 __all__ = [
@@ -24,4 +25,8 @@ __all__ = [
     "KernelBenchmark",
     "estimate_occupancy",
     "get_gpu_memory_hierarchy",
+    # Triton helpers
+    "TRITON_AVAILABLE",
+    "require_triton",
+    "TritonKernelStub",
 ]

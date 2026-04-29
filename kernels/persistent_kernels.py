@@ -14,26 +14,12 @@ Key concepts:
 from __future__ import annotations
 
 import logging
-from types import SimpleNamespace
 
 import torch
 
+from utils.triton_helpers import TRITON_AVAILABLE, TritonKernelStub, require_triton, tl, triton
+
 logger = logging.getLogger(__name__)
-
-try:
-    import triton
-    import triton.language as tl
-
-    TRITON_AVAILABLE = True
-except ModuleNotFoundError:
-    TRITON_AVAILABLE = False
-    triton = SimpleNamespace(cdiv=lambda x, y: (x + y - 1) // y)
-    tl = SimpleNamespace(constexpr=object())
-
-
-def _require_triton() -> None:
-    if not TRITON_AVAILABLE:
-        raise ModuleNotFoundError("triton is required to run persistent kernels.")
 
 
 if TRITON_AVAILABLE:
@@ -110,15 +96,7 @@ if TRITON_AVAILABLE:
             tl.store(c_ptrs, acc.to(C.dtype.element_ty), mask=c_mask)
 
 else:
-
-    class _TritonKernelStub:
-        def __getitem__(self, _grid):
-            def launcher(*args, **kwargs):
-                _require_triton()
-
-            return launcher
-
-    _persistent_matmul_kernel = _TritonKernelStub()
+    _persistent_matmul_kernel = TritonKernelStub()
 
 
 def persistent_matmul(
@@ -147,7 +125,7 @@ def persistent_matmul(
     Returns:
         Result matrix of shape (M, N)
     """
-    _require_triton()
+    require_triton()
 
     if a.dim() != 2 or b.dim() != 2:
         raise ValueError(f"Expected 2D tensors, got A={a.dim()}D, B={b.dim()}D")

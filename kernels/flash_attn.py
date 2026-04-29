@@ -10,6 +10,15 @@ Key concepts:
 - Tiled attention: Process Q, K, V in blocks that fit in SRAM
 - IO-awareness: Minimize HBM reads/writes by keeping data in fast SRAM
 
+Tensor Layout (V1):
+-------------------
+This implementation uses: `(batch, heads, seq_len, head_dim)`
+
+Also accepts 3D input: `(batch*heads, seq_len, head_dim)`
+
+⚠️ Note: FlashAttention V2 uses a different layout: `(batch, seq_len, heads, head_dim)`
+The `heads` and `seq_len` dimensions are swapped in V2!
+
 Reference: FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness
            https://arxiv.org/abs/2205.14135
 """
@@ -18,29 +27,14 @@ from __future__ import annotations
 
 import logging
 import math
-from types import SimpleNamespace
 from typing import Optional
 
 import torch
 
 from utils.config import FLASH_ATTN_DEFAULT_BLOCK_M, FLASH_ATTN_DEFAULT_BLOCK_N
+from utils.triton_helpers import TRITON_AVAILABLE, TritonKernelStub, require_triton, tl, triton
 
 logger = logging.getLogger(__name__)
-
-try:
-    import triton
-    import triton.language as tl
-
-    TRITON_AVAILABLE = True
-except ModuleNotFoundError:
-    TRITON_AVAILABLE = False
-    triton = SimpleNamespace(cdiv=lambda x, y: (x + y - 1) // y)
-    tl = SimpleNamespace(constexpr=object())
-
-
-def _require_triton() -> None:
-    if not TRITON_AVAILABLE:
-        raise ModuleNotFoundError("triton is required to run FlashAttention kernels.")
 
 
 if TRITON_AVAILABLE:
@@ -160,15 +154,7 @@ if TRITON_AVAILABLE:
         tl.store(out_ptrs, acc.to(Out.dtype.element_ty), mask=offs_m[:, None] < seq_len)
 
 else:
-
-    class _TritonKernelStub:
-        def __getitem__(self, _grid):
-            def launcher(*args, **kwargs):
-                _require_triton()
-
-            return launcher
-
-    _flash_attention_forward_kernel = _TritonKernelStub()
+    _flash_attention_forward_kernel = TritonKernelStub()
 
 
 def flash_attention(
@@ -227,7 +213,7 @@ def flash_attention(
     if q.device.type != "cuda":
         raise ValueError("FlashAttention requires CUDA tensors for Q, K, and V.")
 
-    _require_triton()
+    require_triton()
 
     original_shape = q.shape
     if q.dim() == 4:

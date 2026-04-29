@@ -59,8 +59,5 @@ npm run docs:build   # 构建静态站点
 当以下任一变化时，确保一致性：
 - README.md
 - GitHub About description/topics
-- CLAUDE.md 项目概述
+- CLAUDE.md 项目概述（位于仓库根目录）
 
----
-
-**导航**: [← 项目根目录](../CLAUDE.md)

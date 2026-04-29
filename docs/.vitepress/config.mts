@@ -115,6 +115,7 @@ export default defineConfig({
             { text: 'Introduction', link: '/en/' },
             { text: 'Tutorial', link: '/en/tutorial' },
             { text: 'API Reference', link: '/en/api' },
+            { text: 'Tensor Layout Guide', link: '/en/tensor-layout' },
           ]
         },
         {
@@ -143,6 +144,7 @@ export default defineConfig({
             { text: '简介', link: '/zh/' },
             { text: '教程', link: '/zh/tutorial' },
             { text: 'API 参考', link: '/zh/api' },
+            { text: '张量布局指南', link: '/zh/tensor-layout' },
           ]
         },
         {

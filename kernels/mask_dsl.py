@@ -225,12 +225,12 @@ def compose_block_masks(
         New BlockMask with composed pattern
 
     Raises:
-        AssertionError: If masks have different shapes
-        ValueError: If operation is unknown
+        ValueError: If masks have different shapes or operation is unknown
     """
-    assert mask1.mask_matrix.shape == mask2.mask_matrix.shape, (
-        f"Mask shapes must match: {mask1.mask_matrix.shape} vs {mask2.mask_matrix.shape}"
-    )
+    if mask1.mask_matrix.shape != mask2.mask_matrix.shape:
+        raise ValueError(
+            f"Mask shapes must match: {mask1.mask_matrix.shape} vs {mask2.mask_matrix.shape}"
+        )
 
     if operation == "intersect":
         combined = mask1.mask_matrix & mask2.mask_matrix

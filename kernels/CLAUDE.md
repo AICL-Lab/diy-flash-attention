@@ -66,6 +66,15 @@ kernels/
 | 性能 | 基线 | 快 5-15% |
 | 推荐 | 通用场景 | 大序列、Ampere+ GPU |
 
+⚠️ **张量布局差异**：V1 和 V2 使用不同的张量布局！
+
+| 版本 | 布局 |
+|------|------|
+| V1 | `(batch, heads, seq_len, head_dim)` |
+| V2 | `(batch, seq_len, heads, head_dim)` |
+
+`heads` 和 `seq_len` 维度互换位置！切换版本时务必注意转置。详见 `docs/*/tensor-layout.md`。
+
 ## 设计原则
 
 1. **在线 Softmax**：避免实例化完整注意力矩阵，O(N) 内存复杂度

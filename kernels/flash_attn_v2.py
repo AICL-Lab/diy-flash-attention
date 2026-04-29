@@ -11,6 +11,16 @@ Key differences from V1:
 - V2: Each thread block handles one query row across all key blocks (row parallel)
 - V2 typically 5-15% faster on Ampere+ due to better memory access patterns
 
+⚠️ IMPORTANT: Tensor Layout Difference from V1 ⚠️
+-------------------------------------------------
+V2 uses a DIFFERENT tensor layout compared to V1:
+
+- **V1 (flash_attention)**: `(batch, heads, seq_len, head_dim)`
+- **V2 (flash_attention_v2)**: `(batch, seq_len, heads, head_dim)`
+
+This means `heads` and `seq_len` dimensions are SWAPPED between versions!
+When switching from V1 to V2, you must transpose your tensors accordingly.
+
 Reference: FlashAttention-2: Faster Attention with Better Parallelism and Work Partitioning
            https://arxiv.org/abs/2307.08691
 """
@@ -19,27 +29,13 @@ from __future__ import annotations
 
 import logging
 import math
-from types import SimpleNamespace
 from typing import Optional
 
 import torch
 
+from utils.triton_helpers import TRITON_AVAILABLE, TritonKernelStub, require_triton, tl, triton
+
 logger = logging.getLogger(__name__)
-
-try:
-    import triton
-    import triton.language as tl
-
-    TRITON_AVAILABLE = True
-except ModuleNotFoundError:
-    TRITON_AVAILABLE = False
-    triton = SimpleNamespace(cdiv=lambda x, y: (x + y - 1) // y)
-    tl = SimpleNamespace(constexpr=object())
-
-
-def _require_triton() -> None:
-    if not TRITON_AVAILABLE:
-        raise ModuleNotFoundError("triton is required to run FlashAttention kernels.")
 
 
 if TRITON_AVAILABLE:
@@ -204,15 +200,7 @@ if TRITON_AVAILABLE:
         tl.store(l_ptrs, m_i + tl.log(l_i), mask=offs_m < seq_len)
 
 else:
-
-    class _TritonKernelStub:
-        def __getitem__(self, _grid):
-            def launcher(*args, **kwargs):
-                _require_triton()
-
-            return launcher
-
-    _flash_attn_v2_fwd_kernel = _TritonKernelStub()
+    _flash_attn_v2_fwd_kernel = TritonKernelStub()
 
 
 def flash_attention_v2(
@@ -272,7 +260,7 @@ def flash_attention_v2(
     if q.device.type != "cuda":
         raise ValueError("FlashAttention requires CUDA tensors")
 
-    _require_triton()
+    require_triton()
 
     batch, seq_len, heads, head_dim = q.shape
 

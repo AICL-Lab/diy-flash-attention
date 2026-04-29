@@ -13,29 +13,14 @@ Key concepts:
 from __future__ import annotations
 
 import logging
-from types import SimpleNamespace
 from typing import Optional
 
 import torch
 
 from utils.config import MATMUL_GROUP_SIZE_M
+from utils.triton_helpers import TRITON_AVAILABLE, TritonKernelStub, require_triton, tl, triton
 
 logger = logging.getLogger(__name__)
-
-try:
-    import triton
-    import triton.language as tl
-
-    TRITON_AVAILABLE = True
-except ModuleNotFoundError:
-    TRITON_AVAILABLE = False
-    triton = SimpleNamespace(cdiv=lambda x, y: (x + y - 1) // y)
-    tl = SimpleNamespace(constexpr=object())
-
-
-def _require_triton() -> None:
-    if not TRITON_AVAILABLE:
-        raise ModuleNotFoundError("triton is required to run Triton matmul kernels.")
 
 
 if TRITON_AVAILABLE:
@@ -231,15 +216,8 @@ else:
     def get_autotune_configs():
         return []
 
-    class _TritonKernelStub:
-        def __getitem__(self, _grid):
-            def launcher(*args, **kwargs):
-                _require_triton()
-
-            return launcher
-
-    _matmul_kernel_autotuned = _TritonKernelStub()
-    _matmul_kernel_manual = _TritonKernelStub()
+    _matmul_kernel_autotuned = TritonKernelStub()
+    _matmul_kernel_manual = TritonKernelStub()
 
 
 def triton_matmul(
@@ -287,7 +265,7 @@ def triton_matmul(
             f"Input tensors must be on the same device. Got a={a.device}, b={b.device}."
         )
 
-    _require_triton()
+    require_triton()
 
     M, K = a.shape
     K2, N = b.shape
@@ -314,7 +292,10 @@ def triton_matmul(
         raise ValueError("Manual block sizes are required when use_autotune=False")
 
     if manual_blocks:
-        assert block_m is not None and block_n is not None and block_k is not None
+        if block_m is None or block_n is None or block_k is None:
+            raise ValueError(
+                "All block sizes (block_m, block_n, block_k) must be specified for manual mode"
+            )
         if block_m <= 0 or block_n <= 0 or block_k <= 0:
             raise ValueError(f"Block sizes must be positive, got ({block_m}, {block_n}, {block_k})")
         if block_m > M or block_n > N or block_k > K:
