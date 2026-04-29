@@ -81,3 +81,9 @@ docs/.vitepress/cache/
 
 # Claude Code
 .claude/
+
+# OMC (OpenMemory Cache)
+.omc/
+
+# Hypothesis
+.hypothesis/

@@ -5,12 +5,12 @@ hero:
   name: "DIY"
   text: "FlashAttention"
   tagline: |
-    用一个紧凑但真实的 Triton 项目学习 attention kernel、benchmark 和 GPU 自适应配置
-
+    用 Triton 从零构建 FlashAttention，掌握 GPU 内核优化的核心技术
+    
     <div class="badge-group">
       <span class="badge">⚡ 内存减少 99%</span>
-      <span class="badge purple">🚀 1.6倍加速</span>
-      <span class="badge yellow">🎯 动手实践</span>
+      <span class="badge purple">🚀 速度提升 1.6x</span>
+      <span class="badge yellow">📖 生产级代码质量</span>
     </div>
 
   actions:
@@ -18,70 +18,162 @@ hero:
       text: 🚀 开始教程
       link: /zh/tutorial
     - theme: alt
-      text: 📊 Benchmark 指南
+      text: 📊 性能基准
       link: /zh/performance
     - theme: alt
-      text: 💻 GitHub
+      text: 💻 GitHub 源码
       link: https://github.com/LessUp/diy-flash-attention
 
 features:
   - icon: 🔷
-    title: 阅读真实 Triton 代码
-    details: 直接学习仓库中的 matmul 与 FlashAttention 核函数，而不是抽象幻灯片。
+    title: 真实可运行的 Triton 内核
+    details: 不是玩具示例——真实的 matmul 和 FlashAttention 内核，可直接运行、基准测试、逐行研读。代码紧凑，注释详尽。
     link: /zh/tutorial
 
   - icon: ⚡
-    title: 跟踪注意力算法
-    details: 通过紧凑的前向实现理解 online softmax、SRAM 分块与因果掩码。
+    title: O(N) 内存复杂度突破
+    details: 理解 FlashAttention 的核心创新：在线 softmax、SRAM 分块、因果掩码——无需实例化完整的注意力矩阵。
     link: /zh/tutorial
 
   - icon: 📊
-    title: 对比 PyTorch Benchmark
-    details: 使用仓库自带脚本对比 PyTorch SDPA 的速度与内存表现。
+    title: 真实性能基准数据
+    details: 内置基准测试脚本，直接对比 PyTorch SDPA。清楚展示 FlashAttention 如何实现 99% 内存节省和 1.6x 加速。
     link: /zh/performance
 
   - icon: 🖥️
-    title: 查看架构辅助逻辑
-    details: 浏览 Volta → Blackwell 的特性检测、Hopper TMA 标志和 FP8 辅助函数。
+    title: 架构自适应配置
+    details: 自动检测 Volta → Blackwell GPU，适配最优配置。Hopper+ 支持 TMA 和 FP8 特性检测。
     link: /zh/api
+
+  - icon: 🧪
+    title: 完整测试覆盖
+    details: 50+ 单元测试，Hypothesis 属性测试覆盖无限输入空间。代码质量有保障，学习参考更放心。
+    link: https://github.com/LessUp/diy-flash-attention/tree/master/tests
+
+  - icon: 🌐
+    title: 中英双语文档
+    details: 所有核心文档提供中英文版本，面向全球开发者。
+    link: /en/
 ---
 
-## 这个页面的作用
-
-这是面向读者的**项目总览页**，帮助你先判断从哪条路径进入，而不是先去读完整 README。
-
-| 指南 | 说明 |
-|------|------|
-| [教程](/zh/tutorial) | 想按实现细节逐步理解时，从这里开始 |
-| [API 参考](/zh/api) | 想确认支持的 kernel 与 helper 契约时，从这里开始 |
-| [性能指南](/zh/performance) | 想看 benchmark 证据与性能取舍时，从这里开始 |
-| [速查表](/zh/cheatsheet) | 已经了解 Triton、只想快速回顾时，从这里开始 |
-| [常见问题](/zh/faq) | 想看环境与排障建议时，从这里开始 |
-
-## 这个仓库覆盖什么
+## 为什么选择这个项目？
 
 <div class="highlight-box">
-  <p><strong>范围：</strong>Triton matmul、仅前向 FlashAttention、GPU 能力探测、测试与 benchmark 脚本。</p>
-  <p><strong>方法：</strong>把代码规模控制在可完整阅读的范围内，但仍保留真实 benchmark 和验证价值。</p>
-  <p><strong>价值：</strong>你可以在不跳进超大训练框架的前提下，建立 attention kernel 的整体直觉。</p>
+  <p><strong>紧凑但真实</strong>：代码量控制在可完整阅读的范围内，但绝非玩具。你可以：</p>
+  <ul>
+    <li>✅ 在你的 GPU 上运行真实基准测试</li>
+    <li>✅ 对比 PyTorch SDPA 的性能差异</li>
+    <li>✅ 理解每一行代码背后的设计决策</li>
+  </ul>
 </div>
 
-## 仓库的优势
+### 你将学到什么
 
-- **实现紧凑**：能读完，而不是只有概念图
-- **性能有证据**：直接对比 PyTorch SDPA
-- **架构自适应可见**：可以检查 Volta → Blackwell 辅助逻辑
-- **双语文档**：英文与中文页面保持对应
+| 主题 | 收获 |
+|------|------|
+| GPU 内存层级 | 数据流动：HBM → L2 → SRAM → 寄存器 |
+| Triton 编程 | 自动分块、autotune、内核优化技巧 |
+| FlashAttention 算法 | 在线 softmax、因果掩码、变长序列处理 |
+| 性能调优 | 块大小选择、occupancy 优化、内存分析 |
+
+### 项目数据
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-value">2+</div>
+    <div class="stat-label">核心 Triton 内核</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">O(N)</div>
+    <div class="stat-label">注意力内存复杂度</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">6</div>
+    <div class="stat-label">支持的 GPU 架构</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">99%</div>
+    <div class="stat-label">长序列内存节省</div>
+  </div>
+</div>
+
+## 快速开始
+
+```bash
+# 安装
+pip install diy-flash-attention
+
+# 或从源码安装
+pip install -e ".[dev]"
+
+# 验证安装
+python -c "from kernels import flash_attention; print('✓ 安装成功')"
+```
+
+### 运行示例
+
+```python
+import torch
+from kernels import flash_attention
+
+# FlashAttention — 长序列内存减少 99%
+q = torch.randn(2, 8, 4096, 64, device="cuda", dtype=torch.float16)
+k = torch.randn(2, 8, 4096, 64, device="cuda", dtype=torch.float16)
+v = torch.randn(2, 8, 4096, 64, device="cuda", dtype=torch.float16)
+
+out = flash_attention(q, k, v, causal=True)  # GPT 风格因果掩码
+print(f"输出形状: {out.shape}")  # [2, 8, 4096, 64]
+```
+
+## 学习路径
+
+<div class="audience-grid">
+  <div class="audience-card">
+    <div class="audience-avatar">🧑‍💻</div>
+    <div class="audience-title">内核开发者</div>
+    <div class="audience-benefit">从教程开始，逐行理解 FlashAttention 实现</div>
+    <span class="audience-skill">路径：教程 → API → 性能指南</span>
+  </div>
+  <div class="audience-card">
+    <div class="audience-avatar">🔬</div>
+    <div class="audience-title">研究人员</div>
+    <div class="audience-benefit">快速查阅 API 契约，复现和修改内核</div>
+    <span class="audience-skill">路径：API 参考 → 源码</span>
+  </div>
+  <div class="audience-card">
+    <div class="audience-avatar">🚀</div>
+    <div class="audience-title">性能工程师</div>
+    <div class="audience-benefit">深入性能调优，理解块大小和架构适配</div>
+    <span class="audience-skill">路径：性能指南 → 基准测试</span>
+  </div>
+  <div class="audience-card">
+    <div class="audience-avatar">📚</div>
+    <div class="audience-title">学习者</div>
+    <div class="audience-benefit">系统学习 GPU 编程和注意力优化</div>
+    <span class="audience-skill">路径：教程 → 速查表 → FAQ</span>
+  </div>
+</div>
 
 <div class="cta-section">
-  <div class="cta-title">从你最关心的部分开始</div>
-  <div class="cta-desc">教程适合理解实现，性能页适合看证据，API 参考适合看精确定义。</div>
+  <div class="cta-title">开始你的 FlashAttention 学习之旅</div>
+  <div class="cta-desc">教程帮助你理解实现，API 参考确认契约，性能指南提供证据。</div>
   <div class="cta-buttons">
     <a href="/diy-flash-attention/zh/tutorial" class="cta-btn primary">
-      <span>📚</span> 阅读教程
+      <span>🚀</span> 阅读教程
     </a>
     <a href="https://github.com/LessUp/diy-flash-attention" class="cta-btn secondary">
       <span>⭐</span> Star on GitHub
     </a>
   </div>
+</div>
+
+## 语言切换
+
+<div class="lang-switcher">
+  <a href="/diy-flash-attention/zh/" class="lang-link active">
+    <span>🇨🇳</span> 中文
+  </a>
+  <a href="/diy-flash-attention/en/" class="lang-link">
+    <span>🇺🇸</span> English
+  </a>
 </div>

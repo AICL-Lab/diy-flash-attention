@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-04-29
+
+### Added
+- 🚀 **FlashAttention V2**: 行级并行（条纹并行）实现，Ampere+ 上性能提升 5-15%
+  - `flash_attention_v2()` 函数，支持与 V1 相同的参数
+  - 更优的内存访问模式，适合大序列长度
+- 🚀 **Persistent Kernels**: 持久化线程块内核实现
+  - `persistent_matmul()` 函数，grid-stride loop 模式
+  - 减少小矩阵的内核启动开销
+- 🚀 **Mask DSL**: 块级注意力掩码抽象
+  - `BlockMask` 类，支持 causal/full/sliding_window/prefix_lm 模式
+  - 掩码组合（intersect/union）操作
+- 🚀 **Backend Selector**: 统一内核调度注册表
+  - `BackendSelector` 类，自动选择 V1/V2
+  - 基于问题规模和 GPU 能力的启发式选择
+- 🚀 **Profiling Toolkit**: GPU 内存分析工具
+  - `GPUMemoryProfile` 类，occupancy 估算
+  - Ampere/Ada/Hopper 内存层级规格
+
+### Changed
+- 📝 **CLAUDE.md**: 更新模块参考，添加 V2/persistent/mask DSL 文档
+
+### Removed
+- 🗑️ 删除冗余的 `changelog/` 目录（与 CHANGELOG.md 重复）
+- 🗑️ 删除子目录中冗余的 `CLAUDE.md` 文件
+
+---
+
 ## [1.0.4] - 2026-04-27
 
 ### Changed

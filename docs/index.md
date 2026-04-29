@@ -5,148 +5,161 @@ hero:
   name: "DIY"
   text: "FlashAttention"
   tagline: |
-    Learn Triton through a forward-only educational FlashAttention implementation
-
+    用 Triton 从零构建 FlashAttention，掌握 GPU 内核优化的核心技术
+    
     <div class="badge-group">
-      <span class="badge">⚡ 99% Memory Reduction</span>
-      <span class="badge purple">🚀 1.6x Speedup</span>
-      <span class="badge yellow">🎯 Hands-on Learning</span>
+      <span class="badge">⚡ 内存减少 99%</span>
+      <span class="badge purple">🚀 速度提升 1.6x</span>
+      <span class="badge yellow">📖 教育级代码</span>
     </div>
 
   actions:
     - theme: brand
-      text: 🚀 Start with the Tutorial
-      link: /en/tutorial
+      text: 🚀 开始学习
+      link: /zh/tutorial
     - theme: alt
-      text: 📊 Explore Benchmarks
-      link: /en/performance
+      text: 📊 查看性能数据
+      link: /zh/performance
     - theme: alt
-      text: 💻 GitHub
+      text: 💻 GitHub 源码
       link: https://github.com/LessUp/diy-flash-attention
 
 features:
   - icon: 🔷
-    title: Read Real Kernels
-    details: Study the actual Triton matmul and FlashAttention kernels instead of toy pseudocode.
-    link: /en/tutorial
+    title: 读得懂的 Triton 代码
+    details: 不是玩具示例，而是真实可运行的 matmul 和 FlashAttention 内核。代码紧凑，注释详尽，适合逐行研读。
+    link: /zh/tutorial
 
   - icon: ⚡
-    title: Learn the O(N) Trick
-    details: Understand online softmax, causal masking, and SRAM tiling without materializing the full attention matrix.
-    link: /en/tutorial
+    title: O(N) 内存复杂度
+    details: 理解 FlashAttention 的核心创新：在线 softmax、SRAM 分块、因果掩码——所有这一切都不需要实例化完整的注意力矩阵。
+    link: /zh/tutorial
 
   - icon: 📊
-    title: Benchmark Against PyTorch
-    details: Compare throughput and memory behavior against PyTorch SDPA with repository-native benchmark scripts.
-    link: /en/performance
+    title: 真实性能数据
+    details: 内置基准测试脚本，直接对比 PyTorch SDPA。看懂为什么 FlashAttention 能做到 99% 的内存节省和 1.6x 的速度提升。
+    link: /zh/performance
 
   - icon: 🖥️
-    title: Inspect Architecture Helpers
-    details: See how the project handles Volta → Blackwell feature detection, Hopper TMA, and FP8-aware configuration.
-    link: /en/api
+    title: 架构自适应
+    details: 自动检测 Volta → Blackwell GPU 架构，适配最优配置。Hopper+ 支持 TMA 和 FP8 特性检测。
+    link: /zh/api
+
+  - icon: 🧪
+    title: 完整测试覆盖
+    details: 50+ 单元测试，Hypothesis 属性测试覆盖无限输入空间。代码质量有保障，学习参考更放心。
+    link: https://github.com/LessUp/diy-flash-attention/tree/master/tests
+
+  - icon: 🌐
+    title: 中英双语文档
+    details: 所有核心文档提供中英文版本，方便不同背景的开发者学习。
+    link: /en/
 ---
 
-## Why This Repository Exists
+## 为什么选择这个项目？
 
-This site is the **project landing page**, not just a copied README. It helps you decide where to jump in:
-
-| If you want to... | Start here |
-| --- | --- |
-| understand the kernel design | [Tutorial](/en/tutorial) |
-| inspect the public API and helpers | [API Reference](/en/api) |
-| compare performance vs PyTorch SDPA | [Performance Guide](/en/performance) |
-| scan the code from GitHub first | [Repository](https://github.com/LessUp/diy-flash-attention) |
-
-## What Makes It Useful
-
-<div class="feature-highlight">
-  <div class="feature-content">
-    <h3>Compact enough to finish, real enough to matter</h3>
-    <p>This repository keeps the scope narrow on purpose: Triton matmul, forward-only FlashAttention, architecture-aware helpers, tests, and benchmarks.</p>
-    <p>That makes it easier to understand the full stack end-to-end without getting lost in a giant training framework.</p>
-  </div>
-  <div class="feature-visual">
-    <div class="code-preview">
-      <div class="code-preview-header">
-        <span class="code-dot red"></span>
-        <span class="code-dot yellow"></span>
-        <span class="code-dot green"></span>
-        <span class="code-preview-filename">flash_attention.py</span>
-      </div>
-      <pre><code class="language-python">@triton.jit
-    def flash_attn_kernel(...):
-        # load a Q tile into SRAM
-        pid_m = tl.program_id(0)
-        # iterate over K/V tiles
-        # maintain online softmax state
-        # write the normalized output tile</code></pre>
-    </div>
-  </div>
+<div class="highlight-box">
+  <p><strong>紧凑但真实</strong>：代码量控制在可完整阅读的范围内，但不是玩具示例。你可以：</p>
+  <ul>
+    <li>✅ 在 GPU 上运行真实基准测试</li>
+    <li>✅ 对比 PyTorch SDPA 的性能差异</li>
+    <li>✅ 理解每一行代码背后的设计决策</li>
+  </ul>
 </div>
 
-## What You Can Inspect Here
+### 你将学到什么
+
+| 主题 | 收获 |
+|------|------|
+| GPU 内存层级 | HBM → L2 → SRAM → 寄存器的数据流动 |
+| Triton 编程 | 自动分块、autotune、内核优化技巧 |
+| FlashAttention 算法 | 在线 softmax、因果掩码、变长序列处理 |
+| 性能调优 | 块大小选择、occupancy 优化、内存分析 |
+
+### 项目数据
 
 <div class="stats-grid">
   <div class="stat-card">
-    <div class="stat-value">2</div>
-    <div class="stat-label">Core Triton Kernels</div>
+    <div class="stat-value">2+</div>
+    <div class="stat-label">核心 Triton 内核</div>
   </div>
   <div class="stat-card">
     <div class="stat-value">O(N)</div>
-    <div class="stat-label">Attention Memory Path</div>
+    <div class="stat-label">注意力内存复杂度</div>
   </div>
   <div class="stat-card">
-    <div class="stat-value">Volta→Blackwell</div>
-    <div class="stat-label">Architecture Coverage</div>
+    <div class="stat-value">6</div>
+    <div class="stat-label">GPU 架构支持</div>
   </div>
   <div class="stat-card">
-    <div class="stat-value">EN / 中文</div>
-    <div class="stat-label">Docs Languages</div>
+    <div class="stat-value">99%</div>
+    <div class="stat-label">内存节省（长序列）</div>
   </div>
 </div>
 
-### Included in this project
+## 快速开始
 
-- **Triton matmul** — autotune plus manual block-size control
-- **FlashAttention forward** — causal masking, 3D/4D inputs, variable sequence lengths
-- **Architecture helpers** — feature detection, FP8 conversion helpers, configuration selection
-- **Benchmarks and docs** — PyTorch comparisons, walkthroughs, cheatsheets, bilingual pages
+```bash
+# 安装
+pip install diy-flash-attention
 
-## Choose Your Starting Point
+# 或者从源码安装
+pip install -e ".[dev]"
+
+# 验证安装
+python -c "from kernels import flash_attention; print('✓ 安装成功')"
+```
+
+### 运行示例
+
+```python
+import torch
+from kernels import flash_attention
+
+# FlashAttention — 长序列内存减少 99%
+q = torch.randn(2, 8, 4096, 64, device="cuda", dtype=torch.float16)
+k = torch.randn(2, 8, 4096, 64, device="cuda", dtype=torch.float16)
+v = torch.randn(2, 8, 4096, 64, device="cuda", dtype=torch.float16)
+
+out = flash_attention(q, k, v, causal=True)  # GPT 风格因果掩码
+print(f"输出形状: {out.shape}")  # [2, 8, 4096, 64]
+```
+
+## 学习路径
 
 <div class="audience-grid">
   <div class="audience-card">
     <div class="audience-avatar">🧑‍💻</div>
-    <div class="audience-title">Read the kernels</div>
-    <div class="audience-benefit">Start with the tutorial if you want to trace the implementation line by line</div>
-    <span class="audience-skill">Best path: Tutorial</span>
+    <div class="audience-title">内核开发者</div>
+    <div class="audience-benefit">从教程开始，逐行理解 FlashAttention 实现</div>
+    <span class="audience-skill">推荐：教程 → API → 性能指南</span>
   </div>
   <div class="audience-card">
     <div class="audience-avatar">🔬</div>
-    <div class="audience-title">Check the contract</div>
-    <div class="audience-benefit">Use the API and OpenSpec docs if you want a precise view of supported behavior</div>
-    <span class="audience-skill">Best path: API + OpenSpec</span>
+    <div class="audience-title">研究人员</div>
+    <div class="audience-benefit">快速查阅 API 契约，复现和修改内核</div>
+    <span class="audience-skill">推荐：API 参考 → 源码</span>
   </div>
   <div class="audience-card">
     <div class="audience-avatar">🚀</div>
-    <div class="audience-title">Benchmark the trade-offs</div>
-    <div class="audience-benefit">Use the performance guide if you care about timing, memory, and block-size tuning</div>
-    <span class="audience-skill">Best path: Performance</span>
+    <div class="audience-title">性能工程师</div>
+    <div class="audience-benefit">深入性能调优，理解块大小和架构适配</div>
+    <span class="audience-skill">推荐：性能指南 → 基准测试</span>
   </div>
   <div class="audience-card">
     <div class="audience-avatar">📚</div>
-    <div class="audience-title">Browse in your language</div>
-    <div class="audience-benefit">Use English or Chinese docs depending on how you prefer to read technical walkthroughs</div>
-    <span class="audience-skill">Best path: EN / 中文</span>
+    <div class="audience-title">学习者</div>
+    <div class="audience-benefit">系统学习 GPU 编程和注意力优化</div>
+    <span class="audience-skill">推荐：教程 → 速查表 → FAQ</span>
   </div>
 </div>
 
 <div class="cta-section">
-  <div class="cta-title">Start with the part you care about most</div>
-  <div class="cta-desc">Tutorial for understanding, API for contracts, performance pages for evidence, GitHub for code.</div>
+  <div class="cta-title">开始你的 FlashAttention 学习之旅</div>
+  <div class="cta-desc">从教程入手，理解实现；用 API 参考，确认契约；看性能指南，获取证据。</div>
   <div class="cta-buttons">
-    <a href="/diy-flash-attention/en/tutorial" class="cta-btn primary">
-      <span>🚀</span> Start Tutorial
+    <a href="/diy-flash-attention/zh/tutorial" class="cta-btn primary">
+      <span>🚀</span> 阅读教程
     </a>
     <a href="https://github.com/LessUp/diy-flash-attention" class="cta-btn secondary">
       <span>⭐</span> Star on GitHub
@@ -154,13 +167,13 @@ This site is the **project landing page**, not just a copied README. It helps yo
   </div>
 </div>
 
-## Language
+## 语言切换
 
 <div class="lang-switcher">
-  <a href="/diy-flash-attention/en/" class="lang-link active">
-    <span>🇺🇸</span> English
-  </a>
-  <a href="/diy-flash-attention/zh/" class="lang-link">
+  <a href="/diy-flash-attention/zh/" class="lang-link active">
     <span>🇨🇳</span> 中文
+  </a>
+  <a href="/diy-flash-attention/en/" class="lang-link">
+    <span>🇺🇸</span> English
   </a>
 </div>

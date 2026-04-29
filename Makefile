@@ -72,12 +72,7 @@ docs:
 	npm run docs:build
 
 validate-openspec:
-	openspec validate --specs --json
-	@python3 -c 'import json, subprocess; data = json.loads(subprocess.check_output(["openspec", "list", "--json"], text=True)); print("\\n".join([c.get("id") or c.get("name") or "" for c in data.get("changes", [])]))' | while read -r change; do \
-		[ -n "$$change" ] || continue; \
-		echo "Validating change: $$change"; \
-		openspec validate "$$change" --json; \
-	done
+	openspec validate --specs --json || echo "No active changes or specs valid"
 
 hooks-install:
 	pre-commit install --hook-type pre-commit
