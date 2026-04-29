@@ -7,7 +7,7 @@ centralizing common patterns used across all kernel implementations.
 Key utilities:
 - TRITON_AVAILABLE: Check if Triton is available
 - require_triton(): Raise error if Triton is not available
-- triton_cdiv: Ceiling division utility (works without Triton)
+- TritonKernelStub: Placeholder for kernel functions in CPU-only environments
 
 This module eliminates code duplication across kernel files.
 """
@@ -15,6 +15,7 @@ This module eliminates code duplication across kernel files.
 from __future__ import annotations
 
 from types import SimpleNamespace
+from typing import Callable
 
 # Triton availability check
 try:
@@ -41,22 +42,6 @@ def require_triton() -> None:
         )
 
 
-def triton_cdiv(x: int, y: int) -> int:
-    """
-    Ceiling division: ceil(x / y).
-
-    Equivalent to triton.cdiv, but works without Triton installed.
-
-    Args:
-        x: Numerator
-        y: Denominator
-
-    Returns:
-        Ceiling of x / y
-    """
-    return (x + y - 1) // y
-
-
 class TritonKernelStub:
     """
     Stub class for Triton kernels when Triton is not available.
@@ -65,8 +50,18 @@ class TritonKernelStub:
     Used to define kernel functions that work in CPU-only environments.
     """
 
-    def __getitem__(self, _grid):
-        def launcher(*args, **kwargs):
+    def __getitem__(self, _grid) -> Callable:
+        """
+        Return a launcher that raises an error when called.
+
+        Args:
+            _grid: Grid specification (ignored)
+
+        Returns:
+            A callable that raises ModuleNotFoundError
+        """
+
+        def launcher(*args, **kwargs) -> None:
             require_triton()
 
         return launcher
@@ -76,7 +71,6 @@ class TritonKernelStub:
 __all__ = [
     "TRITON_AVAILABLE",
     "require_triton",
-    "triton_cdiv",
     "TritonKernelStub",
     "triton",
     "tl",

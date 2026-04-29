@@ -229,7 +229,8 @@ def compose_block_masks(
     """
     if mask1.mask_matrix.shape != mask2.mask_matrix.shape:
         raise ValueError(
-            f"Mask shapes must match: {mask1.mask_matrix.shape} vs {mask2.mask_matrix.shape}"
+            f"Cannot compose masks: shapes must match. "
+            f"Got mask1={mask1.mask_matrix.shape}, mask2={mask2.mask_matrix.shape}"
         )
 
     if operation == "intersect":
