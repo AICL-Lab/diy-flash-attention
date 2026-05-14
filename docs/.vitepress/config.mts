@@ -24,12 +24,7 @@ export default withMermaid(defineConfig({
   base: '/diy-flash-attention/',
   cleanUrls: true,
   lastUpdated: true,
-  appearance: 'dark', // Default dark mode
-
-  // Mermaid 配置
-  mermaid: {
-    theme: 'dark'
-  },
+  appearance: true, // 启用主题切换，自动检测浏览器偏好
 
   // Head Configuration
   head: [
@@ -313,4 +308,4 @@ export default withMermaid(defineConfig({
       include: ['vue']
     }
   }
-})
+}))

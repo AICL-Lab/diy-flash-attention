@@ -4,6 +4,8 @@
 
 import Theme from 'vitepress/theme'
 import type { EnhanceAppContext } from 'vitepress'
+import { watch } from 'vue'
+import { useData } from 'vitepress'
 import './style.css'
 import './custom.css'
 
@@ -42,5 +44,20 @@ export default {
         }
       })
     }
+  },
+
+  setup() {
+    // Mermaid 主题动态切换
+    const { isDark } = useData()
+
+    watch(isDark, (dark) => {
+      // Mermaid 运行时主题切换
+      if (typeof window !== 'undefined' && (window as any).mermaid) {
+        (window as any).mermaid.initialize({
+          startOnLoad: false,
+          theme: dark ? 'dark' : 'default'
+        })
+      }
+    }, { immediate: true })
   }
 }
