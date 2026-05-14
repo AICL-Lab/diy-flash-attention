@@ -1,10 +1,20 @@
 import { defineConfig } from 'vitepress'
+import { withMermaid } from 'vitepress-plugin-mermaid'
+import llmstxt from 'vitepress-plugin-llms'
 
 // ============================================
 // DIY FlashAttention - VitePress Config
 // ============================================
 
-export default defineConfig({
+// 动态 base 路径：支持本地开发 (/) 和 GitHub Pages (/diy-flash-attention/)
+const rawBase = process.env.VITEPRESS_BASE
+const base = rawBase
+  ? rawBase.startsWith('/')
+    ? rawBase.endsWith('/') ? rawBase : `${rawBase}/`
+    : `/${rawBase}/`
+  : '/diy-flash-attention/'
+
+export default withMermaid(defineConfig({
   // Core Settings
   lang: 'en-US',
   title: 'DIY FlashAttention',
@@ -15,6 +25,11 @@ export default defineConfig({
   cleanUrls: true,
   lastUpdated: true,
   appearance: 'dark', // Default dark mode
+
+  // Mermaid 配置
+  mermaid: {
+    theme: 'dark'
+  },
 
   // Head Configuration
   head: [
@@ -119,6 +134,14 @@ export default defineConfig({
           ]
         },
         {
+          text: 'Whitepaper',
+          collapsed: false,
+          items: [
+            { text: 'Architecture', link: '/en/architecture' },
+            { text: 'Algorithm', link: '/en/algorithm' },
+          ]
+        },
+        {
           text: 'Resources',
           collapsed: false,
           items: [
@@ -145,6 +168,14 @@ export default defineConfig({
             { text: '教程', link: '/zh/tutorial' },
             { text: 'API 参考', link: '/zh/api' },
             { text: '张量布局指南', link: '/zh/tensor-layout' },
+          ]
+        },
+        {
+          text: '白皮书',
+          collapsed: false,
+          items: [
+            { text: '架构设计', link: '/zh/architecture' },
+            { text: '算法详解', link: '/zh/algorithm' },
           ]
         },
         {
@@ -274,14 +305,12 @@ export default defineConfig({
 
   // Vite Configuration
   vite: {
+    plugins: [llmstxt()],
     build: {
       chunkSizeWarningLimit: 1000,
     },
     optimizeDeps: {
       include: ['vue']
-    },
-    ssr: {
-      noExternal: ['@vueuse/core']
     }
   }
 })

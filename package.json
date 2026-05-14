@@ -1,17 +1,15 @@
 {
   "private": true,
-  "name": "diy-flash-attention-docs",
+  "name": "diy-flash-attention-root",
   "version": "2.0.0",
-  "description": "DIY FlashAttention Documentation - Ultra Modern GitHub Pages",
+  "description": "DIY FlashAttention - Educational FlashAttention Implementation with Triton",
   "scripts": {
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
-  },
-  "devDependencies": {
-    "vitepress": "^1.6.3"
+    "docs:dev": "cd docs && npm run dev",
+    "docs:build": "cd docs && npm run build",
+    "docs:preview": "cd docs && npm run preview",
+    "docs:install": "cd docs && npm install"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   }
 }

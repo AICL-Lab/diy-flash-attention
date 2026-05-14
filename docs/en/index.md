@@ -6,95 +6,125 @@ hero:
   text: "FlashAttention"
   tagline: |
     Build FlashAttention from scratch with Triton — master GPU kernel optimization
-    
-    <div class="badge-group">
-      <span class="badge">⚡ 99% Memory Reduction</span>
-      <span class="badge purple">🚀 1.6x Speedup</span>
-      <span class="badge yellow">📖 Production-Quality Code</span>
-    </div>
 
   actions:
     - theme: brand
+      text: 📖 Read Whitepaper
+      link: /en/architecture
+    - theme: alt
       text: 🚀 Start Tutorial
       link: /en/tutorial
     - theme: alt
       text: 📊 View Benchmarks
       link: /en/performance
-    - theme: alt
-      text: 💻 GitHub Source
-      link: https://github.com/LessUp/diy-flash-attention
-
-features:
-  - icon: 🔷
-    title: Read Real Triton Kernels
-    details: Not toy examples — actual matmul and FlashAttention kernels you can run, benchmark, and study line by line. Compact code, detailed comments.
-    link: /en/tutorial
-
-  - icon: ⚡
-    title: O(N) Memory Complexity
-    details: "Understand FlashAttention's breakthrough: online softmax, SRAM tiling, causal masking — all without materializing the full attention matrix."
-    link: /en/tutorial
-
-  - icon: 📊
-    title: Real Performance Data
-    details: Built-in benchmark scripts comparing against PyTorch SDPA. See exactly why FlashAttention achieves 99% memory savings and 1.6x speedup.
-    link: /en/performance
-
-  - icon: 🖥️
-    title: Architecture Adaptive
-    details: Auto-detects Volta → Blackwell GPUs, adapts configurations automatically. Hopper+ supports TMA and FP8 feature detection.
-    link: /en/api
-
-  - icon: 🧪
-    title: Comprehensive Testing
-    details: 50+ unit tests, Hypothesis property-based testing covers infinite input space. Quality assured, safe for learning reference.
-    link: https://github.com/LessUp/diy-flash-attention/tree/master/tests
-
-  - icon: 🌐
-    title: Bilingual Documentation
-    details: All core documentation available in both English and Chinese, accessible to developers worldwide.
-    link: /zh/
 ---
 
-## Why This Project?
+## FlashAttention Architecture
 
-<div class="highlight-box">
-  <p><strong>Compact but Real</strong>: Code small enough to read end-to-end, but not a toy. You can:</p>
-  <ul>
-    <li>✅ Run real benchmarks on your GPU</li>
-    <li>✅ Compare performance against PyTorch SDPA</li>
-    <li>✅ Understand every design decision behind each line</li>
-  </ul>
+<ArchitectureDiagram />
+
+## Why FlashAttention?
+
+<div class="comparison-table">
+
+| Aspect | Traditional Attention | FlashAttention |
+|--------|----------------------|----------------|
+| **Memory Complexity** | O(N²) - Materializes full N×N matrix | O(N) - Never stores intermediate results |
+| **HBM Accesses** | N² reads/writes for S and P matrices | ~N reads/writes, streamed in blocks |
+| **Memory Savings** | ❌ 1GB+ for N=16K sequences | ✅ **99% reduction** for long sequences |
+| **Speedup** | Baseline | **1.6x - 2x faster** on modern GPUs |
+| **Algorithm** | Three-pass: compute → softmax → output | **Single-pass** online softmax |
+
 </div>
 
-### What You'll Learn
+## What You'll Learn
 
-| Topic | Takeaway |
-|-------|----------|
-| GPU Memory Hierarchy | Data flow: HBM → L2 → SRAM → Registers |
-| Triton Programming | Auto-tiling, autotune, kernel optimization techniques |
-| FlashAttention Algorithm | Online softmax, causal masking, variable-length sequences |
-| Performance Tuning | Block size selection, occupancy optimization, memory profiling |
+<div class="doc-nav-grid">
 
-### Project Stats
+<div class="doc-nav-card">
+  <div class="doc-nav-icon">📖</div>
+  <h3><a href="/diy-flash-attention/en/architecture">Architecture Design</a></h3>
+  <p>System architecture, GPU memory hierarchy, kernel design, and design decisions.</p>
+  <span class="doc-nav-tag">Whitepaper</span>
+</div>
 
-<div class="stats-grid">
-  <div class="stat-card">
-    <div class="stat-value">2+</div>
-    <div class="stat-label">Core Triton Kernels</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-value">O(N)</div>
-    <div class="stat-label">Attention Memory Complexity</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-value">6</div>
-    <div class="stat-label">GPU Architectures Supported</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-value">99%</div>
-    <div class="stat-label">Memory Saved (Long Sequences)</div>
-  </div>
+<div class="doc-nav-card">
+  <div class="doc-nav-icon">📐</div>
+  <h3><a href="/diy-flash-attention/en/algorithm">Algorithm Deep Dive</a></h3>
+  <p>Online softmax derivation, tiling strategies, complexity analysis, and correctness proofs.</p>
+  <span class="doc-nav-tag">Whitepaper</span>
+</div>
+
+<div class="doc-nav-card">
+  <div class="doc-nav-icon">🚀</div>
+  <h3><a href="/diy-flash-attention/en/tutorial">Tutorial</a></h3>
+  <p>Step-by-step guide: GPU basics → Triton programming → FlashAttention implementation.</p>
+  <span class="doc-nav-tag">Getting Started</span>
+</div>
+
+<div class="doc-nav-card">
+  <div class="doc-nav-icon">📊</div>
+  <h3><a href="/diy-flash-attention/en/performance">Performance Guide</a></h3>
+  <p>Block size tuning, data type selection, GPU architecture adaptation, and benchmarking.</p>
+  <span class="doc-nav-tag">Reference</span>
+</div>
+
+<div class="doc-nav-card">
+  <div class="doc-nav-icon">🔧</div>
+  <h3><a href="/diy-flash-attention/en/api">API Reference</a></h3>
+  <p>Complete function signatures, parameters, return values, and usage examples.</p>
+  <span class="doc-nav-tag">Reference</span>
+</div>
+
+<div class="doc-nav-card">
+  <div class="doc-nav-icon">⚡</div>
+  <h3><a href="/diy-flash-attention/en/cheatsheet">Cheatsheet</a></h3>
+  <p>Quick reference: common APIs, commands, configuration templates, and error lookup.</p>
+  <span class="doc-nav-tag">Quick Reference</span>
+</div>
+
+</div>
+
+## Key Features
+
+<div class="features-grid">
+
+<div class="feature-item">
+  <span class="feature-icon">🔷</span>
+  <h4>Real Triton Kernels</h4>
+  <p>Not toy examples — production-quality matmul and FlashAttention kernels you can run, benchmark, and study line by line.</p>
+</div>
+
+<div class="feature-item">
+  <span class="feature-icon">⚡</span>
+  <h4>O(N) Memory Complexity</h4>
+  <p>Understand FlashAttention's breakthrough: online softmax, SRAM tiling, causal masking — all without materializing the full attention matrix.</p>
+</div>
+
+<div class="feature-item">
+  <span class="feature-icon">📊</span>
+  <h4>Real Performance Data</h4>
+  <p>Built-in benchmark scripts comparing against PyTorch SDPA. See exactly why FlashAttention achieves 99% memory savings.</p>
+</div>
+
+<div class="feature-item">
+  <span class="feature-icon">🖥️</span>
+  <h4>Architecture Adaptive</h4>
+  <p>Auto-detects Volta → Blackwell GPUs, adapts configurations automatically. Hopper+ supports TMA and FP8.</p>
+</div>
+
+<div class="feature-item">
+  <span class="feature-icon">🧪</span>
+  <h4>Comprehensive Testing</h4>
+  <p>50+ unit tests, Hypothesis property-based testing covers infinite input space. Safe for learning reference.</p>
+</div>
+
+<div class="feature-item">
+  <span class="feature-icon">🌐</span>
+  <h4>Bilingual Documentation</h4>
+  <p>All documentation available in both English and Chinese, accessible to developers worldwide.</p>
+</div>
+
 </div>
 
 ## Quick Start
@@ -125,47 +155,16 @@ out = flash_attention(q, k, v, causal=True)  # GPT-style causal mask
 print(f"Output shape: {out.shape}")  # [2, 8, 4096, 64]
 ```
 
-## Learning Paths
+## GPU Support Matrix
 
-<div class="audience-grid">
-  <div class="audience-card">
-    <div class="audience-avatar">🧑‍💻</div>
-    <div class="audience-title">Kernel Developer</div>
-    <div class="audience-benefit">Start with the tutorial, understand FlashAttention line by line</div>
-    <span class="audience-skill">Path: Tutorial → API → Performance</span>
-  </div>
-  <div class="audience-card">
-    <div class="audience-avatar">🔬</div>
-    <div class="audience-title">Researcher</div>
-    <div class="audience-benefit">Quick API reference lookup, reproduce and modify kernels</div>
-    <span class="audience-skill">Path: API Reference → Source Code</span>
-  </div>
-  <div class="audience-card">
-    <div class="audience-avatar">🚀</div>
-    <div class="audience-title">Performance Engineer</div>
-    <div class="audience-benefit">Deep dive into tuning, understand block sizes and architecture adaptation</div>
-    <span class="audience-skill">Path: Performance Guide → Benchmarks</span>
-  </div>
-  <div class="audience-card">
-    <div class="audience-avatar">📚</div>
-    <div class="audience-title">Learner</div>
-    <div class="audience-benefit">Systematic learning of GPU programming and attention optimization</div>
-    <span class="audience-skill">Path: Tutorial → Cheatsheet → FAQ</span>
-  </div>
-</div>
-
-<div class="cta-section">
-  <div class="cta-title">Start Your FlashAttention Journey</div>
-  <div class="cta-desc">Tutorial for understanding, API for contracts, performance guide for evidence.</div>
-  <div class="cta-buttons">
-    <a href="/diy-flash-attention/en/tutorial" class="cta-btn primary">
-      <span>🚀</span> Read Tutorial
-    </a>
-    <a href="https://github.com/LessUp/diy-flash-attention" class="cta-btn secondary">
-      <span>⭐</span> Star on GitHub
-    </a>
-  </div>
-</div>
+| Architecture | GPUs | Compute Capability | Features |
+|--------------|------|-------------------|----------|
+| **Volta** | V100 | SM70 | ✅ Tensor Cores, FP16 |
+| **Turing** | RTX 20xx | SM75 | ✅ Tensor Cores, FP16 |
+| **Ampere** | A100, RTX 30xx | SM80 | ✅ Full Support, BF16 |
+| **Ada** | RTX 40xx | SM89 | ✅ Full Support, BF16 |
+| **Hopper** | H100 | SM90 | ✅ TMA, FP8 Features |
+| **Blackwell** | B100/B200 | SM100 | ✅ Latest Features |
 
 ## Language
 

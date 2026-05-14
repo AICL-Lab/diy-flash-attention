@@ -1,0 +1,21 @@
+{
+  "name": "diy-flash-attention-docs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
+  "devDependencies": {
+    "vitepress": "^1.6.3"
+  },
+  "dependencies": {
+    "mermaid": "^11.12.2",
+    "vitepress-plugin-llms": "^1.10.0",
+    "vitepress-plugin-mermaid": "^2.0.17"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

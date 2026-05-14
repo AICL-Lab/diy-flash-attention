@@ -11,6 +11,7 @@ import './custom.css'
 import GpuArchitectureVisualizer from './components/GpuArchitectureVisualizer.vue'
 import FlashAttentionVisualizer from './components/FlashAttentionVisualizer.vue'
 import BenchmarkChart from './components/BenchmarkChart.vue'
+import ArchitectureDiagram from './components/ArchitectureDiagram.vue'
 
 export default {
   extends: Theme,
@@ -19,6 +20,7 @@ export default {
     app.component('GpuArchitectureVisualizer', GpuArchitectureVisualizer)
     app.component('FlashAttentionVisualizer', FlashAttentionVisualizer)
     app.component('BenchmarkChart', BenchmarkChart)
+    app.component('ArchitectureDiagram', ArchitectureDiagram)
 
     // Client-side only code
     if (typeof window !== 'undefined') {
