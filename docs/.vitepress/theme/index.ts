@@ -26,13 +26,45 @@ export default {
 
     // Client-side only code
     if (typeof window !== 'undefined') {
-      // Smooth scroll transitions
+      // ============================================
+      // 语言自动检测与偏好记忆
+      // ============================================
+      const LOCALE_KEY = 'vitepress-locale-preference'
+      const BASE_PATH = '/diy-flash-attention'
+
+      // 首次访问：检测浏览器语言并重定向
+      const initAutoLocale = () => {
+        const stored = localStorage.getItem(LOCALE_KEY)
+        if (stored) return // 已有偏好，不干预
+
+        const browserLang = navigator.language
+        const isZh = browserLang === 'zh-CN' || browserLang === 'zh'
+        if (!isZh) return
+
+        const path = window.location.pathname
+        const relPath = path.replace(BASE_PATH, '').replace(/\/$/, '')
+
+        // 当前在英文路径 → 重定向到中文对应页面
+        if (!relPath.startsWith('/zh')) {
+          const newPath = BASE_PATH + '/zh' + relPath
+          window.location.replace(newPath)
+        }
+      }
+
+      // Smooth scroll transitions + 记录语言偏好
       router.onBeforeRouteChange = () => {
         document.documentElement.style.scrollBehavior = 'auto'
       }
-      router.onAfterRouteChanged = () => {
+      router.onAfterRouteChanged = (to) => {
         document.documentElement.style.scrollBehavior = 'smooth'
+
+        // 记录用户语言偏好
+        const isZh = to.startsWith('/zh/')
+        localStorage.setItem(LOCALE_KEY, isZh ? 'zh' : 'en')
       }
+
+      // 初始化语言检测
+      initAutoLocale()
 
       // Keyboard shortcuts
       document.addEventListener('keydown', (e) => {
