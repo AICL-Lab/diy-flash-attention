@@ -372,6 +372,6 @@ On A100 (3.35 TB/s HBM bandwidth):
 
 ## See Also
 
-- [Algorithm Deep Dive](/en/algorithm) - Mathematical foundations and algorithm details
-- [Performance Guide](/en/performance) - Tuning and optimization strategies
-- [API Reference](/en/api) - Complete function signatures and examples
+- [Algorithm Deep Dive](/algorithm) - Mathematical foundations and algorithm details
+- [Performance Guide](/performance) - Tuning and optimization strategies
+- [API Reference](/api) - Complete function signatures and examples

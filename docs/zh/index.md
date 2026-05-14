@@ -169,7 +169,7 @@ print(f"输出形状: {out.shape}")  # [2, 8, 4096, 64]
 ## 语言
 
 <div class="lang-switcher">
-  <a href="/diy-flash-attention/en/" class="lang-link">
+  <a href="/diy-flash-attention/" class="lang-link">
     <span>🇺🇸</span> English
   </a>
   <a href="/diy-flash-attention/zh/" class="lang-link active">

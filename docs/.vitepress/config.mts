@@ -97,59 +97,52 @@ export default withMermaid(defineConfig({
 
     nav: [
       { text: 'Home', link: '/' },
-      { text: 'Tutorial', link: '/en/tutorial' },
-      { text: 'API', link: '/en/api' },
+      { text: 'Tutorial', link: '/tutorial' },
+      { text: 'API', link: '/api' },
       {
         text: 'Resources',
         items: [
-          { text: 'Performance Guide', link: '/en/performance' },
-          { text: 'Cheatsheet', link: '/en/cheatsheet' },
-          { text: 'FAQ', link: '/en/faq' },
-        ]
-      },
-      {
-        text: '🌐',
-        items: [
-          { text: 'English', link: '/en/' },
-          { text: '中文', link: '/zh/' },
+          { text: 'Performance Guide', link: '/performance' },
+          { text: 'Cheatsheet', link: '/cheatsheet' },
+          { text: 'FAQ', link: '/faq' },
         ]
       },
     ],
 
     sidebar: {
-      '/en/': [
+      '/': [
         {
           text: 'Getting Started',
           collapsed: false,
           items: [
-            { text: 'Introduction', link: '/en/' },
-            { text: 'Tutorial', link: '/en/tutorial' },
-            { text: 'API Reference', link: '/en/api' },
-            { text: 'Tensor Layout Guide', link: '/en/tensor-layout' },
+            { text: 'Introduction', link: '/' },
+            { text: 'Tutorial', link: '/tutorial' },
+            { text: 'API Reference', link: '/api' },
+            { text: 'Tensor Layout Guide', link: '/tensor-layout' },
           ]
         },
         {
           text: 'Whitepaper',
           collapsed: false,
           items: [
-            { text: 'Architecture', link: '/en/architecture' },
-            { text: 'Algorithm', link: '/en/algorithm' },
+            { text: 'Architecture', link: '/architecture' },
+            { text: 'Algorithm', link: '/algorithm' },
           ]
         },
         {
           text: 'Resources',
           collapsed: false,
           items: [
-            { text: 'Performance Guide', link: '/en/performance' },
-            { text: 'Cheatsheet', link: '/en/cheatsheet' },
-            { text: 'FAQ', link: '/en/faq' },
+            { text: 'Performance Guide', link: '/performance' },
+            { text: 'Cheatsheet', link: '/cheatsheet' },
+            { text: 'FAQ', link: '/faq' },
           ]
         },
         {
           text: 'Reference',
           collapsed: false,
           items: [
-            { text: 'Changelog', link: '/en/changelog' },
+            { text: 'Changelog', link: '/changelog' },
             { text: 'GitHub →', link: 'https://github.com/LessUp/diy-flash-attention' },
           ]
         },
@@ -255,7 +248,7 @@ export default withMermaid(defineConfig({
 
   // Locales
   locales: {
-    root: { label: 'English', lang: 'en-US', link: '/en/' },
+    root: { label: 'English', lang: 'en-US' },
     zh: {
       label: '中文',
       lang: 'zh-CN',
@@ -271,13 +264,6 @@ export default withMermaid(defineConfig({
               { text: '性能指南', link: '/zh/performance' },
               { text: '速查表', link: '/zh/cheatsheet' },
               { text: '常见问题', link: '/zh/faq' },
-            ]
-          },
-          {
-            text: '🌐',
-            items: [
-              { text: 'English', link: '/en/' },
-              { text: '中文', link: '/zh/' },
             ]
           },
         ],

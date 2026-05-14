@@ -411,6 +411,6 @@ The algorithm naturally maintains numerical stability by:
 
 ## See Also
 
-- [Architecture Design](/en/architecture) - System architecture and memory hierarchy
-- [Performance Guide](/en/performance) - Tuning block sizes and optimization
-- [API Reference](/en/api) - Function signatures and usage examples
+- [Architecture Design](/architecture) - System architecture and memory hierarchy
+- [Performance Guide](/performance) - Tuning block sizes and optimization
+- [API Reference](/api) - Function signatures and usage examples

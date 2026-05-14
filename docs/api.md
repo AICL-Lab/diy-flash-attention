@@ -841,7 +841,7 @@ print(f"Validation {'passed' if is_valid else 'failed'}, max diff: {max_diff:.2e
 ## Links
 
 - [Tensor Layout Guide](./tensor-layout) - Understanding V1 vs V2 layout differences
-- [中文文档](../zh/api) - Complete Chinese API documentation
+- [中文文档](/zh/api) - Complete Chinese API documentation
 - [Tutorial](./tutorial) - Step-by-step learning guide
 - [Performance Guide](./performance) - Optimization tips
 - [FAQ](./faq) - Common questions and solutions
