@@ -27,17 +27,30 @@ def test_docs_academy_route_files_exist_for_chinese() -> None:
     assert (ROOT / "docs/zh/knowledge-map.md").exists()
 
 
-def test_homepages_expose_academy_entry_sections() -> None:
+def test_homepages_prioritize_academy_portal_sections() -> None:
     en = (ROOT / "docs/index.md").read_text()
     zh = (ROOT / "docs/zh/index.md").read_text()
 
+    assert "## Start Here" in en
     assert "Learning Path" in en
     assert "Paper Guide" in en
     assert "Knowledge Map" in en
+    assert "Reference Library" in en
+    assert "## Why FlashAttention?" not in en
+    assert "## Key Features" not in en
+    assert "## Quick Start" not in en
+    assert "## GPU Support Matrix" not in en
 
+    assert "## 从这里开始" in zh
     assert "学习路径" in zh
     assert "论文导读" in zh
-    assert "知识地图" in zh
+    assert "知识图谱" in zh
+    assert "参考资料库" in zh
+    assert "知识地图" not in zh
+    assert "## FlashAttention 架构" not in zh
+    assert "## 核心特性" not in zh
+    assert "## 快速开始" not in zh
+    assert "## GPU 支持矩阵" not in zh
 
 
 def test_docs_config_uses_computed_base_variable() -> None:

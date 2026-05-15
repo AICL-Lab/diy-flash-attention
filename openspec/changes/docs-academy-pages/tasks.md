@@ -8,7 +8,7 @@
 
 ## 3. Academy portal homepage
 
-- [ ] 3.1 Restructure EN/ZH homepages into portal pages
+- [x] 3.1 Restructure EN/ZH homepages into portal pages
 
 ## 4. Learning entry pages
 

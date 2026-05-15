@@ -5,7 +5,7 @@ hero:
   name: "DIY"
   text: "FlashAttention"
   tagline: |
-    Build FlashAttention from scratch with Triton — master GPU kernel optimization
+    Academy portal for learning forward-only FlashAttention with Triton
 
   actions:
     - theme: brand
@@ -21,7 +21,7 @@ hero:
 
 ## Start Here
 
-Use the academy portal first, then move into the whitepaper-style references and runnable code examples below.
+Use this portal to choose a study route first, then move into the reference docs that support each step.
 
 <div class="academy-grid">
 
@@ -42,27 +42,15 @@ Use the academy portal first, then move into the whitepaper-style references and
 
 </div>
 
-## FlashAttention Architecture
+## Portal Overview
 
-<ArchitectureDiagram />
-
-## Why FlashAttention?
-
-<div class="comparison-table">
-
-| Aspect | Traditional Attention | FlashAttention |
-|--------|----------------------|----------------|
-| **Memory Complexity** | O(N²) - Materializes full N×N matrix | O(N) - Never stores intermediate results |
-| **HBM Accesses** | N² reads/writes for S and P matrices | ~N reads/writes, streamed in blocks |
-| **Memory Savings** | ❌ 1GB+ for N=16K sequences | ✅ **99% reduction** for long sequences |
-| **Speedup** | Baseline | **1.6x - 2x faster** on modern GPUs |
-| **Algorithm** | Three-pass: compute → softmax → output | **Single-pass** online softmax |
-
-</div>
+- **Learning Path** gives first-time readers a practical order: Triton basics → online softmax → attention kernels.
+- **Paper Guide** keeps the reading order aligned with the repository's forward-only educational scope.
+- **Knowledge Map** connects concepts, files, and docs so you can jump between theory and implementation.
 
 ## Reference Library
 
-After the academy portal points you to the right entry, use these references to go deeper into the implementation details.
+After the portal points you to the right entry, use these references to go deeper into implementation details.
 
 <div class="doc-nav-grid">
 
@@ -110,86 +98,11 @@ After the academy portal points you to the right entry, use these references to 
 
 </div>
 
-## Key Features
+## Project Scope
 
-<div class="features-grid">
-
-<div class="feature-item">
-  <span class="feature-icon">🔷</span>
-  <h4>Real Triton Kernels</h4>
-  <p>Not toy examples — production-quality matmul and FlashAttention kernels you can run, benchmark, and study line by line.</p>
-</div>
-
-<div class="feature-item">
-  <span class="feature-icon">⚡</span>
-  <h4>O(N) Memory Complexity</h4>
-  <p>Understand FlashAttention's breakthrough: online softmax, SRAM tiling, causal masking — all without materializing the full attention matrix.</p>
-</div>
-
-<div class="feature-item">
-  <span class="feature-icon">📊</span>
-  <h4>Real Performance Data</h4>
-  <p>Built-in benchmark scripts comparing against PyTorch SDPA. See exactly why FlashAttention achieves 99% memory savings.</p>
-</div>
-
-<div class="feature-item">
-  <span class="feature-icon">🖥️</span>
-  <h4>Architecture Adaptive</h4>
-  <p>Auto-detects Volta → Blackwell GPUs, adapts configurations automatically. Hopper+ supports TMA and FP8.</p>
-</div>
-
-<div class="feature-item">
-  <span class="feature-icon">🧪</span>
-  <h4>Comprehensive Testing</h4>
-  <p>50+ unit tests, Hypothesis property-based testing covers infinite input space. Safe for learning reference.</p>
-</div>
-
-<div class="feature-item">
-  <span class="feature-icon">🌐</span>
-  <h4>Bilingual Documentation</h4>
-  <p>All documentation available in both English and Chinese, accessible to developers worldwide.</p>
-</div>
-
-</div>
-
-## Quick Start
-
-```bash
-# Install
-pip install diy-flash-attention
-
-# Or install from source
-pip install -e ".[dev]"
-
-# Verify
-python -c "from kernels import flash_attention; print('✓ Installation successful')"
-```
-
-### Run Example
-
-```python
-import torch
-from kernels import flash_attention
-
-# FlashAttention — 99% less memory for long sequences
-q = torch.randn(2, 8, 4096, 64, device="cuda", dtype=torch.float16)
-k = torch.randn(2, 8, 4096, 64, device="cuda", dtype=torch.float16)
-v = torch.randn(2, 8, 4096, 64, device="cuda", dtype=torch.float16)
-
-out = flash_attention(q, k, v, causal=True)  # GPT-style causal mask
-print(f"Output shape: {out.shape}")  # [2, 8, 4096, 64]
-```
-
-## GPU Support Matrix
-
-| Architecture | GPUs | Compute Capability | Features |
-|--------------|------|-------------------|----------|
-| **Volta** | V100 | SM70 | ✅ Tensor Cores, FP16 |
-| **Turing** | RTX 20xx | SM75 | ✅ Tensor Cores, FP16 |
-| **Ampere** | A100, RTX 30xx | SM80 | ✅ Full Support, BF16 |
-| **Ada** | RTX 40xx | SM89 | ✅ Full Support, BF16 |
-| **Hopper** | H100 | SM90 | ✅ TMA, FP8 Features |
-| **Blackwell** | B100/B200 | SM100 | ✅ Latest Features |
+- Educational, forward-only FlashAttention in Triton.
+- Built to help readers connect papers, kernels, and performance trade-offs.
+- Best used as a guided learning repo, not as a production training framework.
 
 ## Language
 

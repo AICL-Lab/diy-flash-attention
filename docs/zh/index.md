@@ -5,7 +5,7 @@ hero:
   name: "DIY"
   text: "FlashAttention"
   tagline: |
-    从零构建 FlashAttention — 掌握 GPU 内核优化
+    面向学习者的 Triton FlashAttention 学院入口
 
   actions:
     - theme: brand
@@ -15,13 +15,13 @@ hero:
       text: 📚 阅读论文
       link: /zh/paper-guide
     - theme: alt
-      text: 🗺️ 浏览知识地图
+      text: 🗺️ 浏览知识图谱
       link: /zh/knowledge-map
 ---
 
 ## 从这里开始
 
-先使用学院门户选择学习入口，再进入下方的白皮书式参考内容与可运行示例。
+先用这个门户选择学习路线，再进入支撑各阶段的参考文档。
 
 <div class="academy-grid">
 
@@ -36,33 +36,21 @@ hero:
 </div>
 
 <div class="academy-card">
-  <h3><a href="/diy-flash-attention/zh/knowledge-map">知识地图</a></h3>
+  <h3><a href="/diy-flash-attention/zh/knowledge-map">知识图谱</a></h3>
   <p>查看核心概念、源码文件与文档之间的连接关系。</p>
 </div>
 
 </div>
 
-## FlashAttention 架构
+## 门户导览
 
-<ArchitectureDiagram />
-
-## 为什么选择 FlashAttention？
-
-<div class="comparison-table">
-
-| 方面 | 传统注意力 | FlashAttention |
-|------|-----------|----------------|
-| **内存复杂度** | O(N²) - 物化完整 N×N 矩阵 | O(N) - 从不存储中间结果 |
-| **HBM 访问** | S 和 P 矩阵的 N² 次读写 | ~N 次读写，流式块处理 |
-| **内存节省** | ❌ N=16K 序列需 1GB+ | ✅ **长序列节省 99%** |
-| **加速** | 基线 | **现代 GPU 上快 1.6x - 2x** |
-| **算法** | 三阶段：计算 → softmax → 输出 | **单阶段**在线 softmax |
-
-</div>
+- **学习路径**：为第一次阅读本仓库的读者安排 Triton 基础 → 在线 softmax → 注意力内核的学习顺序。
+- **论文导读**：按仓库的 educational、forward-only 范围组织论文阅读顺序。
+- **知识图谱**：把概念、源码文件和文档页面串起来，方便在理论与实现之间切换。
 
 ## 参考资料库
 
-学院门户负责导学，下面这些参考页用于继续深入实现细节与实践路径。
+学院门户负责导学，下面这些页面负责继续深入实现细节与实践路径。
 
 <div class="doc-nav-grid">
 
@@ -110,86 +98,11 @@ hero:
 
 </div>
 
-## 核心特性
+## 项目范围
 
-<div class="features-grid">
-
-<div class="feature-item">
-  <span class="feature-icon">🔷</span>
-  <h4>真实 Triton 内核</h4>
-  <p>非玩具示例 — 生产级 matmul 和 FlashAttention 内核，可运行、基准测试、逐行学习。</p>
-</div>
-
-<div class="feature-item">
-  <span class="feature-icon">⚡</span>
-  <h4>O(N) 内存复杂度</h4>
-  <p>理解 FlashAttention 的突破：在线 softmax、SRAM 分块、因果掩码 — 无需物化完整注意力矩阵。</p>
-</div>
-
-<div class="feature-item">
-  <span class="feature-icon">📊</span>
-  <h4>真实性能数据</h4>
-  <p>内置基准测试脚本，与 PyTorch SDPA 对比。直观展示 99% 内存节省的原因。</p>
-</div>
-
-<div class="feature-item">
-  <span class="feature-icon">🖥️</span>
-  <h4>架构自适应</h4>
-  <p>自动检测 Volta → Blackwell GPU，适配配置。Hopper+ 支持 TMA 和 FP8。</p>
-</div>
-
-<div class="feature-item">
-  <span class="feature-icon">🧪</span>
-  <h4>全面测试</h4>
-  <p>50+ 单元测试，Hypothesis 属性测试覆盖无限输入空间。学习参考安全可靠。</p>
-</div>
-
-<div class="feature-item">
-  <span class="feature-icon">🌐</span>
-  <h4>双语文档</h4>
-  <p>所有文档中英双语，全球开发者均可访问。</p>
-</div>
-
-</div>
-
-## 快速开始
-
-```bash
-# 安装
-pip install diy-flash-attention
-
-# 或从源码安装
-pip install -e ".[dev]"
-
-# 验证
-python -c "from kernels import flash_attention; print('✓ 安装成功')"
-```
-
-### 运行示例
-
-```python
-import torch
-from kernels import flash_attention
-
-# FlashAttention — 长序列节省 99% 内存
-q = torch.randn(2, 8, 4096, 64, device="cuda", dtype=torch.float16)
-k = torch.randn(2, 8, 4096, 64, device="cuda", dtype=torch.float16)
-v = torch.randn(2, 8, 4096, 64, device="cuda", dtype=torch.float16)
-
-out = flash_attention(q, k, v, causal=True)  # GPT 风格因果掩码
-print(f"输出形状: {out.shape}")  # [2, 8, 4096, 64]
-```
-
-## GPU 支持矩阵
-
-| 架构 | GPU | 计算能力 | 特性 |
-|------|-----|----------|------|
-| **Volta** | V100 | SM70 | ✅ Tensor Cores, FP16 |
-| **Turing** | RTX 20xx | SM75 | ✅ Tensor Cores, FP16 |
-| **Ampere** | A100, RTX 30xx | SM80 | ✅ 完整支持, BF16 |
-| **Ada** | RTX 40xx | SM89 | ✅ 完整支持, BF16 |
-| **Hopper** | H100 | SM90 | ✅ TMA, FP8 特性 |
-| **Blackwell** | B100/B200 | SM100 | ✅ 最新特性 |
+- 面向学习的、仅 forward pass 的 Triton FlashAttention 项目。
+- 重点帮助读者建立论文、内核实现与性能权衡之间的联系。
+- 适合作为导学型仓库，不以生产训练框架为目标。
 
 ## 语言
 
