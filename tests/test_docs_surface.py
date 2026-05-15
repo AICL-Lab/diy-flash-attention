@@ -27,6 +27,17 @@ def test_docs_academy_route_files_exist_for_chinese() -> None:
     assert (ROOT / "docs/zh/knowledge-map.md").exists()
 
 
+def test_learning_path_pages_exist_and_reference_core_docs() -> None:
+    en = (ROOT / "docs/learning-path.md").read_text()
+    zh = (ROOT / "docs/zh/learning-path.md").read_text()
+
+    for text in ("tutorial", "architecture", "algorithm", "performance", "api"):
+        assert text in en.lower()
+
+    for text in ("教程", "架构", "算法", "性能", "api"):
+        assert text in zh.lower()
+
+
 def test_homepages_prioritize_academy_portal_sections() -> None:
     en = (ROOT / "docs/index.md").read_text()
     zh = (ROOT / "docs/zh/index.md").read_text()
