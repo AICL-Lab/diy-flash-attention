@@ -31,3 +31,18 @@ def test_docs_config_uses_computed_base_variable() -> None:
     text = CONFIG.read_text()
     assert "const base =" in text
     assert "base: base" in text
+
+
+def test_logo_svg_declares_theme_adaptive_rules() -> None:
+    logo = (ROOT / "docs/public/logo.svg").read_text()
+    assert "prefers-color-scheme" in logo
+    assert "--fa-logo-bg" in logo
+    assert "--fa-logo-fg" in logo
+
+
+def test_theme_aware_figure_component_is_registered() -> None:
+    theme_index = (ROOT / "docs/.vitepress/theme/index.ts").read_text()
+    component = (ROOT / "docs/.vitepress/theme/components/ThemeAwareFigure.vue").read_text()
+    assert "ThemeAwareFigure" in theme_index
+    assert "defineProps" in component
+    assert "isDark" in component

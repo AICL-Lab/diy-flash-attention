@@ -1,19 +1,56 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <style>
+    :root {
+      --fa-logo-bg: #0f172a;
+      --fa-logo-fg: #f8fafc;
+      --fa-logo-accent-start: #06b6d4;
+      --fa-logo-accent-end: #8b5cf6;
+      --fa-logo-highlight: rgba(248, 250, 252, 0.9);
+      --fa-logo-divider: rgba(248, 250, 252, 0.5);
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --fa-logo-bg: #e0f2fe;
+        --fa-logo-fg: #0f172a;
+        --fa-logo-highlight: rgba(15, 23, 42, 0.9);
+        --fa-logo-divider: rgba(15, 23, 42, 0.45);
+      }
+    }
+  </style>
   <defs>
     <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#06b6d4"/>
-      <stop offset="100%" style="stop-color:#8b5cf6"/>
+      <stop offset="0%" stop-color="var(--fa-logo-accent-start)" />
+      <stop offset="100%" stop-color="var(--fa-logo-accent-end)" />
     </linearGradient>
     <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feGaussianBlur stdDeviation="3" result="coloredBlur" />
       <feMerge>
-        <feMergeNode in="coloredBlur"/>
-        <feMergeNode in="SourceGraphic"/>
+        <feMergeNode in="coloredBlur" />
+        <feMergeNode in="SourceGraphic" />
       </feMerge>
     </filter>
   </defs>
-  <rect width="120" height="120" rx="24" fill="url(#g)"/>
-  <text x="60" y="78" text-anchor="middle" font-family="system-ui,sans-serif" font-size="52" font-weight="900" fill="white" filter="url(#glow)">FA</text>
-  <circle cx="60" cy="30" r="5" fill="rgba(255,255,255,0.9)"/>
-  <line x1="35" y1="95" x2="85" y2="95" stroke="rgba(255,255,255,0.5)" stroke-width="3" stroke-linecap="round"/>
+  <rect width="120" height="120" rx="24" fill="var(--fa-logo-bg)" />
+  <rect x="12" y="12" width="96" height="96" rx="20" fill="url(#g)" opacity="0.18" />
+  <text
+    x="60"
+    y="78"
+    text-anchor="middle"
+    font-family="system-ui,sans-serif"
+    font-size="52"
+    font-weight="900"
+    fill="var(--fa-logo-fg)"
+    filter="url(#glow)"
+  >FA</text>
+  <circle cx="60" cy="30" r="5" fill="var(--fa-logo-highlight)" />
+  <line
+    x1="35"
+    y1="95"
+    x2="85"
+    y2="95"
+    stroke="var(--fa-logo-divider)"
+    stroke-width="3"
+    stroke-linecap="round"
+  />
 </svg>
