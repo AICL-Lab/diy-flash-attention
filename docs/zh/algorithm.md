@@ -2,6 +2,12 @@
 
 本文档提供 FlashAttention 算法的全面数学分析，包括在线 softmax 推导、分块策略和复杂度分析。
 
+> **阅读前提：** 建议先通过 [/zh/tutorial](/zh/tutorial) 建立张量布局和 forward-only 的整体心智模型。
+>
+> **对应源码：** `kernels/flash_attn.py`、`kernels/flash_attn_v2.py`
+>
+> **下一步：** 继续阅读 [/zh/paper-guide](/zh/paper-guide) 或 [/zh/knowledge-map](/zh/knowledge-map)。
+
 ## 注意力问题
 
 ### 标准注意力计算

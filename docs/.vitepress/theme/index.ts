@@ -14,6 +14,7 @@ import GpuArchitectureVisualizer from './components/GpuArchitectureVisualizer.vu
 import FlashAttentionVisualizer from './components/FlashAttentionVisualizer.vue'
 import BenchmarkChart from './components/BenchmarkChart.vue'
 import ArchitectureDiagram from './components/ArchitectureDiagram.vue'
+import ThemeAwareFigure from './components/ThemeAwareFigure.vue'
 
 export default {
   extends: Theme,
@@ -23,6 +24,7 @@ export default {
     app.component('FlashAttentionVisualizer', FlashAttentionVisualizer)
     app.component('BenchmarkChart', BenchmarkChart)
     app.component('ArchitectureDiagram', ArchitectureDiagram)
+    app.component('ThemeAwareFigure', ThemeAwareFigure)
 
     // Client-side only code
     if (typeof window !== 'undefined') {
@@ -30,7 +32,17 @@ export default {
       // 语言自动检测与偏好记忆
       // ============================================
       const LOCALE_KEY = 'vitepress-locale-preference'
-      const BASE_PATH = '/diy-flash-attention'
+      const basePath = (import.meta.env.BASE_URL || '/').replace(/\/$/, '')
+
+      const stripBase = (path: string) => {
+        if (!basePath) return path
+        if (!path.startsWith(basePath)) return path
+
+        const stripped = path.slice(basePath.length)
+        return stripped || '/'
+      }
+
+      const withBasePath = (path: string) => `${basePath}${path}`
 
       // 首次访问：检测浏览器语言并重定向
       const initAutoLocale = () => {
@@ -42,11 +54,11 @@ export default {
         if (!isZh) return
 
         const path = window.location.pathname
-        const relPath = path.replace(BASE_PATH, '').replace(/\/$/, '')
+        const relPath = stripBase(path).replace(/\/$/, '')
 
         // 当前在英文路径 → 重定向到中文对应页面
         if (!relPath.startsWith('/zh')) {
-          const newPath = BASE_PATH + '/zh' + relPath
+          const newPath = withBasePath(`/zh${relPath}`)
           window.location.replace(newPath)
         }
       }
@@ -59,7 +71,8 @@ export default {
         document.documentElement.style.scrollBehavior = 'smooth'
 
         // 记录用户语言偏好
-        const isZh = to.startsWith('/zh/')
+        const normalizedTo = stripBase(to)
+        const isZh = normalizedTo === '/zh' || normalizedTo === '/zh/' || normalizedTo.startsWith('/zh/')
         localStorage.setItem(LOCALE_KEY, isZh ? 'zh' : 'en')
       }
 

@@ -14,6 +14,8 @@ const base = rawBase
     : `/${rawBase}/`
   : '/diy-flash-attention/'
 
+const withBasePath = (path: string) => `${base}${path.replace(/^\//, '')}`
+
 export default withMermaid(defineConfig({
   // Core Settings
   lang: 'en-US',
@@ -21,7 +23,7 @@ export default withMermaid(defineConfig({
   titleTemplate: ':title | DIY FlashAttention',
   description: 'Forward-only educational FlashAttention in Triton, with benchmarks, architecture-aware helpers, and bilingual docs.',
 
-  base: '/diy-flash-attention/',
+  base: base,
   cleanUrls: true,
   lastUpdated: true,
   appearance: true, // 启用主题切换，自动检测浏览器偏好
@@ -29,7 +31,7 @@ export default withMermaid(defineConfig({
   // Head Configuration
   head: [
     // PWA
-    ['link', { rel: 'manifest', href: '/diy-flash-attention/manifest.json' }],
+    ['link', { rel: 'manifest', href: withBasePath('/manifest.json') }],
     ['meta', { name: 'theme-color', content: '#06b6d4' }],
 
     // SEO
@@ -56,7 +58,7 @@ export default withMermaid(defineConfig({
     ['link', { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap' }],
 
     // Icons
-    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/diy-flash-attention/logo.svg' }],
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: withBasePath('/logo.svg') }],
 
     // JSON-LD Structured Data
     ['script', { type: 'application/ld+json' }, JSON.stringify({
@@ -92,11 +94,17 @@ export default withMermaid(defineConfig({
 
   // Theme Configuration
   themeConfig: {
-    logo: { src: '/logo.svg', width: 28, height: 28 },
+    logo: {
+      light: '/logo-light.svg',
+      dark: '/logo-dark.svg',
+    },
     siteTitle: 'DIY FlashAttention',
 
     nav: [
       { text: 'Home', link: '/' },
+      { text: 'Learning Path', link: '/learning-path' },
+      { text: 'Paper Guide', link: '/paper-guide' },
+      { text: 'Knowledge Map', link: '/knowledge-map' },
       { text: 'Tutorial', link: '/tutorial' },
       { text: 'API', link: '/api' },
       {
@@ -119,6 +127,15 @@ export default withMermaid(defineConfig({
             { text: 'Tutorial', link: '/tutorial' },
             { text: 'API Reference', link: '/api' },
             { text: 'Tensor Layout Guide', link: '/tensor-layout' },
+          ]
+        },
+        {
+          text: 'Academy',
+          collapsed: false,
+          items: [
+            { text: 'Learning Path', link: '/learning-path' },
+            { text: 'Paper Guide', link: '/paper-guide' },
+            { text: 'Knowledge Map', link: '/knowledge-map' },
           ]
         },
         {
@@ -156,6 +173,15 @@ export default withMermaid(defineConfig({
             { text: '教程', link: '/zh/tutorial' },
             { text: 'API 参考', link: '/zh/api' },
             { text: '张量布局指南', link: '/zh/tensor-layout' },
+          ]
+        },
+        {
+          text: '学院',
+          collapsed: false,
+          items: [
+            { text: '学习路径', link: '/zh/learning-path' },
+            { text: '论文导读', link: '/zh/paper-guide' },
+            { text: '知识图谱', link: '/zh/knowledge-map' },
           ]
         },
         {
@@ -256,6 +282,9 @@ export default withMermaid(defineConfig({
       themeConfig: {
         nav: [
           { text: '首页', link: '/zh/' },
+          { text: '学习路径', link: '/zh/learning-path' },
+          { text: '论文导读', link: '/zh/paper-guide' },
+          { text: '知识图谱', link: '/zh/knowledge-map' },
           { text: '教程', link: '/zh/tutorial' },
           { text: 'API', link: '/zh/api' },
           {

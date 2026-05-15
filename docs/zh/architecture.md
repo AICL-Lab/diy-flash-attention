@@ -2,6 +2,12 @@
 
 本文档全面介绍 DIY FlashAttention 的系统架构，包括 GPU 内存层次结构、内核设计和性能优化策略。
 
+> **阅读前提：** 建议先通过 [/zh/tutorial](/zh/tutorial) 建立张量布局和 forward-only 的整体心智模型。
+>
+> **对应源码：** `kernels/flash_attn.py`、`kernels/flash_attn_v2.py`
+>
+> **下一步：** 继续阅读 [/zh/paper-guide](/zh/paper-guide) 或 [/zh/knowledge-map](/zh/knowledge-map)。
+
 ## 概述
 
 DIY FlashAttention 是一个使用 OpenAI Triton 实现的 FlashAttention 教育性项目。系统设计目标：

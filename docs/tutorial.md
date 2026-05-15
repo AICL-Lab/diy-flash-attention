@@ -2,6 +2,12 @@
 
 A comprehensive guide to understanding and implementing FlashAttention from scratch. Whether you're new to GPU programming or an experienced developer, you'll find value here.
 
+> **Before you read:** This page establishes the tensor layout, causal masking context, and forward-only scope used by the rest of the docs.
+>
+> **Source files:** `kernels/flash_attn.py`, `kernels/flash_attn_v2.py`
+>
+> **Next step:** Continue to [/paper-guide](/paper-guide) or [/knowledge-map](/knowledge-map).
+
 ## Learning Path
 
 ```

@@ -2,6 +2,12 @@
 
 This guide covers optimization techniques for DIY FlashAttention, including configuration tuning, best practices, and common pitfalls.
 
+> **Before you read:** You should already know the tensor layout and forward-only scope from [/tutorial](/tutorial).
+>
+> **Source files:** `kernels/flash_attn.py`, `kernels/flash_attn_v2.py`
+>
+> **Next step:** Continue to [/paper-guide](/paper-guide) or [/knowledge-map](/knowledge-map).
+
 ## Table of Contents
 
 - [Performance Benchmarks](#performance-benchmarks)

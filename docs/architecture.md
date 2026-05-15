@@ -2,6 +2,12 @@
 
 This document provides a comprehensive overview of the DIY FlashAttention system architecture, including GPU memory hierarchy, kernel design, and performance optimization strategies.
 
+> **Before you read:** You should already know the tensor layout and forward-only scope from [/tutorial](/tutorial).
+>
+> **Source files:** `kernels/flash_attn.py`, `kernels/flash_attn_v2.py`
+>
+> **Next step:** Continue to [/paper-guide](/paper-guide) or [/knowledge-map](/knowledge-map).
+
 ## Overview
 
 DIY FlashAttention is an educational implementation of the FlashAttention algorithm using OpenAI Triton. The system is designed to:

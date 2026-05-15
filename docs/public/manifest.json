@@ -2,15 +2,15 @@
   "name": "DIY FlashAttention",
   "short_name": "DIY FlashAttn",
   "description": "Learn Triton by implementing FlashAttention from scratch. Educational kernels, benchmarks, and bilingual docs.",
-  "start_url": "/diy-flash-attention/",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#06b6d4",
   "orientation": "any",
-  "scope": "/diy-flash-attention/",
+  "scope": "./",
   "icons": [
     {
-      "src": "/diy-flash-attention/logo.svg",
+      "src": "logo.svg",
       "type": "image/svg+xml",
       "sizes": "120x120"
     }

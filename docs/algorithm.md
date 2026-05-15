@@ -2,6 +2,12 @@
 
 This document provides a comprehensive mathematical analysis of the FlashAttention algorithm, including the derivation of online softmax, tiling strategies, and complexity analysis.
 
+> **Before you read:** You should already know the tensor layout and forward-only scope from [/tutorial](/tutorial).
+>
+> **Source files:** `kernels/flash_attn.py`, `kernels/flash_attn_v2.py`
+>
+> **Next step:** Continue to [/paper-guide](/paper-guide) or [/knowledge-map](/knowledge-map).
+
 ## The Attention Problem
 
 ### Standard Attention Computation
