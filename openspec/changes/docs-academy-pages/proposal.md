@@ -2,6 +2,19 @@
 
 GitHub Pages 目前更像项目展示页，而不是服务于学习者的学院式导读站，难以把 README 中已经明确的教育性、forward-only FlashAttention 定位延伸成更系统的学习入口。与此同时，亮暗模式切换下的 SVG 图示缺乏统一适配策略，首页、导航、论文导读与知识地图之间也缺少成体系的入口设计。
 
+## Goals
+
+- 将 GitHub Pages 首页升级为 academy-style portal，提供学习路径、论文导读、知识地图三类结构化入口。
+- 采用双层结构组织站点：portal layer 负责导学，reference layer 保持教程与 API 等参考内容稳定可达。
+- 为站点 logo 与公开图示建立 light/dark 主题自适应策略，确保关键 SVG 资产始终可读。
+- 为后续实施切分出独立、可验证的任务切片。
+
+## Non-Goals
+
+- 不在本 change 中修改 FlashAttention kernel 算法或扩展到 backward/training 作用域。
+- 不把文档站点扩展成泛 LLM、泛 GPU 或泛 Transformer 百科。
+- 不在本 change 中重做整个 docs 技术栈或引入新的站点框架。
+
 ## What Changes
 
 - 将 docs 首页从项目展示页升级为 academy-style 学习入口，明确“从哪里开始”“先读什么论文”“核心概念如何关联文档”。

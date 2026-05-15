@@ -2,19 +2,6 @@
 
 当前 `project-surface` 规格要求 README、GitHub Pages 与仓库 About 讲述同一个教育性 Triton/FlashAttention 故事，但 docs 首页仍偏展示页，尚未形成针对初学者的系统导学入口。此次 change 需要在不偏离“教育性、仅 forward pass、非泛化百科站点”范围的前提下，把 docs 站点升级为更像学习学院的入口，并补齐主题自适应 SVG 策略。
 
-## Goals / Non-Goals
-
-**Goals:**
-- 将 GitHub Pages 首页升级为 academy-style portal，提供学习路径、论文导读、知识地图三类结构化入口。
-- 采用双层结构组织站点：portal layer 负责导学，reference layer 保持教程与 API 等参考内容稳定可达。
-- 为站点 logo 与公开图示建立 light/dark 主题自适应策略，确保关键 SVG 资产始终可读。
-- 为后续实施切分出独立、可验证的任务切片。
-
-**Non-Goals:**
-- 不在本 change 中修改 FlashAttention kernel 算法或扩展到 backward/training 作用域。
-- 不把文档站点扩展成泛 LLM、泛 GPU 或泛 Transformer 百科。
-- 不在本 change 中重做整个 docs 技术栈或引入新的站点框架。
-
 ## Decisions
 
 ### Site Model
