@@ -66,6 +66,19 @@ def test_paper_guide_pages_cover_core_papers() -> None:
     assert "](/zh/algorithm)" in zh
 
 
+def test_knowledge_map_pages_link_concepts_to_repo_artifacts() -> None:
+    en = (ROOT / "docs/knowledge-map.md").read_text()
+    zh = (ROOT / "docs/zh/knowledge-map.md").read_text()
+
+    assert "online softmax" in en.lower()
+    assert "backend_selector.py" in en
+    assert "mask_dsl.py" in en
+
+    assert "online softmax" in zh.lower()
+    assert "backend_selector.py" in zh
+    assert "mask_dsl.py" in zh
+
+
 def test_homepages_prioritize_academy_portal_sections() -> None:
     en = (ROOT / "docs/index.md").read_text()
     zh = (ROOT / "docs/zh/index.md").read_text()
