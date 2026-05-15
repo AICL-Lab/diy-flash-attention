@@ -51,6 +51,21 @@ def test_learning_path_pages_exist_and_reference_core_docs() -> None:
     assert en != zh
 
 
+def test_paper_guide_pages_cover_core_papers() -> None:
+    en = (ROOT / "docs/paper-guide.md").read_text()
+    zh = (ROOT / "docs/zh/paper-guide.md").read_text()
+
+    assert "FlashAttention" in en
+    assert "FlashAttention-2" in en
+    assert "what to read first" in en.lower()
+    assert "](/algorithm)" in en
+
+    assert "FlashAttention" in zh
+    assert "FlashAttention-2" in zh
+    assert "先读" in zh
+    assert "](/zh/algorithm)" in zh
+
+
 def test_homepages_prioritize_academy_portal_sections() -> None:
     en = (ROOT / "docs/index.md").read_text()
     zh = (ROOT / "docs/zh/index.md").read_text()
