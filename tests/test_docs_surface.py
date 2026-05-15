@@ -53,6 +53,21 @@ def test_homepages_prioritize_academy_portal_sections() -> None:
     assert "## GPU 支持矩阵" not in zh
 
 
+def test_homepage_portal_links_do_not_hardcode_repo_base() -> None:
+    en = (ROOT / "docs/index.md").read_text()
+    zh = (ROOT / "docs/zh/index.md").read_text()
+
+    assert "href=\"/diy-flash-attention/learning-path\"" not in en
+    assert "href=\"/diy-flash-attention/paper-guide\"" not in en
+    assert "href=\"/diy-flash-attention/knowledge-map\"" not in en
+    assert "href=\"/diy-flash-attention/\"" not in en
+
+    assert "href=\"/diy-flash-attention/zh/learning-path\"" not in zh
+    assert "href=\"/diy-flash-attention/zh/paper-guide\"" not in zh
+    assert "href=\"/diy-flash-attention/zh/knowledge-map\"" not in zh
+    assert "href=\"/diy-flash-attention/zh/\"" not in zh
+
+
 def test_docs_config_uses_computed_base_variable() -> None:
     text = CONFIG.read_text()
     assert "const base =" in text

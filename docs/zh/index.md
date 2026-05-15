@@ -26,17 +26,17 @@ hero:
 <div class="academy-grid">
 
 <div class="academy-card">
-  <h3><a href="/diy-flash-attention/zh/learning-path">学习路径</a></h3>
+  <h3><a href="./learning-path">学习路径</a></h3>
   <p>从 Triton 基础开始，再进入在线 softmax 与 FlashAttention 内核实现。</p>
 </div>
 
 <div class="academy-card">
-  <h3><a href="/diy-flash-attention/zh/paper-guide">论文导读</a></h3>
+  <h3><a href="./paper-guide">论文导读</a></h3>
   <p>按与本仓库相匹配的顺序阅读 FlashAttention 论文。</p>
 </div>
 
 <div class="academy-card">
-  <h3><a href="/diy-flash-attention/zh/knowledge-map">知识图谱</a></h3>
+  <h3><a href="./knowledge-map">知识图谱</a></h3>
   <p>查看核心概念、源码文件与文档之间的连接关系。</p>
 </div>
 
@@ -107,10 +107,10 @@ hero:
 ## 语言
 
 <div class="lang-switcher">
-  <a href="/diy-flash-attention/" class="lang-link">
+  <a href="../" class="lang-link">
     <span>🇺🇸</span> English
   </a>
-  <a href="/diy-flash-attention/zh/" class="lang-link active">
+  <a href="./" class="lang-link active">
     <span>🇨🇳</span> 中文
   </a>
 </div>

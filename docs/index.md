@@ -26,17 +26,17 @@ Use this portal to choose a study route first, then move into the reference docs
 <div class="academy-grid">
 
 <div class="academy-card">
-  <h3><a href="/diy-flash-attention/learning-path">Learning Path</a></h3>
+  <h3><a href="./learning-path">Learning Path</a></h3>
   <p>Start from Triton basics, then move into online softmax and FlashAttention kernels.</p>
 </div>
 
 <div class="academy-card">
-  <h3><a href="/diy-flash-attention/paper-guide">Paper Guide</a></h3>
+  <h3><a href="./paper-guide">Paper Guide</a></h3>
   <p>Read the FlashAttention papers in an order that matches this repository.</p>
 </div>
 
 <div class="academy-card">
-  <h3><a href="/diy-flash-attention/knowledge-map">Knowledge Map</a></h3>
+  <h3><a href="./knowledge-map">Knowledge Map</a></h3>
   <p>See how concepts, source files, and docs connect.</p>
 </div>
 
@@ -107,10 +107,10 @@ After the portal points you to the right entry, use these references to go deepe
 ## Language
 
 <div class="lang-switcher">
-  <a href="/diy-flash-attention/" class="lang-link active">
+  <a href="./" class="lang-link active">
     <span>🇺🇸</span> English
   </a>
-  <a href="/diy-flash-attention/zh/" class="lang-link">
+  <a href="./zh/" class="lang-link">
     <span>🇨🇳</span> 中文
   </a>
 </div>
