@@ -16,4 +16,4 @@
 
 ## 5. Guide rails and verification
 
-- [ ] 5.1 Add guide rails to core docs and verify builds
+- [x] 5.1 Add guide rails to core docs and verify builds

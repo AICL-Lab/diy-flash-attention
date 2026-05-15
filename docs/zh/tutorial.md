@@ -2,6 +2,12 @@
 
 本教程将带你从零开始理解和实现 FlashAttention 算法。无论你是 GPU 编程新手还是经验丰富的开发者，都能从中获得价值。
 
+> **阅读前提：** 本页会先建立张量布局、因果掩码和 forward-only 范围的整体心智模型，作为后续核心页面的共同起点。
+>
+> **对应源码：** `kernels/flash_attn.py`、`kernels/flash_attn_v2.py`
+>
+> **下一步：** 继续阅读 [/zh/paper-guide](/zh/paper-guide) 或 [/zh/knowledge-map](/zh/knowledge-map)。
+
 ## 📚 学习路径
 
 ```

@@ -2,6 +2,12 @@
 
 本指南详细介绍如何优化 DIY FlashAttention 的性能，涵盖配置调优、最佳实践和常见陷阱。
 
+> **阅读前提：** 建议先通过 [/zh/tutorial](/zh/tutorial) 建立张量布局和 forward-only 的整体心智模型。
+>
+> **对应源码：** `kernels/flash_attn.py`、`kernels/flash_attn_v2.py`
+>
+> **下一步：** 继续阅读 [/zh/paper-guide](/zh/paper-guide) 或 [/zh/knowledge-map](/zh/knowledge-map)。
+
 ## 目录
 
 - [性能基准](#性能基准)

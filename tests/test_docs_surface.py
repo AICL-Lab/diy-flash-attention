@@ -1,6 +1,5 @@
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "docs/.vitepress/config.mts"
 
@@ -157,3 +156,22 @@ def test_docs_config_uses_theme_aware_logo_assets() -> None:
     assert "light: withBasePath('/logo-light.svg')" in config
     assert "dark: withBasePath('/logo-dark.svg')" in config
     assert "src: withBasePath('/logo.svg')" not in config
+
+
+def test_core_docs_include_reader_guidance_blocks() -> None:
+    targets = [
+        ROOT / "docs/architecture.md",
+        ROOT / "docs/algorithm.md",
+        ROOT / "docs/tutorial.md",
+        ROOT / "docs/performance.md",
+        ROOT / "docs/api.md",
+        ROOT / "docs/zh/architecture.md",
+        ROOT / "docs/zh/algorithm.md",
+        ROOT / "docs/zh/tutorial.md",
+        ROOT / "docs/zh/performance.md",
+        ROOT / "docs/zh/api.md",
+    ]
+
+    for path in targets:
+        text = path.read_text()
+        assert "Next step" in text or "下一步" in text
