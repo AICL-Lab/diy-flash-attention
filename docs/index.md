@@ -56,42 +56,42 @@ After the portal points you to the right entry, use these references to go deepe
 
 <div class="doc-nav-card">
   <div class="doc-nav-icon">📖</div>
-  <h3><a href="/diy-flash-attention/architecture">Architecture Design</a></h3>
+  <h3><a href="./architecture">Architecture Design</a></h3>
   <p>System architecture, GPU memory hierarchy, kernel design, and design decisions.</p>
   <span class="doc-nav-tag">Whitepaper</span>
 </div>
 
 <div class="doc-nav-card">
   <div class="doc-nav-icon">📐</div>
-  <h3><a href="/diy-flash-attention/algorithm">Algorithm Deep Dive</a></h3>
+  <h3><a href="./algorithm">Algorithm Deep Dive</a></h3>
   <p>Online softmax derivation, tiling strategies, complexity analysis, and correctness proofs.</p>
   <span class="doc-nav-tag">Whitepaper</span>
 </div>
 
 <div class="doc-nav-card">
   <div class="doc-nav-icon">🚀</div>
-  <h3><a href="/diy-flash-attention/tutorial">Tutorial</a></h3>
+  <h3><a href="./tutorial">Tutorial</a></h3>
   <p>Step-by-step guide: GPU basics → Triton programming → FlashAttention implementation.</p>
   <span class="doc-nav-tag">Getting Started</span>
 </div>
 
 <div class="doc-nav-card">
   <div class="doc-nav-icon">📊</div>
-  <h3><a href="/diy-flash-attention/performance">Performance Guide</a></h3>
+  <h3><a href="./performance">Performance Guide</a></h3>
   <p>Block size tuning, data type selection, GPU architecture adaptation, and benchmarking.</p>
   <span class="doc-nav-tag">Reference</span>
 </div>
 
 <div class="doc-nav-card">
   <div class="doc-nav-icon">🔧</div>
-  <h3><a href="/diy-flash-attention/api">API Reference</a></h3>
+  <h3><a href="./api">API Reference</a></h3>
   <p>Complete function signatures, parameters, return values, and usage examples.</p>
   <span class="doc-nav-tag">Reference</span>
 </div>
 
 <div class="doc-nav-card">
   <div class="doc-nav-icon">⚡</div>
-  <h3><a href="/diy-flash-attention/cheatsheet">Cheatsheet</a></h3>
+  <h3><a href="./cheatsheet">Cheatsheet</a></h3>
   <p>Quick reference: common APIs, commands, configuration templates, and error lookup.</p>
   <span class="doc-nav-tag">Quick Reference</span>
 </div>

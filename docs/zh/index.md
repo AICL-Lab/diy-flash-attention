@@ -56,42 +56,42 @@ hero:
 
 <div class="doc-nav-card">
   <div class="doc-nav-icon">📖</div>
-  <h3><a href="/diy-flash-attention/zh/architecture">架构设计</a></h3>
+  <h3><a href="./architecture">架构设计</a></h3>
   <p>系统架构、GPU 内存层次结构、内核设计、设计决策。</p>
   <span class="doc-nav-tag">白皮书</span>
 </div>
 
 <div class="doc-nav-card">
   <div class="doc-nav-icon">📐</div>
-  <h3><a href="/diy-flash-attention/zh/algorithm">算法详解</a></h3>
+  <h3><a href="./algorithm">算法详解</a></h3>
   <p>在线 softmax 推导、分块策略、复杂度分析、正确性证明。</p>
   <span class="doc-nav-tag">白皮书</span>
 </div>
 
 <div class="doc-nav-card">
   <div class="doc-nav-icon">🚀</div>
-  <h3><a href="/diy-flash-attention/zh/tutorial">教程</a></h3>
+  <h3><a href="./tutorial">教程</a></h3>
   <p>循序渐进：GPU 基础 → Triton 编程 → FlashAttention 实现。</p>
   <span class="doc-nav-tag">入门</span>
 </div>
 
 <div class="doc-nav-card">
   <div class="doc-nav-icon">📊</div>
-  <h3><a href="/diy-flash-attention/zh/performance">性能指南</a></h3>
+  <h3><a href="./performance">性能指南</a></h3>
   <p>块大小调优、数据类型选择、GPU 架构适配、基准测试。</p>
   <span class="doc-nav-tag">参考</span>
 </div>
 
 <div class="doc-nav-card">
   <div class="doc-nav-icon">🔧</div>
-  <h3><a href="/diy-flash-attention/zh/api">API 参考</a></h3>
+  <h3><a href="./api">API 参考</a></h3>
   <p>完整函数签名、参数、返回值、使用示例。</p>
   <span class="doc-nav-tag">参考</span>
 </div>
 
 <div class="doc-nav-card">
   <div class="doc-nav-icon">⚡</div>
-  <h3><a href="/diy-flash-attention/zh/cheatsheet">速查表</a></h3>
+  <h3><a href="./cheatsheet">速查表</a></h3>
   <p>快速参考：常用 API、命令、配置模板、错误速查。</p>
   <span class="doc-nav-tag">速查</span>
 </div>
