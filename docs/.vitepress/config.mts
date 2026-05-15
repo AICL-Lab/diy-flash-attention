@@ -95,8 +95,8 @@ export default withMermaid(defineConfig({
   // Theme Configuration
   themeConfig: {
     logo: {
-      light: withBasePath('/logo-light.svg'),
-      dark: withBasePath('/logo-dark.svg'),
+      light: '/logo-light.svg',
+      dark: '/logo-dark.svg',
     },
     siteTitle: 'DIY FlashAttention',
 

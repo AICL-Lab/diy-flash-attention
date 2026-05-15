@@ -153,8 +153,10 @@ def test_theme_aware_figure_component_is_registered() -> None:
 def test_docs_config_uses_theme_aware_logo_assets() -> None:
     config = CONFIG.read_text()
     assert "logo: {" in config
-    assert "light: withBasePath('/logo-light.svg')" in config
-    assert "dark: withBasePath('/logo-dark.svg')" in config
+    assert "light: '/logo-light.svg'" in config
+    assert "dark: '/logo-dark.svg'" in config
+    assert "light: withBasePath('/logo-light.svg')" not in config
+    assert "dark: withBasePath('/logo-dark.svg')" not in config
     assert "src: withBasePath('/logo.svg')" not in config
 
 
