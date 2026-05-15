@@ -3,15 +3,20 @@
  * Cache-first strategy for offline docs
  */
 
-const CACHE_NAME = 'diy-flash-attention-v3';
+const CACHE_NAME = 'diy-flash-attention-v4';
+const scopeUrl = new URL(self.registration.scope);
+const basePath = scopeUrl.pathname.endsWith('/') ? scopeUrl.pathname : `${scopeUrl.pathname}/`;
+const offlineUrl = new URL('offline.html', scopeUrl);
+const coreAssets = [
+  basePath,
+  new URL('manifest.json', scopeUrl).pathname,
+  offlineUrl.pathname,
+];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll([
-        '/diy-flash-attention/',
-        '/diy-flash-attention/manifest.json',
-      ]))
+      .then((cache) => cache.addAll(coreAssets))
       .then(() => self.skipWaiting())
       .catch(() => {})
   );
@@ -30,7 +35,7 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   if (request.method !== 'GET') return;
-  if (!new URL(request.url).pathname.startsWith('/diy-flash-attention/')) return;
+  if (!new URL(request.url).pathname.startsWith(basePath)) return;
 
   event.respondWith(
     caches.match(request).then((cached) => {
@@ -42,7 +47,7 @@ self.addEventListener('fetch', (event) => {
         return res;
       }).catch(() => {
         if (request.mode === 'navigate') {
-          return caches.match('/diy-flash-attention/offline.html');
+          return caches.match(offlineUrl.pathname);
         }
         return new Response('Offline', { status: 408 });
       });

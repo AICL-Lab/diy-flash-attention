@@ -85,6 +85,16 @@ def test_homepage_portal_links_do_not_hardcode_repo_base() -> None:
     assert "/diy-flash-attention/" not in zh
 
 
+def test_static_pwa_assets_do_not_hardcode_repo_base() -> None:
+    for relative_path in (
+        "docs/public/manifest.json",
+        "docs/public/sw.js",
+        "docs/public/offline.html",
+    ):
+        text = (ROOT / relative_path).read_text()
+        assert "/diy-flash-attention/" not in text, relative_path
+
+
 def test_docs_config_uses_computed_base_variable() -> None:
     text = CONFIG.read_text()
     assert "const base =" in text
