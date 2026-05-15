@@ -48,6 +48,9 @@ def test_theme_aware_figure_component_is_registered() -> None:
     assert "isDark" in component
     assert "withBase" in component
     assert "normalizeSrc" in component
+    assert "data:" in component
+    assert "startsWith('/')" in component or "startsWith(\"/\")" in component
+    assert "replace(/^(?:\\.\\.\\/|\\.\\/)+/, '')" in component or "replace(/^(?:\\.\\.\\/|\\.\\/)+/, \"\")" in component
 
 
 def test_docs_config_uses_theme_aware_logo_assets() -> None:

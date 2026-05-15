@@ -15,7 +15,8 @@ const normalizeSrc = (value: string) => {
   if (/^(?:[a-z]+:)?\/\//i.test(value) || value.startsWith('data:')) {
     return value
   }
-  return value.startsWith('/') ? withBase(value) : value
+  const normalized = value.replace(/^(?:\.\.\/|\.\/)+/, '')
+  return withBase(normalized.startsWith('/') ? normalized : `/${normalized}`)
 }
 
 const src = computed(() => normalizeSrc(isDark.value ? props.dark : props.light))
