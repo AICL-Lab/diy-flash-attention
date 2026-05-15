@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useData } from 'vitepress'
+import { useData, withBase } from 'vitepress'
 
 const props = defineProps<{
   light: string
@@ -10,7 +10,15 @@ const props = defineProps<{
 }>()
 
 const { isDark } = useData()
-const src = computed(() => (isDark.value ? props.dark : props.light))
+
+const normalizeSrc = (value: string) => {
+  if (/^(?:[a-z]+:)?\/\//i.test(value) || value.startsWith('data:')) {
+    return value
+  }
+  return value.startsWith('/') ? withBase(value) : value
+}
+
+const src = computed(() => normalizeSrc(isDark.value ? props.dark : props.light))
 </script>
 
 <template>

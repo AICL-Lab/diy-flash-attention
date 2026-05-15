@@ -46,3 +46,13 @@ def test_theme_aware_figure_component_is_registered() -> None:
     assert "ThemeAwareFigure" in theme_index
     assert "defineProps" in component
     assert "isDark" in component
+    assert "withBase" in component
+    assert "normalizeSrc" in component
+
+
+def test_docs_config_uses_theme_aware_logo_assets() -> None:
+    config = CONFIG.read_text()
+    assert "logo: {" in config
+    assert "light: withBasePath('/logo-light.svg')" in config
+    assert "dark: withBasePath('/logo-dark.svg')" in config
+    assert "src: withBasePath('/logo.svg')" not in config
