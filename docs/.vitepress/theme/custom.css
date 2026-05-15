@@ -588,6 +588,48 @@
   background: var(--vp-c-bg-soft);
 }
 
+/* Academy Portal */
+.academy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.academy-card {
+  background: var(--vp-c-bg-alt);
+  border: 1px solid var(--vp-c-divider);
+  border-radius: var(--vp-radius-lg);
+  padding: 1.25rem;
+  transition: all 0.3s ease;
+}
+
+.academy-card:hover {
+  border-color: var(--vp-c-brand-1);
+  box-shadow: var(--vp-shadow-md);
+  transform: translateY(-2px);
+}
+
+.academy-card h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.academy-card h3 a {
+  color: var(--vp-c-text-1);
+  text-decoration: none;
+}
+
+.academy-card h3 a:hover {
+  color: var(--vp-c-brand-1);
+}
+
+.academy-card p {
+  margin: 0;
+  color: var(--vp-c-text-2);
+  line-height: 1.6;
+}
+
 /* Document Navigation Grid */
 .doc-nav-grid {
   display: grid;

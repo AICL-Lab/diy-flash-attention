@@ -27,6 +27,19 @@ def test_docs_academy_route_files_exist_for_chinese() -> None:
     assert (ROOT / "docs/zh/knowledge-map.md").exists()
 
 
+def test_homepages_expose_academy_entry_sections() -> None:
+    en = (ROOT / "docs/index.md").read_text()
+    zh = (ROOT / "docs/zh/index.md").read_text()
+
+    assert "Learning Path" in en
+    assert "Paper Guide" in en
+    assert "Knowledge Map" in en
+
+    assert "学习路径" in zh
+    assert "论文导读" in zh
+    assert "知识地图" in zh
+
+
 def test_docs_config_uses_computed_base_variable() -> None:
     text = CONFIG.read_text()
     assert "const base =" in text

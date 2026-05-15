@@ -9,15 +9,38 @@ hero:
 
   actions:
     - theme: brand
-      text: 📖 Read Whitepaper
-      link: /architecture
+      text: 🧭 Start Learning
+      link: /learning-path
     - theme: alt
-      text: 🚀 Start Tutorial
-      link: /tutorial
+      text: 📚 Read Papers
+      link: /paper-guide
     - theme: alt
-      text: 📊 View Benchmarks
-      link: /performance
+      text: 🗺️ Explore Concepts
+      link: /knowledge-map
 ---
+
+## Start Here
+
+Use the academy portal first, then move into the whitepaper-style references and runnable code examples below.
+
+<div class="academy-grid">
+
+<div class="academy-card">
+  <h3><a href="/diy-flash-attention/learning-path">Learning Path</a></h3>
+  <p>Start from Triton basics, then move into online softmax and FlashAttention kernels.</p>
+</div>
+
+<div class="academy-card">
+  <h3><a href="/diy-flash-attention/paper-guide">Paper Guide</a></h3>
+  <p>Read the FlashAttention papers in an order that matches this repository.</p>
+</div>
+
+<div class="academy-card">
+  <h3><a href="/diy-flash-attention/knowledge-map">Knowledge Map</a></h3>
+  <p>See how concepts, source files, and docs connect.</p>
+</div>
+
+</div>
 
 ## FlashAttention Architecture
 
@@ -37,7 +60,9 @@ hero:
 
 </div>
 
-## What You'll Learn
+## Reference Library
+
+After the academy portal points you to the right entry, use these references to go deeper into the implementation details.
 
 <div class="doc-nav-grid">
 

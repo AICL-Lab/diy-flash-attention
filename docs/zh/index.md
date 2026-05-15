@@ -9,15 +9,38 @@ hero:
 
   actions:
     - theme: brand
-      text: 📖 阅读白皮书
-      link: /zh/architecture
+      text: 🧭 开始学习
+      link: /zh/learning-path
     - theme: alt
-      text: 🚀 开始教程
-      link: /zh/tutorial
+      text: 📚 阅读论文
+      link: /zh/paper-guide
     - theme: alt
-      text: 📊 查看基准测试
-      link: /zh/performance
+      text: 🗺️ 浏览知识地图
+      link: /zh/knowledge-map
 ---
+
+## 从这里开始
+
+先使用学院门户选择学习入口，再进入下方的白皮书式参考内容与可运行示例。
+
+<div class="academy-grid">
+
+<div class="academy-card">
+  <h3><a href="/diy-flash-attention/zh/learning-path">学习路径</a></h3>
+  <p>从 Triton 基础开始，再进入在线 softmax 与 FlashAttention 内核实现。</p>
+</div>
+
+<div class="academy-card">
+  <h3><a href="/diy-flash-attention/zh/paper-guide">论文导读</a></h3>
+  <p>按与本仓库相匹配的顺序阅读 FlashAttention 论文。</p>
+</div>
+
+<div class="academy-card">
+  <h3><a href="/diy-flash-attention/zh/knowledge-map">知识地图</a></h3>
+  <p>查看核心概念、源码文件与文档之间的连接关系。</p>
+</div>
+
+</div>
 
 ## FlashAttention 架构
 
@@ -37,7 +60,9 @@ hero:
 
 </div>
 
-## 你将学到什么
+## 参考资料库
+
+学院门户负责导学，下面这些参考页用于继续深入实现细节与实践路径。
 
 <div class="doc-nav-grid">
 
