@@ -1,11 +1,15 @@
 ## ADDED Requirements
 
-### Requirement: GitHub Pages acts as a learning academy entrypoint
-The GitHub Pages site SHALL provide structured entrypoints for learning path, paper guide, and concept map content that help readers navigate the repository's educational FlashAttention scope.
+### Requirement: English and Chinese GitHub Pages act as a learning academy entrypoint
+The English and Chinese GitHub Pages surfaces SHALL provide aligned structured entrypoints for learning path, paper guide, and concept map content that help readers navigate the repository's educational FlashAttention scope.
 
 #### Scenario: First-time visitor on GitHub Pages
-- **WHEN** a reader lands on the docs homepage
-- **THEN** the site SHALL present guided entrypoints for where to start learning, what papers to read, and which concepts connect to which repository documents
+- **WHEN** a reader lands on the English or Chinese docs homepage
+- **THEN** the site SHALL present the same guided entrypoints for where to start learning, what papers to read, and which concepts connect to which repository documents
+
+#### Scenario: Reader switches between English and Chinese homepages
+- **WHEN** a reader compares the English and Chinese docs homepages
+- **THEN** both surfaces SHALL expose the same academy portal structure and equivalent entrypoints, with locale-appropriate copy only
 
 ### Requirement: Public SVG assets remain legible across light and dark themes
 The GitHub Pages site SHALL ensure primary SVG assets used in the docs surface remain readable in both light and dark themes.
